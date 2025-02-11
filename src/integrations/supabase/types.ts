@@ -9,7 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      predictions: {
+        Row: {
+          created_at: string
+          fastest_lap: string | null
+          id: string
+          pole_position: string
+          pole_time: string | null
+          race_id: string
+          top_10: string[]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fastest_lap?: string | null
+          id?: string
+          pole_position: string
+          pole_time?: string | null
+          race_id: string
+          top_10: string[]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fastest_lap?: string | null
+          id?: string
+          pole_position?: string
+          pole_time?: string | null
+          race_id?: string
+          top_10?: string[]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predictions_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          points: number | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          points?: number | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          points?: number | null
+          username?: string
+        }
+        Relationships: []
+      }
+      races: {
+        Row: {
+          circuit: string
+          country: string
+          created_at: string
+          date: string
+          id: string
+          name: string
+          qualifying_date: string
+        }
+        Insert: {
+          circuit: string
+          country: string
+          created_at?: string
+          date: string
+          id?: string
+          name: string
+          qualifying_date: string
+        }
+        Update: {
+          circuit?: string
+          country?: string
+          created_at?: string
+          date?: string
+          id?: string
+          name?: string
+          qualifying_date?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
