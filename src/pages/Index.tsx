@@ -1,8 +1,33 @@
 
 import { Trophy, Flag, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { supabase } from "@/lib/supabase";
+import type { Race } from "@/types/betting";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const Index = () => {
+  const { data: races, isLoading } = useQuery({
+    queryKey: ["races"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("races")
+        .select("*")
+        .order("date", { ascending: true });
+
+      if (error) throw error;
+      return data as Race[];
+    },
+  });
+
+  const formatDate = (date: string) => {
+    return format(new Date(date), "d 'de' MMMM 'às' HH:mm", {
+      locale: ptBR,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       {/* Hero Section */}
@@ -18,8 +43,8 @@ const Index = () => {
             <span className="text-racing-red"> Betting League</span>
           </h1>
           <p className="text-xl md:text-2xl text-racing-silver max-w-2xl mx-auto">
-            Compete with friends, predict race outcomes, and climb the leaderboard
-            in our premium F1 betting experience.
+            Compete com amigos, faça previsões para as corridas e suba no ranking
+            em nossa experiência premium de apostas F1.
           </p>
         </motion.div>
 
@@ -32,10 +57,9 @@ const Index = () => {
             className="p-6 rounded-xl bg-racing-black border border-racing-silver/20 hover:border-racing-red/50 transition-all"
           >
             <Trophy className="w-12 h-12 text-racing-red mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Compete & Win</h3>
+            <h3 className="text-xl font-semibold mb-2">Compita & Vença</h3>
             <p className="text-racing-silver">
-              Join leagues with friends and compete for the top spot on our global
-              leaderboard.
+              Participe de ligas com amigos e dispute o topo do ranking global.
             </p>
           </motion.div>
 
@@ -46,10 +70,9 @@ const Index = () => {
             className="p-6 rounded-xl bg-racing-black border border-racing-silver/20 hover:border-racing-red/50 transition-all"
           >
             <Flag className="w-12 h-12 text-racing-red mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Race Predictions</h3>
+            <h3 className="text-xl font-semibold mb-2">Previsões de Corrida</h3>
             <p className="text-racing-silver">
-              Make detailed predictions for each Grand Prix and score points based
-              on accuracy.
+              Faça previsões detalhadas para cada Grande Prêmio e marque pontos com base na precisão.
             </p>
           </motion.div>
 
@@ -60,12 +83,53 @@ const Index = () => {
             className="p-6 rounded-xl bg-racing-black border border-racing-silver/20 hover:border-racing-red/50 transition-all"
           >
             <Calendar className="w-12 h-12 text-racing-red mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Live Schedule</h3>
+            <h3 className="text-xl font-semibold mb-2">Calendário ao Vivo</h3>
             <p className="text-racing-silver">
-              Stay updated with real-time race schedules and betting deadlines.
+              Fique atualizado com o calendário de corridas e prazos para apostas em tempo real.
             </p>
           </motion.div>
         </div>
+
+        {/* Próximas Corridas */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16"
+        >
+          <h2 className="text-3xl font-bold mb-8 text-center">Próximas Corridas</h2>
+          {isLoading ? (
+            <div className="text-center text-racing-silver">Carregando corridas...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {races?.map((race) => (
+                <Card key={race.id} className="bg-racing-black border-racing-silver/20">
+                  <CardHeader>
+                    <CardTitle className="text-xl text-racing-white">
+                      {race.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-racing-silver">
+                      <p>
+                        <strong>Corrida:</strong> {formatDate(race.date)}
+                      </p>
+                      <p>
+                        <strong>Classificação:</strong> {formatDate(race.qualifying_date)}
+                      </p>
+                      <p>
+                        <strong>Circuito:</strong> {race.circuit}
+                      </p>
+                      <p>
+                        <strong>País:</strong> {race.country}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </motion.div>
 
         {/* CTA Section */}
         <motion.div
@@ -75,7 +139,7 @@ const Index = () => {
           className="mt-16 text-center"
         >
           <button className="px-8 py-3 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105">
-            Start Betting Now
+            Comece a Apostar Agora
           </button>
         </motion.div>
       </div>
