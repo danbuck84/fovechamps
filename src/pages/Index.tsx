@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { formatInTimeZone } from 'date-fns-tz';
 import { supabase } from "@/lib/supabase";
 import type { Race } from "@/types/betting";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -23,9 +24,12 @@ const Index = () => {
   });
 
   const formatDate = (date: string) => {
-    return format(new Date(date), "d 'de' MMMM 'às' HH:mm", {
-      locale: ptBR,
-    });
+    return formatInTimeZone(
+      new Date(date),
+      'America/Sao_Paulo',
+      "d 'de' MMMM 'às' HH:mm",
+      { locale: ptBR }
+    );
   };
 
   return (
