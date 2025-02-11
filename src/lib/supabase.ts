@@ -1,6 +1,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 
+// Aguarda 1 segundo para garantir que as variáveis de ambiente estejam disponíveis
+await new Promise(resolve => setTimeout(resolve, 1000));
+
 if (!import.meta.env.VITE_SUPABASE_URL) {
   throw new Error("VITE_SUPABASE_URL não está definido");
 }
@@ -19,3 +22,6 @@ export const supabase = createClient(
     },
   }
 );
+
+// Log para debug
+console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
