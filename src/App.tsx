@@ -9,7 +9,15 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import RacePredictions from "./pages/RacePredictions";
 
-const queryClient = new QueryClient();
+// Move queryClient creation outside of the component
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
