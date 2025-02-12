@@ -9,33 +9,71 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      drivers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          number: number
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          number: number
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          number?: number
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       predictions: {
         Row: {
           created_at: string
+          dnf_predictions: string[]
           fastest_lap: string | null
           id: string
           pole_position: string
           pole_time: string | null
+          qualifying_top_10: string[]
           race_id: string
           top_10: string[]
           user_id: string
         }
         Insert: {
           created_at?: string
+          dnf_predictions?: string[]
           fastest_lap?: string | null
           id?: string
           pole_position: string
           pole_time?: string | null
+          qualifying_top_10?: string[]
           race_id: string
           top_10: string[]
           user_id: string
         }
         Update: {
           created_at?: string
+          dnf_predictions?: string[]
           fastest_lap?: string | null
           id?: string
           pole_position?: string
           pole_time?: string | null
+          qualifying_top_10?: string[]
           race_id?: string
           top_10?: string[]
           user_id?: string
@@ -108,6 +146,27 @@ export type Database = {
           id?: string
           name?: string
           qualifying_date?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          created_at: string
+          engine: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          engine: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          engine?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }

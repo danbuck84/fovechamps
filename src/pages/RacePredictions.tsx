@@ -10,7 +10,15 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Race } from "@/types/betting";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
   const { raceId } = useParams();
@@ -20,9 +28,11 @@ const RacePredictions = () => {
   const [polePosition, setPolePosition] = useState("");
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
-  const [top10, setTop10] = useState<string[]>(Array(10).fill(""));
+  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
+  const [raceTop10, setRaceTop10] = useState<string[]>(Array(10).fill(""));
+  const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
 
-  const { data: race, isLoading } = useQuery({
+  const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -36,6 +46,25 @@ const RacePredictions = () => {
     },
   });
 
+  const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
+    queryKey: ["drivers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("drivers")
+        .select(`
+          *,
+          team:teams (
+            name,
+            engine
+          )
+        `)
+        .order('name');
+
+      if (error) throw error;
+      return data as (Driver & { team: { name: string; engine: string } })[];
+    },
+  });
+
   const formatDate = (date: string) => {
     return formatInTimeZone(
       new Date(date),
@@ -43,6 +72,15 @@ const RacePredictions = () => {
       "d 'de' MMMM 'às' HH:mm",
       { locale: ptBR }
     );
+  };
+
+  const handleDriverDNF = (driverId: string) => {
+    setDnfPredictions(prev => {
+      if (prev.includes(driverId)) {
+        return prev.filter(id => id !== driverId);
+      }
+      return [...prev, driverId];
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +103,9 @@ const RacePredictions = () => {
       pole_position: polePosition,
       pole_time: poleTime,
       fastest_lap: fastestLap,
-      top_10: top10,
+      qualifying_top_10: qualifyingTop10,
+      top_10: raceTop10,
+      dnf_predictions: dnfPredictions,
     });
 
     if (error) {
@@ -85,10 +125,10 @@ const RacePredictions = () => {
     navigate("/");
   };
 
-  if (isLoading || !race) {
+  if (isLoadingRace || isLoadingDrivers || !race || !drivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Carregando informações da corrida...</p>
+        <p className="text-racing-silver">Carregando informações...</p>
       </div>
     );
   }
@@ -118,21 +158,27 @@ const RacePredictions = () => {
             </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Pole Position Prediction */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Classificação</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label htmlFor="polePosition" className="text-sm text-racing-silver">
+                    <label className="text-sm text-racing-silver">
                       Pole Position
                     </label>
-                    <Input
-                      id="polePosition"
-                      value={polePosition}
-                      onChange={(e) => setPolePosition(e.target.value)}
-                      className="bg-racing-black border-racing-silver/20"
-                      required
-                    />
+                    <Select value={polePosition} onValueChange={setPolePosition}>
+                      <SelectTrigger className="bg-racing-black border-racing-silver/20">
+                        <SelectValue placeholder="Selecione um piloto" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {drivers.map((driver) => (
+                          <SelectItem key={driver.id} value={driver.id}>
+                            {driver.name} ({driver.team.name})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="poleTime" className="text-sm text-racing-silver">
@@ -150,43 +196,91 @@ const RacePredictions = () => {
                 </div>
               </div>
 
+              {/* Qualifying Top 10 Prediction */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Corrida</h3>
-                <div className="space-y-2">
-                  <label htmlFor="fastestLap" className="text-sm text-racing-silver">
-                    Volta mais rápida
-                  </label>
-                  <Input
-                    id="fastestLap"
-                    value={fastestLap}
-                    onChange={(e) => setFastestLap(e.target.value)}
-                    className="bg-racing-black border-racing-silver/20"
-                    required
-                  />
+                <h3 className="text-xl font-semibold">Grid de Largada (Acerte o Grid)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {qualifyingTop10.map((_, index) => (
+                    <div key={`qual-${index}`} className="space-y-2">
+                      <label className="text-sm text-racing-silver">
+                        {index + 1}º Lugar
+                      </label>
+                      <Select
+                        value={qualifyingTop10[index]}
+                        onValueChange={(value) => {
+                          const newTop10 = [...qualifyingTop10];
+                          newTop10[index] = value;
+                          setQualifyingTop10(newTop10);
+                        }}
+                      >
+                        <SelectTrigger className="bg-racing-black border-racing-silver/20">
+                          <SelectValue placeholder="Selecione um piloto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {drivers.map((driver) => (
+                            <SelectItem key={driver.id} value={driver.id}>
+                              {driver.name} ({driver.team.name})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
                 </div>
+              </div>
 
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold">Top 10 - Ordem de chegada</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {top10.map((driver, index) => (
-                      <div key={index} className="space-y-2">
-                        <label htmlFor={`position-${index + 1}`} className="text-sm text-racing-silver">
-                          {index + 1}º Lugar
-                        </label>
-                        <Input
-                          id={`position-${index + 1}`}
-                          value={driver}
-                          onChange={(e) => {
-                            const newTop10 = [...top10];
-                            newTop10[index] = e.target.value;
-                            setTop10(newTop10);
-                          }}
-                          className="bg-racing-black border-racing-silver/20"
-                          required
-                        />
-                      </div>
-                    ))}
-                  </div>
+              {/* Race Top 10 and DNF Predictions */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Resultado da Corrida (Palpites)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {raceTop10.map((_, index) => (
+                    <div key={`race-${index}`} className="space-y-2">
+                      <label className="text-sm text-racing-silver">
+                        {index + 1}º Lugar
+                      </label>
+                      <Select
+                        value={raceTop10[index]}
+                        onValueChange={(value) => {
+                          const newTop10 = [...raceTop10];
+                          newTop10[index] = value;
+                          setRaceTop10(newTop10);
+                        }}
+                      >
+                        <SelectTrigger className="bg-racing-black border-racing-silver/20">
+                          <SelectValue placeholder="Selecione um piloto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {drivers.map((driver) => (
+                            <SelectItem key={driver.id} value={driver.id}>
+                              {driver.name} ({driver.team.name})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* DNF Predictions (Sobreviventes) */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">Abandonos (Sobreviventes)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {drivers.map((driver) => (
+                    <div key={`dnf-${driver.id}`} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dnf-${driver.id}`}
+                        checked={dnfPredictions.includes(driver.id)}
+                        onCheckedChange={() => handleDriverDNF(driver.id)}
+                      />
+                      <label
+                        htmlFor={`dnf-${driver.id}`}
+                        className="text-sm text-racing-silver"
+                      >
+                        {driver.name} ({driver.team.name})
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
 

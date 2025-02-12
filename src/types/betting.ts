@@ -16,6 +16,8 @@ export interface Prediction {
   pole_time: string;
   fastest_lap: string;
   top_10: string[];
+  qualifying_top_10: string[];
+  dnf_predictions: string[];
   created_at: string;
 }
 
@@ -24,4 +26,17 @@ export interface Profile {
   username: string;
   points: number;
   avatar_url?: string;
+}
+
+export interface Driver {
+  id: string;
+  name: string;
+  number: number;
+  team_id: string;
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  engine: string;
 }
