@@ -198,7 +198,12 @@ const RacePredictions = () => {
 
               {/* Qualifying Top 10 Prediction */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Grid de Largada (Acerte o Grid)</h3>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold">Acerte o Grid</h3>
+                  <p className="text-sm text-racing-silver">
+                    Tente acertar exatamente a posição de cada piloto no grid de largada após a classificação.
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {qualifyingTop10.map((_, index) => (
                     <div key={`qual-${index}`} className="space-y-2">
@@ -229,9 +234,14 @@ const RacePredictions = () => {
                 </div>
               </div>
 
-              {/* Race Top 10 and DNF Predictions */}
+              {/* Race Top 10 Predictions */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Resultado da Corrida (Palpites)</h3>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-semibold">Palpites da Corrida</h3>
+                  <p className="text-sm text-racing-silver">
+                    Faça seus palpites para o resultado final da corrida, prevendo as 10 primeiras posições.
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {raceTop10.map((_, index) => (
                     <div key={`race-${index}`} className="space-y-2">
