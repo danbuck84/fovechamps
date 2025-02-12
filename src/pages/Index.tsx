@@ -2,7 +2,6 @@
 import { Trophy, Flag, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { formatInTimeZone } from 'date-fns-tz';
 import { supabase } from "@/lib/supabase";
@@ -32,6 +31,10 @@ const Index = () => {
     );
   };
 
+  const isRacePast = (date: string) => {
+    return new Date(date) < new Date();
+  };
+
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       {/* Hero Section */}
@@ -43,8 +46,8 @@ const Index = () => {
           className="text-center space-y-6"
         >
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Formula One
-            <span className="text-racing-red"> Betting League</span>
+            Best Lap
+            <span className="text-racing-red"> Bets</span>
           </h1>
           <p className="text-xl md:text-2xl text-racing-silver max-w-2xl mx-auto">
             Compete com amigos, faça previsões para as corridas e suba no ranking
@@ -101,36 +104,51 @@ const Index = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-16"
         >
-          <h2 className="text-3xl font-bold mb-8 text-center">Próximas Corridas</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">Calendário F1 2024</h2>
           {isLoading ? (
             <div className="text-center text-racing-silver">Carregando corridas...</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {races?.map((race) => (
-                <Card key={race.id} className="bg-racing-black border-racing-silver/20">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-racing-white">
-                      {race.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-racing-silver">
-                      <p>
-                        <strong>Corrida:</strong> {formatDate(race.date)}
-                      </p>
-                      <p>
-                        <strong>Classificação:</strong> {formatDate(race.qualifying_date)}
-                      </p>
-                      <p>
-                        <strong>Circuito:</strong> {race.circuit}
-                      </p>
-                      <p>
-                        <strong>País:</strong> {race.country}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {races?.map((race) => {
+                const isPast = isRacePast(race.date);
+                return (
+                  <Card 
+                    key={race.id} 
+                    className={`bg-racing-black border-racing-silver/20 transition-all ${
+                      isPast ? 'opacity-50' : 'hover:border-racing-red/50'
+                    }`}
+                  >
+                    <CardHeader>
+                      <CardTitle className="text-xl text-racing-white">
+                        {race.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-racing-silver">
+                        <p>
+                          <strong>Corrida:</strong> {formatDate(race.date)}
+                        </p>
+                        <p>
+                          <strong>Classificação:</strong> {formatDate(race.qualifying_date)}
+                        </p>
+                        <p>
+                          <strong>Circuito:</strong> {race.circuit}
+                        </p>
+                        <p>
+                          <strong>País:</strong> {race.country}
+                        </p>
+                        {!isPast && (
+                          <button 
+                            className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
+                          >
+                            Fazer Palpites
+                          </button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </motion.div>
