@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { ptBR } from "date-fns/locale";
 import { formatInTimeZone } from 'date-fns-tz';
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import type { Race } from "@/types/betting";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -104,7 +105,7 @@ const Index = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-16"
         >
-          <h2 className="text-3xl font-bold mb-8 text-center">Calendário F1 2024</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">Calendário F1 2025</h2>
           {isLoading ? (
             <div className="text-center text-racing-silver">Carregando corridas...</div>
           ) : (
@@ -138,11 +139,12 @@ const Index = () => {
                           <strong>País:</strong> {race.country}
                         </p>
                         {!isPast && (
-                          <button 
-                            className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all"
+                          <Link 
+                            to={`/predictions/${race.id}`}
+                            className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center"
                           >
                             Fazer Palpites
-                          </button>
+                          </Link>
                         )}
                       </div>
                     </CardContent>
@@ -160,9 +162,12 @@ const Index = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mt-16 text-center"
         >
-          <button className="px-8 py-3 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105">
+          <Link 
+            to="/auth"
+            className="inline-block px-8 py-3 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105"
+          >
             Comece a Apostar Agora
-          </button>
+          </Link>
         </motion.div>
       </div>
     </div>
