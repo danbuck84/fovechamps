@@ -121,7 +121,7 @@ const RacePredictions = () => {
       description: "Boa sorte!",
     });
 
-    navigate("/");
+    navigate("/my-predictions");
   };
 
   const formatPoleTime = (input: string) => {
