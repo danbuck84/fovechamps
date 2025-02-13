@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -125,6 +124,18 @@ const RacePredictions = () => {
     navigate("/");
   };
 
+  const formatPoleTime = (input: string) => {
+    const numbers = input.replace(/\D/g, '');
+    const limited = numbers.slice(0, 6);
+    if (limited.length < 6) return limited;
+    return `${limited[0]}:${limited[1]}${limited[2]}.${limited[3]}${limited[4]}${limited[5]}`;
+  };
+
+  const handlePoleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPoleTime(e.target.value);
+    setPoleTime(formatted);
+  };
+
   if (isLoadingRace || isLoadingDrivers || !race || !drivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
@@ -182,14 +193,14 @@ const RacePredictions = () => {
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="poleTime" className="text-sm text-racing-silver">
-                      Tempo da Pole (formato: 1:23.456)
+                      Tempo da Pole (digite apenas números, ex: 123456 para 1:23.456)
                     </label>
                     <Input
                       id="poleTime"
                       value={poleTime}
-                      onChange={(e) => setPoleTime(e.target.value)}
+                      onChange={handlePoleTimeChange}
                       className="bg-racing-black border-racing-silver/20 text-racing-white placeholder:text-racing-silver/50"
-                      placeholder="1:23.456"
+                      placeholder="Digite apenas números"
                       required
                     />
                   </div>
