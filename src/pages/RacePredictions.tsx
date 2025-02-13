@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -167,8 +168,8 @@ const RacePredictions = () => {
                       Pole Position
                     </label>
                     <Select value={polePosition} onValueChange={setPolePosition}>
-                      <SelectTrigger className="bg-racing-black border-racing-silver/20">
-                        <SelectValue placeholder="Selecione um piloto" />
+                      <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
+                        <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                       </SelectTrigger>
                       <SelectContent>
                         {drivers.map((driver) => (
@@ -187,7 +188,7 @@ const RacePredictions = () => {
                       id="poleTime"
                       value={poleTime}
                       onChange={(e) => setPoleTime(e.target.value)}
-                      className="bg-racing-black border-racing-silver/20"
+                      className="bg-racing-black border-racing-silver/20 text-racing-white placeholder:text-racing-silver/50"
                       placeholder="1:23.456"
                       required
                     />
@@ -217,8 +218,8 @@ const RacePredictions = () => {
                           setQualifyingTop10(newTop10);
                         }}
                       >
-                        <SelectTrigger className="bg-racing-black border-racing-silver/20">
-                          <SelectValue placeholder="Selecione um piloto" />
+                        <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
+                          <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                         </SelectTrigger>
                         <SelectContent>
                           {drivers.map((driver) => (
@@ -256,10 +257,9 @@ const RacePredictions = () => {
                             newTop10[index] = value;
                             setRaceTop10(newTop10);
                           }}
-                          className="flex-1"
                         >
-                          <SelectTrigger className="bg-racing-black border-racing-silver/20">
-                            <SelectValue placeholder="Selecione um piloto" />
+                          <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
+                            <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                           </SelectTrigger>
                           <SelectContent>
                             {drivers.map((driver) => (
@@ -275,6 +275,7 @@ const RacePredictions = () => {
                               id={`dnf-${raceTop10[index]}`}
                               checked={dnfPredictions.includes(raceTop10[index])}
                               onCheckedChange={() => handleDriverDNF(raceTop10[index])}
+                              className="data-[state=checked]:bg-racing-red border-racing-silver/50"
                             />
                             <label
                               htmlFor={`dnf-${raceTop10[index]}`}
