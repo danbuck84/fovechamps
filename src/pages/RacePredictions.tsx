@@ -271,26 +271,27 @@ const RacePredictions = () => {
                         {index + 1}º Lugar
                       </label>
                       <div className="flex gap-2 items-center">
-                        <Select
-                          value={raceTop10[index]}
-                          onValueChange={(value) => {
-                            const newTop10 = [...raceTop10];
-                            newTop10[index] = value;
-                            setRaceTop10(newTop10);
-                          }}
-                          className="flex-1"
-                        >
-                          <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
-                            <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-racing-black border-racing-silver/20">
-                            {drivers.map((driver) => (
-                              <SelectItem key={driver.id} value={driver.id} className="text-racing-white hover:bg-racing-silver/20">
-                                {driver.name} ({driver.team.name})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex-1">
+                          <Select
+                            value={raceTop10[index]}
+                            onValueChange={(value) => {
+                              const newTop10 = [...raceTop10];
+                              newTop10[index] = value;
+                              setRaceTop10(newTop10);
+                            }}
+                          >
+                            <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
+                              <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-racing-black border-racing-silver/20">
+                              {drivers.map((driver) => (
+                                <SelectItem key={driver.id} value={driver.id} className="text-racing-white hover:bg-racing-silver/20">
+                                  {driver.name} ({driver.team.name})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                         {raceTop10[index] && (
                           <div className="flex items-center space-x-2 min-w-[80px]">
                             <Checkbox
