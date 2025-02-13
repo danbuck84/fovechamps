@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -240,6 +239,7 @@ const RacePredictions = () => {
                   <h3 className="text-xl font-semibold">Palpites da Corrida</h3>
                   <p className="text-sm text-racing-silver">
                     Faça seus palpites para o resultado final da corrida, prevendo as 10 primeiras posições.
+                    Marque o checkbox ao lado do piloto caso você ache que ele não completará a prova (DNF).
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -248,47 +248,43 @@ const RacePredictions = () => {
                       <label className="text-sm text-racing-silver">
                         {index + 1}º Lugar
                       </label>
-                      <Select
-                        value={raceTop10[index]}
-                        onValueChange={(value) => {
-                          const newTop10 = [...raceTop10];
-                          newTop10[index] = value;
-                          setRaceTop10(newTop10);
-                        }}
-                      >
-                        <SelectTrigger className="bg-racing-black border-racing-silver/20">
-                          <SelectValue placeholder="Selecione um piloto" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {drivers.map((driver) => (
-                            <SelectItem key={driver.id} value={driver.id}>
-                              {driver.name} ({driver.team.name})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* DNF Predictions (Sobreviventes) */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold">Abandonos (Sobreviventes)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {drivers.map((driver) => (
-                    <div key={`dnf-${driver.id}`} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`dnf-${driver.id}`}
-                        checked={dnfPredictions.includes(driver.id)}
-                        onCheckedChange={() => handleDriverDNF(driver.id)}
-                      />
-                      <label
-                        htmlFor={`dnf-${driver.id}`}
-                        className="text-sm text-racing-silver"
-                      >
-                        {driver.name} ({driver.team.name})
-                      </label>
+                      <div className="flex gap-2 items-center">
+                        <Select
+                          value={raceTop10[index]}
+                          onValueChange={(value) => {
+                            const newTop10 = [...raceTop10];
+                            newTop10[index] = value;
+                            setRaceTop10(newTop10);
+                          }}
+                          className="flex-1"
+                        >
+                          <SelectTrigger className="bg-racing-black border-racing-silver/20">
+                            <SelectValue placeholder="Selecione um piloto" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {drivers.map((driver) => (
+                              <SelectItem key={driver.id} value={driver.id}>
+                                {driver.name} ({driver.team.name})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {raceTop10[index] && (
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`dnf-${raceTop10[index]}`}
+                              checked={dnfPredictions.includes(raceTop10[index])}
+                              onCheckedChange={() => handleDriverDNF(raceTop10[index])}
+                            />
+                            <label
+                              htmlFor={`dnf-${raceTop10[index]}`}
+                              className="text-sm text-racing-silver"
+                            >
+                              DNF
+                            </label>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
