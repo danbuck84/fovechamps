@@ -128,7 +128,17 @@ const RacePredictions = () => {
     const numbers = input.replace(/\D/g, '');
     const limited = numbers.slice(0, 6);
     if (limited.length < 6) return limited;
-    return `${limited[0]}:${limited[1]}${limited[2]}.${limited[3]}${limited[4]}${limited[5]}`;
+    const minutes = parseInt(limited[0]);
+    const seconds = parseInt(limited[1] + limited[2]);
+    if (seconds > 59) {
+      toast({
+        title: "Tempo inválido",
+        description: "Os segundos não podem ser maiores que 59",
+        variant: "destructive",
+      });
+      return "";
+    }
+    return `${minutes}:${limited[1]}${limited[2]}.${limited[3]}${limited[4]}${limited[5]}`;
   };
 
   const handlePoleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -268,29 +278,30 @@ const RacePredictions = () => {
                             newTop10[index] = value;
                             setRaceTop10(newTop10);
                           }}
+                          className="flex-1"
                         >
                           <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
                             <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-racing-black border-racing-silver/20">
                             {drivers.map((driver) => (
-                              <SelectItem key={driver.id} value={driver.id}>
+                              <SelectItem key={driver.id} value={driver.id} className="text-racing-white hover:bg-racing-silver/20">
                                 {driver.name} ({driver.team.name})
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                         {raceTop10[index] && (
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 min-w-[80px]">
                             <Checkbox
                               id={`dnf-${raceTop10[index]}`}
                               checked={dnfPredictions.includes(raceTop10[index])}
                               onCheckedChange={() => handleDriverDNF(raceTop10[index])}
-                              className="data-[state=checked]:bg-racing-red border-racing-silver/50"
+                              className="h-5 w-5 border-2 border-racing-silver/50 data-[state=checked]:bg-racing-red data-[state=checked]:border-racing-red"
                             />
                             <label
                               htmlFor={`dnf-${raceTop10[index]}`}
-                              className="text-sm text-racing-silver"
+                              className="text-sm font-medium text-racing-silver cursor-pointer select-none"
                             >
                               DNF
                             </label>
