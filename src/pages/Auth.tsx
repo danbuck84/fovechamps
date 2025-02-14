@@ -25,7 +25,8 @@ const Auth = () => {
         });
         
         if (error) {
-          if (error.message === "User already registered") {
+          // Verifica o código de erro específico para usuário já registrado
+          if (error.message.includes("user_already_exists") || error.message.includes("User already registered")) {
             throw new Error("Este email já está registrado. Por favor, faça login.");
           }
           throw error;
@@ -42,7 +43,8 @@ const Auth = () => {
         });
         
         if (error) {
-          if (error.message === "Invalid login credentials") {
+          // Verifica o código de erro específico para credenciais inválidas
+          if (error.message.includes("invalid_credentials") || error.message.includes("Invalid login credentials")) {
             throw new Error("Email ou senha incorretos. Por favor, tente novamente.");
           }
           throw error;
@@ -51,6 +53,7 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
+      console.error("Auth error:", error); // Adicionando log para debug
       toast({
         title: "Erro!",
         description: error.message,
