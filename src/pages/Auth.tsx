@@ -23,7 +23,14 @@ const Auth = () => {
           email,
           password,
         });
-        if (error) throw error;
+        
+        if (error) {
+          if (error.message === "User already registered") {
+            throw new Error("Este email já está registrado. Por favor, faça login.");
+          }
+          throw error;
+        }
+        
         toast({
           title: "Conta criada com sucesso!",
           description: "Verifique seu email para confirmar seu cadastro.",
@@ -33,7 +40,14 @@ const Auth = () => {
           email,
           password,
         });
-        if (error) throw error;
+        
+        if (error) {
+          if (error.message === "Invalid login credentials") {
+            throw new Error("Email ou senha incorretos. Por favor, tente novamente.");
+          }
+          throw error;
+        }
+        
         navigate("/dashboard");
       }
     } catch (error: any) {
