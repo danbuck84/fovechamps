@@ -1,9 +1,10 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { Home } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -53,7 +54,7 @@ const Auth = () => {
         navigate("/dashboard");
       }
     } catch (error: any) {
-      console.error("Auth error:", error); // Adicionando log para debug
+      console.error("Auth error:", error);
       toast({
         title: "Erro!",
         description: error.message,
@@ -66,6 +67,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-racing-black flex items-center justify-center p-4">
+      {/* Link para Home */}
+      <Link
+        to="/"
+        className="absolute top-4 left-4 text-racing-silver hover:text-racing-red flex items-center gap-2 transition-colors"
+      >
+        <Home size={20} />
+        <span>Voltar para Home</span>
+      </Link>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
