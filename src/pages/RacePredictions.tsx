@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ptBR } from "date-fns/locale";
@@ -30,6 +31,17 @@ const RacePredictions = () => {
   const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
   const [raceTop10, setRaceTop10] = useState<string[]>(Array(10).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
+
+  // Effect to update qualifying grid when pole position changes
+  useEffect(() => {
+    if (polePosition) {
+      setQualifyingTop10(prev => {
+        const newTop10 = [...prev];
+        newTop10[0] = polePosition;
+        return newTop10;
+      });
+    }
+  }, [polePosition]);
 
   const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
@@ -146,6 +158,23 @@ const RacePredictions = () => {
     setPoleTime(formatted);
   };
 
+  // Get available drivers for a specific position (excluding already selected drivers)
+  const getAvailableDrivers = (position: number, isQualifying: boolean = true) => {
+    if (!drivers) return [];
+    
+    const selectedDrivers = isQualifying ? qualifyingTop10 : raceTop10;
+    
+    return drivers.filter(driver => {
+      // For qualifying, first position should only show the pole position driver
+      if (isQualifying && position === 0) {
+        return driver.id === polePosition;
+      }
+      
+      // For other positions, exclude already selected drivers
+      return !selectedDrivers.includes(driver.id) || selectedDrivers.indexOf(driver.id) === position;
+    });
+  };
+
   if (isLoadingRace || isLoadingDrivers || !race || !drivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
@@ -238,12 +267,13 @@ const RacePredictions = () => {
                           newTop10[index] = value;
                           setQualifyingTop10(newTop10);
                         }}
+                        disabled={index === 0} // Disable first position as it's controlled by pole position
                       >
                         <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
                           <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                         </SelectTrigger>
                         <SelectContent>
-                          {drivers.map((driver) => (
+                          {getAvailableDrivers(index).map((driver) => (
                             <SelectItem key={driver.id} value={driver.id}>
                               {driver.name} ({driver.team.name})
                             </SelectItem>
@@ -284,7 +314,7 @@ const RacePredictions = () => {
                               <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
                             </SelectTrigger>
                             <SelectContent className="bg-racing-black border-racing-silver/20">
-                              {drivers.map((driver) => (
+                              {getAvailableDrivers(index, false).map((driver) => (
                                 <SelectItem key={driver.id} value={driver.id} className="text-racing-white hover:bg-racing-silver/20">
                                   {driver.name} ({driver.team.name})
                                 </SelectItem>
