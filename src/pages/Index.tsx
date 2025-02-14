@@ -51,7 +51,7 @@ const Index = () => {
             <span className="text-racing-red"> Bets</span>
           </h1>
           <p className="text-xl md:text-2xl text-racing-silver max-w-2xl mx-auto">
-            Compete com amigos, faça previsões para as corridas e suba no ranking
+            Compita com amigos, faça previsões para as corridas e suba no ranking
             em nossa experiência premium de apostas F1.
           </p>
         </motion.div>
