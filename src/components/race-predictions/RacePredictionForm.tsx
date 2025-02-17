@@ -15,6 +15,7 @@ interface RacePredictionFormProps {
   dnfPredictions: string[];
   onDriverDNF: (driverId: string) => void;
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
+  disabled?: boolean;
 }
 
 export const RacePredictionForm = ({
@@ -23,6 +24,7 @@ export const RacePredictionForm = ({
   dnfPredictions,
   onDriverDNF,
   getAvailableDrivers,
+  disabled = false,
 }: RacePredictionFormProps) => {
   return (
     <div className="space-y-4">
@@ -48,6 +50,7 @@ export const RacePredictionForm = ({
                     newTop10[index] = value;
                     setRaceTop10(newTop10);
                   }}
+                  disabled={disabled}
                 >
                   <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
                     <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
@@ -68,6 +71,7 @@ export const RacePredictionForm = ({
                     checked={dnfPredictions.includes(raceTop10[index])}
                     onCheckedChange={() => onDriverDNF(raceTop10[index])}
                     className="h-5 w-5 border-2 border-racing-silver/50 data-[state=checked]:bg-racing-red data-[state=checked]:border-racing-red"
+                    disabled={disabled}
                   />
                   <label
                     htmlFor={`dnf-${raceTop10[index]}`}

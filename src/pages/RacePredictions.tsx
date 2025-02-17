@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PolePositionForm } from "@/components/race-predictions/PolePositionForm";
@@ -25,16 +25,7 @@ const RacePredictions = () => {
   const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
   const [raceTop10, setRaceTop10] = useState<string[]>(Array(10).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (polePosition) {
-      setQualifyingTop10(prev => {
-        const newTop10 = [...prev];
-        newTop10[0] = polePosition;
-        return newTop10;
-      });
-    }
-  }, [polePosition]);
+  const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
 
   const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
@@ -69,6 +60,46 @@ const RacePredictions = () => {
     },
   });
 
+  useEffect(() => {
+    if (race) {
+      const checkDeadline = () => {
+        const qualifyingDate = new Date(race.qualifying_date);
+        const now = new Date();
+        const oneHourBefore = new Date(qualifyingDate.getTime() - 60 * 60 * 1000);
+        
+        // Check if we're within one hour of the deadline
+        if (now >= oneHourBefore && now < qualifyingDate && !isDeadlinePassed) {
+          toast({
+            title: "Atenção!",
+            description: "Falta menos de 1 hora para o fechamento das apostas!",
+            duration: 10000,
+          });
+        }
+
+        // Check if deadline has passed
+        setIsDeadlinePassed(now >= qualifyingDate);
+      };
+
+      // Check immediately
+      checkDeadline();
+
+      // Set up interval to check every minute
+      const interval = setInterval(checkDeadline, 60000);
+
+      return () => clearInterval(interval);
+    }
+  }, [race, toast, isDeadlinePassed]);
+
+  useEffect(() => {
+    if (polePosition) {
+      setQualifyingTop10(prev => {
+        const newTop10 = [...prev];
+        newTop10[0] = polePosition;
+        return newTop10;
+      });
+    }
+  }, [polePosition]);
+
   const handleDriverDNF = (driverId: string) => {
     setDnfPredictions(prev => {
       if (prev.includes(driverId)) {
@@ -80,6 +111,15 @@ const RacePredictions = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isDeadlinePassed) {
+      toast({
+        title: "Erro",
+        description: "O prazo para apostas já encerrou",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
@@ -157,14 +197,25 @@ const RacePredictions = () => {
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       <div className="container mx-auto px-4 py-8">
-        <Button
-          variant="ghost"
-          className="text-racing-silver hover:text-racing-white mb-6"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="ghost"
+            className="text-racing-silver hover:text-racing-white"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+          <Button
+            variant="ghost"
+            className="text-racing-silver hover:text-racing-white"
+            asChild
+          >
+            <Link to="/my-predictions">
+              Ver Minhas Apostas
+            </Link>
+          </Button>
+        </div>
 
         <Card className="bg-racing-black border-racing-silver/20">
           <CardHeader>
@@ -177,6 +228,17 @@ const RacePredictions = () => {
             <p className="text-racing-silver">
               Classificação: {formatDate(race.qualifying_date)}
             </p>
+            {isDeadlinePassed ? (
+              <div className="mt-4 p-4 bg-racing-red/10 border border-racing-red rounded-md flex items-center gap-2 text-racing-red">
+                <Clock className="h-5 w-5" />
+                <p>O prazo para apostas já encerrou</p>
+              </div>
+            ) : (
+              <div className="mt-4 p-4 bg-racing-silver/10 border border-racing-silver/20 rounded-md flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                <p>Prazo para apostas: até {formatDate(race.qualifying_date)}</p>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
@@ -186,6 +248,7 @@ const RacePredictions = () => {
                 setPolePosition={setPolePosition}
                 poleTime={poleTime}
                 onPoleTimeChange={handlePoleTimeChange}
+                disabled={isDeadlinePassed}
               />
 
               <QualifyingPredictionForm
@@ -193,6 +256,7 @@ const RacePredictions = () => {
                 qualifyingTop10={qualifyingTop10}
                 setQualifyingTop10={setQualifyingTop10}
                 getAvailableDrivers={getAvailableDrivers}
+                disabled={isDeadlinePassed}
               />
 
               <RacePredictionForm
@@ -201,11 +265,13 @@ const RacePredictions = () => {
                 dnfPredictions={dnfPredictions}
                 onDriverDNF={handleDriverDNF}
                 getAvailableDrivers={getAvailableDrivers}
+                disabled={isDeadlinePassed}
               />
 
               <Button 
                 type="submit"
-                className="w-full bg-racing-red hover:bg-opacity-90"
+                className="w-full bg-racing-red hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isDeadlinePassed}
               >
                 Salvar Palpites
               </Button>
