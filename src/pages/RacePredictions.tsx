@@ -1,17 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PolePositionForm } from "@/components/race-predictions/PolePositionForm";
-import { QualifyingPredictionForm } from "@/components/race-predictions/QualifyingPredictionForm";
-import { RacePredictionForm } from "@/components/race-predictions/RacePredictionForm";
-import { formatDate } from "@/utils/date-utils";
-import { formatPoleTime } from "@/utils/prediction-utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
+import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
+import { RacePredictionFormWrapper } from "@/components/race-predictions/RacePredictionFormWrapper";
 import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
@@ -67,7 +63,6 @@ const RacePredictions = () => {
         const now = new Date();
         const oneHourBefore = new Date(qualifyingDate.getTime() - 60 * 60 * 1000);
         
-        // Check if we're within one hour of the deadline
         if (now >= oneHourBefore && now < qualifyingDate && !isDeadlinePassed) {
           toast({
             title: "Atenção!",
@@ -76,16 +71,11 @@ const RacePredictions = () => {
           });
         }
 
-        // Check if deadline has passed
         setIsDeadlinePassed(now >= qualifyingDate);
       };
 
-      // Check immediately
       checkDeadline();
-
-      // Set up interval to check every minute
       const interval = setInterval(checkDeadline, 60000);
-
       return () => clearInterval(interval);
     }
   }, [race, toast, isDeadlinePassed]);
@@ -160,19 +150,6 @@ const RacePredictions = () => {
     navigate("/my-predictions");
   };
 
-  const handlePoleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPoleTime(e.target.value);
-    if (formatted !== undefined) {
-      setPoleTime(formatted);
-    } else {
-      toast({
-        title: "Tempo inválido",
-        description: "Os segundos não podem ser maiores que 59",
-        variant: "destructive",
-      });
-    }
-  };
-
   const getAvailableDrivers = (position: number, isQualifying: boolean = true) => {
     if (!drivers) return [];
     
@@ -197,85 +174,41 @@ const RacePredictions = () => {
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <Button
-            variant="ghost"
-            className="text-racing-silver hover:text-racing-white"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-          <Button
-            variant="ghost"
-            className="text-racing-silver hover:text-racing-white"
-            asChild
-          >
-            <Link to="/my-predictions">
-              Ver Minhas Apostas
-            </Link>
-          </Button>
-        </div>
+        <RacePredictionsHeader onBack={() => navigate(-1)} />
 
         <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle className="text-2xl text-racing-white">
-              {race.name}
-            </CardTitle>
-            <p className="text-racing-silver">
-              Data da corrida: {formatDate(race.date)}
-            </p>
-            <p className="text-racing-silver">
-              Classificação: {formatDate(race.qualifying_date)}
-            </p>
-            {isDeadlinePassed ? (
-              <div className="mt-4 p-4 bg-racing-red/10 border border-racing-red rounded-md flex items-center gap-2 text-racing-red">
-                <Clock className="h-5 w-5" />
-                <p>O prazo para apostas já encerrou</p>
-              </div>
-            ) : (
-              <div className="mt-4 p-4 bg-racing-silver/10 border border-racing-silver/20 rounded-md flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <p>Prazo para apostas: até {formatDate(race.qualifying_date)}</p>
-              </div>
-            )}
-          </CardHeader>
+          <RaceInfoHeader 
+            race={race}
+            isDeadlinePassed={isDeadlinePassed}
+          />
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <PolePositionForm
-                drivers={drivers}
-                polePosition={polePosition}
-                setPolePosition={setPolePosition}
-                poleTime={poleTime}
-                onPoleTimeChange={handlePoleTimeChange}
-                disabled={isDeadlinePassed}
-              />
-
-              <QualifyingPredictionForm
-                drivers={drivers}
-                qualifyingTop10={qualifyingTop10}
-                setQualifyingTop10={setQualifyingTop10}
-                getAvailableDrivers={getAvailableDrivers}
-                disabled={isDeadlinePassed}
-              />
-
-              <RacePredictionForm
-                raceTop10={raceTop10}
-                setRaceTop10={setRaceTop10}
-                dnfPredictions={dnfPredictions}
-                onDriverDNF={handleDriverDNF}
-                getAvailableDrivers={getAvailableDrivers}
-                disabled={isDeadlinePassed}
-              />
-
-              <Button 
-                type="submit"
-                className="w-full bg-racing-red hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isDeadlinePassed}
-              >
-                Salvar Palpites
-              </Button>
-            </form>
+            <RacePredictionFormWrapper
+              drivers={drivers}
+              polePosition={polePosition}
+              setPolePosition={setPolePosition}
+              poleTime={poleTime}
+              onPoleTimeChange={(e) => {
+                const formatted = formatPoleTime(e.target.value);
+                if (formatted !== undefined) {
+                  setPoleTime(formatted);
+                } else {
+                  toast({
+                    title: "Tempo inválido",
+                    description: "Os segundos não podem ser maiores que 59",
+                    variant: "destructive",
+                  });
+                }
+              }}
+              qualifyingTop10={qualifyingTop10}
+              setQualifyingTop10={setQualifyingTop10}
+              raceTop10={raceTop10}
+              setRaceTop10={setRaceTop10}
+              dnfPredictions={dnfPredictions}
+              onDriverDNF={handleDriverDNF}
+              getAvailableDrivers={getAvailableDrivers}
+              isDeadlinePassed={isDeadlinePassed}
+              onSubmit={handleSubmit}
+            />
           </CardContent>
         </Card>
       </div>
