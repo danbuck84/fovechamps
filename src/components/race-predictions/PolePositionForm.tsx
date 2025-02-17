@@ -15,6 +15,7 @@ interface PolePositionFormProps {
   setPolePosition: (value: string) => void;
   poleTime: string;
   onPoleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 export const PolePositionForm = ({
@@ -23,6 +24,7 @@ export const PolePositionForm = ({
   setPolePosition,
   poleTime,
   onPoleTimeChange,
+  disabled = false,
 }: PolePositionFormProps) => {
   return (
     <div className="space-y-4">
@@ -32,7 +34,7 @@ export const PolePositionForm = ({
           <label className="text-sm text-racing-silver">
             Pole Position
           </label>
-          <Select value={polePosition} onValueChange={setPolePosition}>
+          <Select value={polePosition} onValueChange={setPolePosition} disabled={disabled}>
             <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
               <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
             </SelectTrigger>
@@ -56,6 +58,7 @@ export const PolePositionForm = ({
             className="bg-racing-black border-racing-silver/20 text-racing-white placeholder:text-racing-silver/50"
             placeholder="Digite apenas números"
             required
+            disabled={disabled}
           />
         </div>
       </div>

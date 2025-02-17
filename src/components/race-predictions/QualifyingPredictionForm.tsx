@@ -13,12 +13,14 @@ interface QualifyingPredictionFormProps {
   qualifyingTop10: string[];
   setQualifyingTop10: (value: string[]) => void;
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
+  disabled?: boolean;
 }
 
 export const QualifyingPredictionForm = ({
   qualifyingTop10,
   setQualifyingTop10,
   getAvailableDrivers,
+  disabled = false,
 }: QualifyingPredictionFormProps) => {
   return (
     <div className="space-y-4">
@@ -41,7 +43,7 @@ export const QualifyingPredictionForm = ({
                 newTop10[index] = value;
                 setQualifyingTop10(newTop10);
               }}
-              disabled={index === 0}
+              disabled={index === 0 || disabled}
             >
               <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
                 <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
