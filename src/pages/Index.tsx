@@ -47,8 +47,8 @@ const Index = () => {
           className="text-center space-y-6"
         >
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            Best Lap
-            <span className="text-racing-red"> Bets</span>
+            FoVe
+            <span className="text-racing-red"> Champs</span>
           </h1>
           <p className="text-xl md:text-2xl text-racing-silver max-w-2xl mx-auto">
             Compita com amigos, faça previsões para as corridas e suba no ranking
