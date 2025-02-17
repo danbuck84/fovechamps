@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
 import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
 import { RacePredictionFormWrapper } from "@/components/race-predictions/RacePredictionFormWrapper";
+import { formatPoleTime } from "@/utils/prediction-utils";
 import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
