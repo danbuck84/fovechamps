@@ -15,6 +15,7 @@ interface RacePredictionFormProps {
   dnfPredictions: string[];
   onDriverDNF: (driverId: string) => void;
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
+  allDrivers: (Driver & { team: { name: string; engine: string } })[];
   disabled?: boolean;
 }
 
@@ -24,6 +25,7 @@ export const RacePredictionForm = ({
   dnfPredictions,
   onDriverDNF,
   getAvailableDrivers,
+  allDrivers,
   disabled = false,
 }: RacePredictionFormProps) => {
   return (
@@ -31,8 +33,7 @@ export const RacePredictionForm = ({
       <div className="space-y-2">
         <h3 className="text-xl font-semibold">Palpites da Corrida</h3>
         <p className="text-sm text-racing-silver">
-          Faça seus palpites para o resultado final da corrida, prevendo as 10 primeiras posições.
-          Marque o checkbox ao lado do piloto caso você ache que ele não completará a prova (DNF).
+          Faça seus palpites para o resultado final da corrida, prevendo as 11 primeiras posições.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -64,26 +65,46 @@ export const RacePredictionForm = ({
                   </SelectContent>
                 </Select>
               </div>
-              {raceTop10[index] && (
-                <div className="flex items-center space-x-2 min-w-[80px]">
-                  <Checkbox
-                    id={`dnf-${raceTop10[index]}`}
-                    checked={dnfPredictions.includes(raceTop10[index])}
-                    onCheckedChange={() => onDriverDNF(raceTop10[index])}
-                    className="h-5 w-5 border-2 border-racing-silver/50 data-[state=checked]:bg-racing-red data-[state=checked]:border-racing-red"
-                    disabled={disabled}
-                  />
-                  <label
-                    htmlFor={`dnf-${raceTop10[index]}`}
-                    className="text-sm font-medium text-racing-silver cursor-pointer select-none"
-                  >
-                    DNF
-                  </label>
-                </div>
-              )}
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8 space-y-4">
+        <h4 className="text-lg font-semibold">Previsões de DNF</h4>
+        <p className="text-sm text-racing-silver">
+          Selecione os pilotos que você acredita que não completarão a corrida.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {allDrivers.map((driver) => {
+            const isSelected = raceTop10.includes(driver.id);
+            return (
+              <div
+                key={driver.id}
+                className={`flex items-center space-x-2 p-2 rounded ${
+                  isSelected ? 'bg-racing-silver/10' : ''
+                }`}
+              >
+                <Checkbox
+                  id={`dnf-${driver.id}`}
+                  checked={dnfPredictions.includes(driver.id)}
+                  onCheckedChange={() => onDriverDNF(driver.id)}
+                  className="h-5 w-5 border-2 border-racing-silver/50 data-[state=checked]:bg-racing-red data-[state=checked]:border-racing-red"
+                  disabled={disabled}
+                />
+                <label
+                  htmlFor={`dnf-${driver.id}`}
+                  className={`text-sm font-medium cursor-pointer select-none ${
+                    isSelected ? 'text-racing-white font-semibold' : 'text-racing-silver'
+                  }`}
+                >
+                  {driver.name} ({driver.team.name})
+                  {isSelected && ` - ${raceTop10.indexOf(driver.id) + 1}º`}
+                </label>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

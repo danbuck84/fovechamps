@@ -43,7 +43,7 @@ export const QualifyingPredictionForm = ({
                 newTop10[index] = value;
                 setQualifyingTop10(newTop10);
               }}
-              disabled={index === 0 || disabled}
+              disabled={disabled}
             >
               <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
                 <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />

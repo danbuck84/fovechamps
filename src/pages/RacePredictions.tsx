@@ -15,11 +15,10 @@ const RacePredictions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [polePosition, setPolePosition] = useState("");
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
-  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
-  const [raceTop10, setRaceTop10] = useState<string[]>(Array(10).fill(""));
+  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(11).fill(""));
+  const [raceTop10, setRaceTop10] = useState<string[]>(Array(11).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
   const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
 
@@ -81,14 +80,14 @@ const RacePredictions = () => {
   }, [race, toast, isDeadlinePassed]);
 
   useEffect(() => {
-    if (polePosition) {
+    if (poleTime) {
       setQualifyingTop10(prev => {
         const newTop10 = [...prev];
-        newTop10[0] = polePosition;
+        newTop10[0] = poleTime;
         return newTop10;
       });
     }
-  }, [polePosition]);
+  }, [poleTime]);
 
   const handleDriverDNF = (driverId: string) => {
     setDnfPredictions(prev => {
@@ -125,7 +124,6 @@ const RacePredictions = () => {
     const { error } = await supabase.from("predictions").insert({
       race_id: raceId,
       user_id: user.data.user.id,
-      pole_position: polePosition,
       pole_time: poleTime,
       fastest_lap: fastestLap,
       qualifying_top_10: qualifyingTop10,
@@ -156,9 +154,6 @@ const RacePredictions = () => {
     const selectedDrivers = isQualifying ? qualifyingTop10 : raceTop10;
     
     return drivers.filter(driver => {
-      if (isQualifying && position === 0) {
-        return driver.id === polePosition;
-      }
       return !selectedDrivers.includes(driver.id) || selectedDrivers.indexOf(driver.id) === position;
     });
   };
@@ -184,8 +179,6 @@ const RacePredictions = () => {
           <CardContent>
             <RacePredictionFormWrapper
               drivers={drivers}
-              polePosition={polePosition}
-              setPolePosition={setPolePosition}
               poleTime={poleTime}
               onPoleTimeChange={(e) => {
                 const formatted = formatPoleTime(e.target.value);
@@ -206,6 +199,7 @@ const RacePredictions = () => {
               dnfPredictions={dnfPredictions}
               onDriverDNF={handleDriverDNF}
               getAvailableDrivers={getAvailableDrivers}
+              allDrivers={drivers}
               isDeadlinePassed={isDeadlinePassed}
               onSubmit={handleSubmit}
             />
