@@ -80,9 +80,9 @@ export const RacePredictionForm = ({
           <Select
             value={dnfPredictions.length.toString()}
             onValueChange={(value) => {
-              const numDNFs = parseInt(value);
-              // Limpa as previsões anteriores
-              setDnfPredictions([]);
+              // When the user selects a new number of DNFs,
+              // we reset the array and call onDriverDNF with an empty array
+              onDriverDNF("");
             }}
             disabled={disabled}
           >
