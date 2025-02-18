@@ -80,9 +80,18 @@ export const RacePredictionForm = ({
           <Select
             value={dnfPredictions.length.toString()}
             onValueChange={(value) => {
-              // When the user selects a new number of DNFs,
-              // we reset the array and call onDriverDNF with an empty array
-              onDriverDNF("");
+              const numDNFs = parseInt(value);
+              // Limpar todas as previsões anteriores
+              while (dnfPredictions.length > 0) {
+                onDriverDNF(dnfPredictions[0]);
+              }
+              // Se o número selecionado for maior que zero, adicionar pilotos disponíveis
+              if (numDNFs > 0) {
+                const availableDrivers = allDrivers
+                  .filter(driver => !raceTop10.includes(driver.id))
+                  .slice(0, numDNFs);
+                availableDrivers.forEach(driver => onDriverDNF(driver.id));
+              }
             }}
             disabled={disabled}
           >
