@@ -1,5 +1,4 @@
 
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -71,39 +70,37 @@ export const RacePredictionForm = ({
       </div>
 
       <div className="mt-8 space-y-4">
-        <h4 className="text-lg font-semibold">Previsões de DNF</h4>
-        <p className="text-sm text-racing-silver">
-          Selecione os pilotos que você acredita que não completarão a corrida.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {allDrivers.map((driver) => {
-            const isSelected = raceTop10.includes(driver.id);
-            return (
-              <div
-                key={driver.id}
-                className={`flex items-center space-x-2 p-2 rounded ${
-                  isSelected ? 'bg-racing-silver/10' : ''
-                }`}
-              >
-                <Checkbox
-                  id={`dnf-${driver.id}`}
-                  checked={dnfPredictions.includes(driver.id)}
-                  onCheckedChange={() => onDriverDNF(driver.id)}
-                  className="h-5 w-5 border-2 border-racing-silver/50 data-[state=checked]:bg-racing-red data-[state=checked]:border-racing-red"
-                  disabled={disabled}
-                />
-                <label
-                  htmlFor={`dnf-${driver.id}`}
-                  className={`text-sm font-medium cursor-pointer select-none ${
-                    isSelected ? 'text-racing-white font-semibold' : 'text-racing-silver'
-                  }`}
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold">Previsão de Abandonos</h4>
+          <p className="text-sm text-racing-silver">
+            Selecione quantos pilotos você acredita que não completarão a corrida.
+          </p>
+        </div>
+        <div className="max-w-xs mx-auto">
+          <Select
+            value={dnfPredictions.length.toString()}
+            onValueChange={(value) => {
+              const numDNFs = parseInt(value);
+              // Limpa as previsões anteriores
+              setDnfPredictions([]);
+            }}
+            disabled={disabled}
+          >
+            <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
+              <SelectValue placeholder="Selecione o número de abandonos" />
+            </SelectTrigger>
+            <SelectContent className="bg-racing-black border-racing-silver/20">
+              {Array.from({ length: 21 }, (_, i) => (
+                <SelectItem 
+                  key={i} 
+                  value={i.toString()}
+                  className="text-racing-white hover:bg-racing-silver/20"
                 >
-                  {driver.name} ({driver.team.name})
-                  {isSelected && ` - ${raceTop10.indexOf(driver.id) + 1}º`}
-                </label>
-              </div>
-            );
-          })}
+                  {i} {i === 1 ? 'piloto' : 'pilotos'}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
