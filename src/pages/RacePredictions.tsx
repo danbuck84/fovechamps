@@ -124,6 +124,7 @@ const RacePredictions = () => {
     const { error } = await supabase.from("predictions").insert({
       race_id: raceId,
       user_id: user.data.user.id,
+      pole_position: qualifyingTop10[0],
       pole_time: poleTime,
       fastest_lap: fastestLap,
       qualifying_top_10: qualifyingTop10,
@@ -199,7 +200,6 @@ const RacePredictions = () => {
               dnfPredictions={dnfPredictions}
               onDriverDNF={handleDriverDNF}
               getAvailableDrivers={getAvailableDrivers}
-              allDrivers={drivers}
               isDeadlinePassed={isDeadlinePassed}
               onSubmit={handleSubmit}
             />

@@ -7,8 +7,6 @@ import type { Driver } from "@/types/betting";
 
 interface RacePredictionFormWrapperProps {
   drivers: (Driver & { team: { name: string; engine: string } })[];
-  polePosition: string;
-  setPolePosition: (value: string) => void;
   poleTime: string;
   onPoleTimeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   qualifyingTop10: string[];
@@ -24,8 +22,6 @@ interface RacePredictionFormWrapperProps {
 
 export const RacePredictionFormWrapper = ({
   drivers,
-  polePosition,
-  setPolePosition,
   poleTime,
   onPoleTimeChange,
   qualifyingTop10,
@@ -41,9 +37,6 @@ export const RacePredictionFormWrapper = ({
   return (
     <form onSubmit={onSubmit} className="space-y-8">
       <PolePositionForm
-        drivers={drivers}
-        polePosition={polePosition}
-        setPolePosition={setPolePosition}
         poleTime={poleTime}
         onPoleTimeChange={onPoleTimeChange}
         disabled={isDeadlinePassed}
@@ -63,6 +56,7 @@ export const RacePredictionFormWrapper = ({
         dnfPredictions={dnfPredictions}
         onDriverDNF={onDriverDNF}
         getAvailableDrivers={getAvailableDrivers}
+        allDrivers={drivers}
         disabled={isDeadlinePassed}
       />
 
