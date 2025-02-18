@@ -83,7 +83,7 @@ const Auth = () => {
       >
         <div className="text-center">
           <h2 className="text-3xl font-bold text-racing-white">
-            Bestap<span className="text-racing-red">Bets</span>
+            FoVe<span className="text-racing-red">Champs</span>
           </h2>
           <p className="mt-2 text-racing-silver">
             {isSignUp
