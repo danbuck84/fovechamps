@@ -25,15 +25,20 @@ const RacePredictions = () => {
   const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
     queryFn: async () => {
+      if (!raceId) throw new Error("ID da corrida não fornecido");
+      
       const { data, error } = await supabase
         .from("races")
         .select("*")
         .eq("id", raceId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error("Corrida não encontrada");
+      
       return data as Race;
     },
+    enabled: !!raceId,
   });
 
   const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
@@ -100,6 +105,7 @@ const RacePredictions = () => {
     });
 
     if (error) {
+      console.error("Erro ao salvar palpites:", error);
       toast({
         title: "Erro ao salvar palpites",
         description: "Por favor, tente novamente",
@@ -126,10 +132,18 @@ const RacePredictions = () => {
     });
   };
 
-  if (isLoadingRace || isLoadingDrivers || !race || !drivers) {
+  if (isLoadingRace || isLoadingDrivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
         <p className="text-racing-silver">Carregando informações...</p>
+      </div>
+    );
+  }
+
+  if (!race || !drivers) {
+    return (
+      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
+        <p className="text-racing-silver">Corrida não encontrada</p>
       </div>
     );
   }
