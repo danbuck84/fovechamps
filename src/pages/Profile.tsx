@@ -1,13 +1,12 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { User } from "@/types/user";
+import type { User } from "@/types/user";
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -110,11 +109,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-racing-black p-4 flex flex-col items-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-2xl"
-      >
+      <div className="w-full max-w-2xl">
         <Card className="bg-racing-black border-racing-silver/20">
           <CardHeader>
             <CardTitle className="text-racing-white">Meu Perfil</CardTitle>
@@ -194,7 +189,7 @@ const Profile = () => {
             </form>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };

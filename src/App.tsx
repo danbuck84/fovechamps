@@ -10,6 +10,7 @@ import RacePredictions from "@/pages/RacePredictions";
 import MyPredictions from "@/pages/MyPredictions";
 import Leaderboard from "@/pages/Leaderboard";
 import Users from "@/pages/Users";
+import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import "./App.css";
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/my-predictions" element={<MyPredictions />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
