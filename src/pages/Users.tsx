@@ -26,7 +26,7 @@ const Users = () => {
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
-          .order("points", { ascending: false, nullsLast: true });
+          .order("points", { ascending: false, nullsFirst: false });
 
         if (error) throw error;
         setUsers(data || []);
