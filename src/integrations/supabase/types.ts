@@ -99,22 +99,28 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          full_name: string | null
           id: string
           points: number | null
+          updated_at: string | null
           username: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          full_name?: string | null
           id: string
           points?: number | null
+          updated_at?: string | null
           username: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          full_name?: string | null
           id?: string
           points?: number | null
+          updated_at?: string | null
           username?: string
         }
         Relationships: []

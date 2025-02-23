@@ -14,19 +14,46 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const validatePassword = (password: string) => {
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasMinLength = password.length >= 8;
+
+    const errors = [];
+    if (!hasUpperCase) errors.push("uma letra maiúscula");
+    if (!hasLowerCase) errors.push("uma letra minúscula");
+    if (!hasSpecialChar) errors.push("um caractere especial");
+    if (!hasNumber) errors.push("um número");
+    if (!hasMinLength) errors.push("no mínimo 8 caracteres");
+
+    return errors;
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (isSignUp) {
+        const passwordErrors = validatePassword(password);
+        if (passwordErrors.length > 0) {
+          throw new Error(`A senha deve conter ${passwordErrors.join(", ")}`);
+        }
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth`,
+            data: {
+              full_name: email.split("@")[0],
+            },
+          },
         });
         
         if (error) {
-          // Verifica o código de erro específico para usuário já registrado
           if (error.message.includes("user_already_exists") || error.message.includes("User already registered")) {
             throw new Error("Este email já está registrado. Por favor, faça login.");
           }
@@ -34,7 +61,7 @@ const Auth = () => {
         }
         
         toast({
-          title: "Conta criada com sucesso!",
+          title: "Cadastro realizado com sucesso!",
           description: "Verifique seu email para confirmar seu cadastro.",
         });
       } else {
@@ -44,7 +71,6 @@ const Auth = () => {
         });
         
         if (error) {
-          // Verifica o código de erro específico para credenciais inválidas
           if (error.message.includes("invalid_credentials") || error.message.includes("Invalid login credentials")) {
             throw new Error("Email ou senha incorretos. Por favor, tente novamente.");
           }
@@ -65,9 +91,17 @@ const Auth = () => {
     }
   };
 
+  // Lista de requisitos de senha
+  const passwordRequirements = [
+    { label: "Uma letra maiúscula", regex: /[A-Z]/ },
+    { label: "Uma letra minúscula", regex: /[a-z]/ },
+    { label: "Um caractere especial", regex: /[!@#$%^&*(),.?":{}|<>]/ },
+    { label: "Um número", regex: /[0-9]/ },
+    { label: "Mínimo de 8 caracteres", check: (p: string) => p.length >= 8 },
+  ];
+
   return (
     <div className="min-h-screen bg-racing-black flex items-center justify-center p-4">
-      {/* Link para Home */}
       <Link
         to="/"
         className="absolute top-4 left-4 text-racing-silver hover:text-racing-red flex items-center gap-2 transition-colors"
@@ -125,6 +159,29 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 bg-racing-black border border-racing-silver/20 rounded-md text-racing-white focus:outline-none focus:ring-2 focus:ring-racing-red"
               />
+              {isSignUp && (
+                <div className="mt-2 space-y-2">
+                  <p className="text-sm text-racing-silver">Requisitos da senha:</p>
+                  <ul className="text-xs space-y-1">
+                    {passwordRequirements.map((req, index) => {
+                      const isValid = req.regex 
+                        ? req.regex.test(password)
+                        : req.check!(password);
+                      return (
+                        <li
+                          key={index}
+                          className={`flex items-center space-x-2 ${
+                            isValid ? "text-green-500" : "text-racing-silver"
+                          }`}
+                        >
+                          <span>{isValid ? "✓" : "○"}</span>
+                          <span>{req.label}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
 
