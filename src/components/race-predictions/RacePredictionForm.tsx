@@ -48,15 +48,15 @@ export const RacePredictionForm = ({
                   }}
                   disabled={disabled}
                 >
-                  <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">
+                  <SelectTrigger className="bg-racing-black text-racing-white border-racing-silver/20">
                     <SelectValue placeholder="Selecione um piloto" />
                   </SelectTrigger>
-                  <SelectContent className="bg-racing-white border-racing-silver/20">
+                  <SelectContent className="bg-racing-black border-racing-silver/20">
                     {getAvailableDrivers(index, false).map((driver) => (
                       <SelectItem 
                         key={driver.id} 
                         value={driver.id}
-                        className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+                        className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
                       >
                         {driver.name} ({driver.team.name})
                       </SelectItem>
