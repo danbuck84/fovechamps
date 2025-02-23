@@ -140,7 +140,7 @@ const Index = () => {
                         </p>
                         {!isPast && (
                           <Link 
-                            to={`/predictions/${race.id}`}
+                            to={`/race-predictions/${race.id}`}
                             className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center"
                           >
                             Fazer Palpites
