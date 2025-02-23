@@ -54,7 +54,6 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold text-racing-white">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Próximas Corridas */}
         <Card className="bg-racing-black border-racing-silver/20">
           <CardHeader>
             <CardTitle className="text-xl text-racing-white">
@@ -75,7 +74,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Palpites Recentes */}
         <Card className="bg-racing-black border-racing-silver/20">
           <CardHeader>
             <CardTitle className="text-xl text-racing-white">
@@ -86,7 +84,7 @@ const Dashboard = () => {
             {recentPredictions?.map((prediction) => (
               <div 
                 key={prediction.id}
-                onClick={() => navigate(`/race/${prediction.race_id}`)}
+                onClick={() => navigate(`/race-predictions/${prediction.race_id}`)}
                 className="p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg cursor-pointer"
               >
                 <h3 className="font-semibold text-racing-white">
