@@ -69,8 +69,17 @@ const Auth = () => {
           description: "Você já pode fazer login com suas credenciais.",
         });
       } else {
-        console.log("Attempting login with:", { email }); // omit password for security
+        console.log("Attempting login with email:", email); 
         
+        // Primeiro, vamos verificar se o usuário existe
+        const { data: existingUser, error: fetchError } = await supabase
+          .from('profiles')
+          .select()
+          .eq('username', email.split('@')[0])
+          .single();
+        
+        console.log("Existing user check:", { existingUser, fetchError });
+
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password: password,
@@ -78,17 +87,27 @@ const Auth = () => {
         
         if (error) {
           console.error("Login error details:", error);
-          if (error.message.includes("invalid_credentials") || error.message.includes("Invalid login credentials")) {
-            throw new Error("Email ou senha incorretos. Por favor, tente novamente.");
+          console.error("Login error message:", error.message);
+          console.error("Login error status:", error.status);
+          
+          if (error.message === "Invalid login credentials" || 
+              error.message.includes("invalid_credentials")) {
+            throw new Error("Email ou senha incorretos. Por favor, verifique suas credenciais e tente novamente.");
           }
           throw error;
         }
 
-        console.log("Login successful:", data);
+        console.log("Login successful, user data:", data);
         navigate("/dashboard");
       }
     } catch (error: any) {
-      console.error("Auth error:", error);
+      console.error("Auth error details:", {
+        message: error.message,
+        status: error.status,
+        name: error.name,
+        stack: error.stack
+      });
+      
       toast({
         title: "Erro!",
         description: error.message,
