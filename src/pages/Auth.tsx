@@ -63,13 +63,13 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
-      <Card className="w-full max-w-md p-8 space-y-6">
+    <div className="flex items-center justify-center min-h-screen bg-[#000000e6]">
+      <Card className="w-full max-w-md p-8 space-y-6 bg-[#222] border-racing-red">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-3xl font-bold text-white">
             {isSignUp ? "Criar Conta" : "Login"}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-[#fff6]">
             {isSignUp 
               ? "Crie sua conta para começar a fazer suas previsões" 
               : "Entre com suas credenciais para continuar"}
@@ -83,7 +83,7 @@ export default function Auth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full"
+              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6]"
               disabled={isLoading}
             />
           </div>
@@ -94,13 +94,13 @@ export default function Auth() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full"
+              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6]"
               disabled={isLoading}
             />
           </div>
           <Button 
             type="submit" 
-            className="w-full"
+            className="w-full bg-racing-red hover:bg-racing-red/90 text-white"
             disabled={isLoading}
           >
             {isSignUp ? "Criar Conta" : "Entrar"}
@@ -110,7 +110,7 @@ export default function Auth() {
           <Button
             variant="link"
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm text-primary"
+            className="text-sm text-racing-red hover:text-racing-red/90"
             disabled={isLoading}
           >
             {isSignUp
