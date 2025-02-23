@@ -11,8 +11,6 @@ import type { Driver } from "@/types/betting";
 interface RacePredictionFormProps {
   raceTop10: string[];
   setRaceTop10: (value: string[]) => void;
-  dnfPredictions: string[];
-  onDriverDNF: (driverId: string) => void;
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
   allDrivers: (Driver & { team: { name: string; engine: string } })[];
   disabled?: boolean;
@@ -21,8 +19,6 @@ interface RacePredictionFormProps {
 export const RacePredictionForm = ({
   raceTop10,
   setRaceTop10,
-  dnfPredictions,
-  onDriverDNF,
   getAvailableDrivers,
   allDrivers,
   disabled = false,
@@ -52,12 +48,16 @@ export const RacePredictionForm = ({
                   }}
                   disabled={disabled}
                 >
-                  <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
-                    <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
+                  <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">
+                    <SelectValue placeholder="Selecione um piloto" />
                   </SelectTrigger>
-                  <SelectContent className="bg-racing-black border-racing-silver/20">
+                  <SelectContent className="bg-racing-white border-racing-silver/20">
                     {getAvailableDrivers(index, false).map((driver) => (
-                      <SelectItem key={driver.id} value={driver.id} className="text-racing-white hover:bg-racing-silver/20">
+                      <SelectItem 
+                        key={driver.id} 
+                        value={driver.id}
+                        className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+                      >
                         {driver.name} ({driver.team.name})
                       </SelectItem>
                     ))}
@@ -67,50 +67,6 @@ export const RacePredictionForm = ({
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-8 space-y-4">
-        <div className="space-y-2">
-          <h4 className="text-lg font-semibold">Previsão de Abandonos</h4>
-          <p className="text-sm text-racing-silver">
-            Selecione quantos pilotos você acredita que não completarão a corrida.
-          </p>
-        </div>
-        <div className="max-w-xs mx-auto">
-          <Select
-            value={dnfPredictions.length.toString()}
-            onValueChange={(value) => {
-              const numDNFs = parseInt(value);
-              // Limpar todas as previsões anteriores
-              while (dnfPredictions.length > 0) {
-                onDriverDNF(dnfPredictions[0]);
-              }
-              // Se o número selecionado for maior que zero, adicionar pilotos disponíveis
-              if (numDNFs > 0) {
-                const availableDrivers = allDrivers
-                  .filter(driver => !raceTop10.includes(driver.id))
-                  .slice(0, numDNFs);
-                availableDrivers.forEach(driver => onDriverDNF(driver.id));
-              }
-            }}
-            disabled={disabled}
-          >
-            <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
-              <SelectValue placeholder="Selecione o número de abandonos" />
-            </SelectTrigger>
-            <SelectContent className="bg-racing-black border-racing-silver/20">
-              {Array.from({ length: 21 }, (_, i) => (
-                <SelectItem 
-                  key={i} 
-                  value={i.toString()}
-                  className="text-racing-white hover:bg-racing-silver/20"
-                >
-                  {i} {i === 1 ? 'piloto' : 'pilotos'}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
       </div>
     </div>
   );
