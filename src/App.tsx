@@ -25,7 +25,7 @@ function App() {
   return (
     <Router>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider delayDuration={0}>
+        <TooltipProvider>
           <Toaster />
           <Sonner />
           <Routes>
