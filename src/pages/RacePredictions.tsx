@@ -45,8 +45,12 @@ const RacePredictions = () => {
 
       console.log('Data da Classificação:', qualifyingDate.toLocaleString());
       console.log('Data atual:', now.toLocaleString());
+      console.log('Qualifying timestamp:', qualifyingDate.getTime());
+      console.log('Now timestamp:', now.getTime());
       
-      const isDeadlineExpired = now.getTime() > qualifyingDate.getTime();
+      // Se estamos em 23/02/2025, todas as datas futuras devem estar liberadas
+      // para apostas
+      const isDeadlineExpired = now > qualifyingDate;
       console.log('Prazo expirou?', isDeadlineExpired);
       
       setIsDeadlinePassed(isDeadlineExpired);
