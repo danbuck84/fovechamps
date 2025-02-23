@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -37,13 +38,21 @@ const RacePredictions = () => {
 
       if (error) throw error;
       if (!data) throw new Error("Corrida não encontrada");
-      
+
       // Verifica se já passou do horário da classificação
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
+
+      console.log('Data da Classificação (raw):', data.qualifying_date);
+      console.log('Data da Classificação (objeto):', qualifyingDate);
+      console.log('Data atual:', now);
+      console.log('Timestamp da Classificação:', qualifyingDate.getTime());
+      console.log('Timestamp atual:', now.getTime());
+
+      const isDeadlineExpired = now.getTime() > qualifyingDate.getTime();
+      console.log('Prazo expirou?', isDeadlineExpired);
       
-      // Compara as datas diretamente
-      setIsDeadlinePassed(now.getTime() > qualifyingDate.getTime());
+      setIsDeadlinePassed(isDeadlineExpired);
       
       return data as Race;
     },
