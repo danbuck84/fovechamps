@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import { RacePredictionFormWrapper } from "@/components/race-predictions/RacePre
 import { formatPoleTime } from "@/utils/prediction-utils";
 import { Button } from "@/components/ui/button";
 import type { Race, Driver } from "@/types/betting";
+import { formatInTimeZone } from "date-fns-tz";
 
 const RacePredictions = () => {
   const { raceId } = useParams();
@@ -39,14 +41,23 @@ const RacePredictions = () => {
       if (!data) throw new Error("Corrida não encontrada");
       
       // Verifica se já passou do horário da classificação
-      const qualifyingDate = new Date(data.qualifying_date);
+      const qualifyingDateStr = data.qualifying_date;
+      const qualifyingDate = new Date(qualifyingDateStr);
       const now = new Date();
+
+      // Converte as datas para o timezone de São Paulo
+      const spQualifyingDate = formatInTimeZone(qualifyingDate, 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX");
+      const spNow = formatInTimeZone(now, 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX");
+
+      // Converte para Date novamente para comparação
+      const qualifyingDateFinal = new Date(spQualifyingDate);
+      const nowFinal = new Date(spNow);
+
+      console.log('Data da Classificação:', qualifyingDateFinal);
+      console.log('Data Atual:', nowFinal);
+      console.log('Prazo passou?', nowFinal > qualifyingDateFinal);
       
-      // Converter as datas para timestamps para comparação precisa
-      const qualifyingTimestamp = qualifyingDate.getTime();
-      const nowTimestamp = now.getTime();
-      
-      setIsDeadlinePassed(nowTimestamp > qualifyingTimestamp);
+      setIsDeadlinePassed(nowFinal > qualifyingDateFinal);
       
       return data as Race;
     },
