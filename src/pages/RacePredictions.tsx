@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -42,7 +41,12 @@ const RacePredictions = () => {
       // Verifica se já passou do horário da classificação
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
-      setIsDeadlinePassed(now > qualifyingDate);
+      
+      // Converter as datas para timestamps para comparação precisa
+      const qualifyingTimestamp = qualifyingDate.getTime();
+      const nowTimestamp = now.getTime();
+      
+      setIsDeadlinePassed(nowTimestamp > qualifyingTimestamp);
       
       return data as Race;
     },
