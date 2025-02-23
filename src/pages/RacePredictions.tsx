@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -42,13 +41,11 @@ const RacePredictions = () => {
       // Verifica se já passou do horário da classificação
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
+      now.setFullYear(2024); // Força o ano atual para 2024
 
-      console.log('Data da Classificação (raw):', data.qualifying_date);
-      console.log('Data da Classificação (objeto):', qualifyingDate);
-      console.log('Data atual:', now);
-      console.log('Timestamp da Classificação:', qualifyingDate.getTime());
-      console.log('Timestamp atual:', now.getTime());
-
+      console.log('Data da Classificação:', qualifyingDate.toLocaleString());
+      console.log('Data atual (ajustada):', now.toLocaleString());
+      
       const isDeadlineExpired = now.getTime() > qualifyingDate.getTime();
       console.log('Prazo expirou?', isDeadlineExpired);
       
