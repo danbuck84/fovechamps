@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +21,6 @@ const RacePredictions = () => {
   const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(11).fill(""));
   const [raceTop10, setRaceTop10] = useState<string[]>(Array(11).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
-  const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
 
   const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
@@ -56,30 +56,6 @@ const RacePredictions = () => {
   });
 
   useEffect(() => {
-    if (race) {
-      const checkDeadline = () => {
-        const qualifyingDate = new Date(race.qualifying_date);
-        const now = new Date();
-        const oneHourBefore = new Date(qualifyingDate.getTime() - 60 * 60 * 1000);
-        
-        if (now >= oneHourBefore && now < qualifyingDate && !isDeadlinePassed) {
-          toast({
-            title: "Atenção!",
-            description: "Falta menos de 1 hora para o fechamento das apostas!",
-            duration: 10000,
-          });
-        }
-
-        setIsDeadlinePassed(now >= qualifyingDate);
-      };
-
-      checkDeadline();
-      const interval = setInterval(checkDeadline, 60000);
-      return () => clearInterval(interval);
-    }
-  }, [race, toast, isDeadlinePassed]);
-
-  useEffect(() => {
     if (poleTime) {
       setQualifyingTop10(prev => {
         const newTop10 = [...prev];
@@ -100,15 +76,6 @@ const RacePredictions = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (isDeadlinePassed) {
-      toast({
-        title: "Erro",
-        description: "O prazo para apostas já encerrou",
-        variant: "destructive",
-      });
-      return;
-    }
 
     const user = await supabase.auth.getUser();
     if (!user.data.user) {
@@ -175,7 +142,7 @@ const RacePredictions = () => {
         <Card className="bg-racing-black border-racing-silver/20">
           <RaceInfoHeader 
             race={race}
-            isDeadlinePassed={isDeadlinePassed}
+            isDeadlinePassed={false}
           />
           <CardContent>
             <RacePredictionFormWrapper
@@ -200,7 +167,7 @@ const RacePredictions = () => {
               dnfPredictions={dnfPredictions}
               onDriverDNF={handleDriverDNF}
               getAvailableDrivers={getAvailableDrivers}
-              isDeadlinePassed={isDeadlinePassed}
+              isDeadlinePassed={false}
               onSubmit={handleSubmit}
             />
           </CardContent>
