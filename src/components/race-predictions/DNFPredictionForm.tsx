@@ -9,7 +9,6 @@ import {
 import type { Driver } from "@/types/betting";
 
 interface DNFPredictionFormProps {
-  drivers: (Driver & { team: { name: string; engine: string } })[];
   dnfPredictions: string[];
   onDriverDNF: (driverId: string) => void;
   disabled?: boolean;
@@ -32,9 +31,8 @@ export const DNFPredictionForm = ({
       <Select
         value={dnfPredictions.length.toString()}
         onValueChange={(value) => {
-          // Atualiza a lista de DNFs com o número selecionado de elementos vazios
           const newDNFs = Array(parseInt(value)).fill("");
-          newDNFs.forEach(id => onDriverDNF(id));
+          onDriverDNF(value);
         }}
         disabled={disabled}
       >

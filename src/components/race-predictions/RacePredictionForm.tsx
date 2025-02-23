@@ -20,13 +20,12 @@ export const RacePredictionForm = ({
   raceTop10,
   setRaceTop10,
   getAvailableDrivers,
-  allDrivers,
   disabled = false,
 }: RacePredictionFormProps) => {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold">Palpites da Corrida</h3>
+        <h3 className="text-xl font-semibold text-racing-white">Palpites</h3>
         <p className="text-sm text-racing-silver">
           Faça seus palpites para o resultado final da corrida, prevendo as 11 primeiras posições.
         </p>
@@ -37,34 +36,30 @@ export const RacePredictionForm = ({
             <label className="text-sm text-racing-silver">
               {index + 1}º Lugar
             </label>
-            <div className="flex gap-2 items-center">
-              <div className="flex-1">
-                <Select
-                  value={raceTop10[index]}
-                  onValueChange={(value) => {
-                    const newTop10 = [...raceTop10];
-                    newTop10[index] = value;
-                    setRaceTop10(newTop10);
-                  }}
-                  disabled={disabled}
-                >
-                  <SelectTrigger className="bg-racing-black text-racing-white border-racing-silver/20">
-                    <SelectValue placeholder="Selecione um piloto" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-racing-black border-racing-silver/20">
-                    {getAvailableDrivers(index, false).map((driver) => (
-                      <SelectItem 
-                        key={driver.id} 
-                        value={driver.id}
-                        className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
-                      >
-                        {driver.name} ({driver.team.name})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <Select
+              value={raceTop10[index]}
+              onValueChange={(value) => {
+                const newTop10 = [...raceTop10];
+                newTop10[index] = value;
+                setRaceTop10(newTop10);
+              }}
+              disabled={disabled}
+            >
+              <SelectTrigger className="bg-racing-black text-racing-white border-racing-silver/20">
+                <SelectValue placeholder="Selecione um piloto" />
+              </SelectTrigger>
+              <SelectContent className="bg-racing-black border-racing-silver/20">
+                {getAvailableDrivers(index, false).map((driver) => (
+                  <SelectItem 
+                    key={driver.id} 
+                    value={driver.id}
+                    className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+                  >
+                    {driver.name} ({driver.team.name})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         ))}
       </div>

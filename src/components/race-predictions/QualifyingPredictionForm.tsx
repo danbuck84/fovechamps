@@ -25,7 +25,7 @@ export const QualifyingPredictionForm = ({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold">Acerte o Grid</h3>
+        <h3 className="text-xl font-semibold text-racing-white">Acerte o Grid</h3>
         <p className="text-sm text-racing-silver">
           Tente acertar exatamente a posição de cada piloto no grid de largada após a classificação.
         </p>
