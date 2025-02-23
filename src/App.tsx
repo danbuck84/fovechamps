@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
+import Dashboard from "@/pages/Dashboard";
+import Leaderboard from "@/pages/Leaderboard";
 import RacePredictions from "@/pages/RacePredictions";
 import MyPredictions from "@/pages/MyPredictions";
 import NotFound from "@/pages/NotFound";
@@ -32,8 +34,10 @@ function App() {
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<MainLayout><Outlet /></MainLayout>}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/race-predictions/:id" element={<RacePredictions />} />
+              <Route path="/race-predictions/:raceId" element={<RacePredictions />} />
               <Route path="/my-predictions" element={<MyPredictions />} />
             </Route>
             <Route path="*" element={<NotFound />} />

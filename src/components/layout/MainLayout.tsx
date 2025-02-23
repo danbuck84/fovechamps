@@ -18,8 +18,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           {/* Logo */}
           <div className="p-4 border-b border-racing-silver/20">
             <h1 className="hidden md:block text-xl font-bold text-racing-white">
-              Bestap
-              <span className="text-racing-red">Bets</span>
+              FoVe
+              <span className="text-racing-red">Champs</span>
             </h1>
           </div>
 
@@ -37,7 +37,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               </li>
               <li>
                 <button
-                  onClick={() => navigate("/races")}
+                  onClick={() => navigate("/")}
                   className="flex items-center w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors"
                 >
                   <Calendar className="w-6 h-6" />
