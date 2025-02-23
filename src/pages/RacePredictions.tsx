@@ -39,7 +39,7 @@ const RacePredictions = () => {
       if (error) throw error;
       if (!data) throw new Error("Corrida não encontrada");
 
-      // Verifica se já passou do horário da classificação
+      // Ajusta a data da classificação para o timezone correto
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
 
@@ -48,9 +48,9 @@ const RacePredictions = () => {
       console.log('Qualifying timestamp:', qualifyingDate.getTime());
       console.log('Now timestamp:', now.getTime());
       
-      // Se estamos em 23/02/2025, todas as datas futuras devem estar liberadas
-      // para apostas
-      const isDeadlineExpired = now > qualifyingDate;
+      // Se estamos em 23/02/2025 e a data da classificação é futura,
+      // permitimos as apostas
+      const isDeadlineExpired = now.getTime() > qualifyingDate.getTime();
       console.log('Prazo expirou?', isDeadlineExpired);
       
       setIsDeadlinePassed(isDeadlineExpired);

@@ -22,7 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/" element={<MainLayout><Outlet /></MainLayout>}>
+          <Route element={<MainLayout><Outlet /></MainLayout>}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/race-predictions/:raceId" element={<RacePredictions />} />
             <Route path="/my-predictions" element={<MyPredictions />} />
