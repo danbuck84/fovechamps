@@ -93,18 +93,17 @@ const RacePredictions = () => {
       if (prediction) {
         setExistingPrediction(prediction);
         if (!isDeadlinePassed) {
-          // Se encontrou uma previsão existente e não passou do prazo, preenche o formulário
           setPoleTime(prediction.pole_time || "");
           setFastestLap(prediction.fastest_lap || "");
-          setQualifyingTop10(prediction.qualifying_top_10);
-          setRaceTop10(prediction.top_10);
-          setDnfPredictions(prediction.dnf_predictions);
+          setQualifyingTop10(prediction.qualifying_top_10 || Array(10).fill(""));
+          setRaceTop10(prediction.top_10 || Array(10).fill(""));
+          setDnfPredictions(prediction.dnf_predictions || []);
         }
       }
     };
 
     checkExistingPrediction();
-  }, [raceId]);
+  }, [raceId, isDeadlinePassed]);
 
   useEffect(() => {
     if (poleTime) {
@@ -146,38 +145,46 @@ const RacePredictions = () => {
       dnf_predictions: dnfPredictions,
     };
 
-    let error;
-    if (existingPrediction) {
-      // Atualiza a previsão existente
-      const { error: updateError } = await supabase
-        .from("predictions")
-        .update(predictionData)
-        .eq("id", existingPrediction.id);
-      error = updateError;
-    } else {
-      // Cria uma nova previsão
-      const { error: insertError } = await supabase
-        .from("predictions")
-        .insert([predictionData]);
-      error = insertError;
-    }
+    try {
+      let error;
+      
+      if (existingPrediction) {
+        const { error: updateError } = await supabase
+          .from("predictions")
+          .update(predictionData)
+          .eq("id", existingPrediction.id);
+        error = updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from("predictions")
+          .insert([predictionData]);
+        error = insertError;
+      }
 
-    if (error) {
+      if (error) {
+        console.error("Erro ao salvar palpites:", error);
+        toast({
+          title: "Erro ao salvar palpites",
+          description: "Por favor, tente novamente",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Palpites salvos com sucesso!",
+        description: "Boa sorte!",
+      });
+
+      navigate("/my-predictions");
+    } catch (error) {
       console.error("Erro ao salvar palpites:", error);
       toast({
         title: "Erro ao salvar palpites",
         description: "Por favor, tente novamente",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Palpites salvos com sucesso!",
-      description: "Boa sorte!",
-    });
-
-    navigate("/my-predictions");
   };
 
   const getAvailableDrivers = (position: number, isQualifying: boolean = true) => {

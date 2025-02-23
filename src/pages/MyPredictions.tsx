@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ptBR } from "date-fns/locale";
@@ -65,31 +64,41 @@ const MyPredictions = () => {
     },
   });
 
-  const handleDelete = async (predictionId: string) => {
-    const { error } = await supabase
-      .from('predictions')
-      .delete()
-      .eq('id', predictionId);
+  const handleEdit = (raceId: string) => {
+    navigate(`/race-predictions/${raceId}`);
+  };
 
-    if (error) {
+  const handleDelete = async (predictionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('predictions')
+        .delete()
+        .eq('id', predictionId);
+
+      if (error) {
+        console.error('Erro ao apagar aposta:', error);
+        toast({
+          title: "Erro ao apagar aposta",
+          description: "Não foi possível apagar sua aposta. Tente novamente.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Aposta apagada",
+        description: "Sua aposta foi apagada com sucesso.",
+      });
+
+      await refetch();
+    } catch (error) {
+      console.error('Erro ao apagar aposta:', error);
       toast({
         title: "Erro ao apagar aposta",
         description: "Não foi possível apagar sua aposta. Tente novamente.",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Aposta apagada",
-      description: "Sua aposta foi apagada com sucesso.",
-    });
-
-    refetch();
-  };
-
-  const handleEdit = (raceId: string) => {
-    navigate(`/race/${raceId}`);
   };
 
   const formatDate = (date: string) => {
