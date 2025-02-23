@@ -6,12 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -87,16 +89,25 @@ export default function Auth() {
               disabled={isLoading}
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2 relative">
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Sua senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6]"
+              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6] pr-10"
               disabled={isLoading}
             />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#fff6] hover:text-white hover:bg-transparent"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </Button>
           </div>
           <Button 
             type="submit" 
