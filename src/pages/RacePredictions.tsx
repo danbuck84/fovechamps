@@ -123,8 +123,8 @@ const RacePredictions = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const user = await supabase.auth.getUser();
-    if (!user.data.user) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
       toast({
         title: "Erro",
         description: "Você precisa estar logado para fazer palpites",
@@ -136,36 +136,38 @@ const RacePredictions = () => {
 
     const predictionData = {
       race_id: raceId,
-      user_id: user.data.user.id,
-      pole_position: qualifyingTop10[0],
+      user_id: user.id,
+      pole_position: qualifyingTop10[0] || "",
       pole_time: poleTime,
       fastest_lap: fastestLap,
-      qualifying_top_10: qualifyingTop10,
-      top_10: raceTop10,
-      dnf_predictions: dnfPredictions,
+      qualifying_top_10: qualifyingTop10.filter(Boolean),
+      top_10: raceTop10.filter(Boolean),
+      dnf_predictions: dnfPredictions.filter(Boolean),
     };
 
     try {
-      let error;
+      let result;
       
       if (existingPrediction) {
-        const { error: updateError } = await supabase
+        result = await supabase
           .from("predictions")
           .update(predictionData)
-          .eq("id", existingPrediction.id);
-        error = updateError;
+          .eq("id", existingPrediction.id)
+          .select()
+          .single();
       } else {
-        const { error: insertError } = await supabase
+        result = await supabase
           .from("predictions")
-          .insert([predictionData]);
-        error = insertError;
+          .insert([predictionData])
+          .select()
+          .single();
       }
 
-      if (error) {
-        console.error("Erro ao salvar palpites:", error);
+      if (result.error) {
+        console.error("Erro ao salvar palpites:", result.error);
         toast({
           title: "Erro ao salvar palpites",
-          description: "Por favor, tente novamente",
+          description: result.error.message || "Por favor, tente novamente",
           variant: "destructive",
         });
         return;
