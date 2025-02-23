@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import type { Race, Driver, Prediction } from "@/types/betting";
+import { Link } from "react-router-dom";
 
 const MyPredictions = () => {
   const navigate = useNavigate();
@@ -64,16 +65,13 @@ const MyPredictions = () => {
     },
   });
 
-  const handleEdit = (raceId: string) => {
-    navigate(`/race-predictions/${raceId}`);
-  };
-
   const handleDelete = async (predictionId: string) => {
     try {
       const { error } = await supabase
         .from('predictions')
         .delete()
-        .eq('id', predictionId);
+        .eq('id', predictionId)
+        .single();
 
       if (error) {
         console.error('Erro ao apagar aposta:', error);
@@ -162,17 +160,12 @@ const MyPredictions = () => {
                       </CardHeader>
                     </AccordionTrigger>
                     <div className="flex gap-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(prediction.race_id);
-                        }}
+                      <Link
+                        to={`/race-predictions/${prediction.race_id}`}
+                        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 w-10 bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
                       >
                         <Edit className="h-4 w-4" />
-                      </Button>
+                      </Link>
                       <Button
                         variant="outline"
                         size="icon"
