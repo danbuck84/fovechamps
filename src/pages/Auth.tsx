@@ -4,13 +4,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Home } from "lucide-react";
+import { Home, Eye, EyeOff } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -62,7 +63,7 @@ const Auth = () => {
         
         toast({
           title: "Cadastro realizado com sucesso!",
-          description: "Verifique seu email para confirmar seu cadastro.",
+          description: "Você já pode fazer login com suas credenciais.",
         });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -151,14 +152,23 @@ const Auth = () => {
               >
                 Senha
               </label>
-              <input
-                id="password"
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-racing-black border border-racing-silver/20 rounded-md text-racing-white focus:outline-none focus:ring-2 focus:ring-racing-red"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-racing-black border border-racing-silver/20 rounded-md text-racing-white focus:outline-none focus:ring-2 focus:ring-racing-red pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-racing-silver hover:text-racing-white transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
               {isSignUp && (
                 <div className="mt-2 space-y-2">
                   <p className="text-sm text-racing-silver">Requisitos da senha:</p>
