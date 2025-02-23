@@ -35,14 +35,15 @@ export default function Auth() {
           throw error;
         }
 
-        // Verifica se o usuário foi criado com sucesso
         if (data?.user) {
           toast({
             title: "Conta criada com sucesso!",
             description: "Você já pode fazer login com suas credenciais.",
           });
-          // Volta para a tela de login
           setIsSignUp(false);
+          // Limpa os campos após criar a conta
+          setEmail("");
+          setPassword("");
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -75,6 +76,14 @@ export default function Auth() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    // Limpa os campos ao alternar entre modos
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
   };
 
   return (
@@ -144,7 +153,7 @@ export default function Auth() {
         <div className="text-center">
           <Button
             variant="link"
-            onClick={() => setIsSignUp(!isSignUp)}
+            onClick={toggleMode}
             className="text-sm text-racing-red hover:text-racing-red/90"
             disabled={isLoading}
           >
