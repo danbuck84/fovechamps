@@ -9,7 +9,7 @@ import {
 
 interface DNFPredictionFormProps {
   dnfPredictions: string[];
-  onDriverDNF: (driverId: string) => void;
+  onDriverDNF: (count: number) => void;
   disabled?: boolean;
 }
 
@@ -29,7 +29,7 @@ export const DNFPredictionForm = ({
       
       <Select
         value={dnfPredictions.length.toString()}
-        onValueChange={onDriverDNF}
+        onValueChange={(value) => onDriverDNF(parseInt(value))}
         disabled={disabled}
       >
         <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">

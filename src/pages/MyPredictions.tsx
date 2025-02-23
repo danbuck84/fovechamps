@@ -1,10 +1,12 @@
+
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ptBR } from "date-fns/locale";
 import { formatInTimeZone } from 'date-fns-tz';
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft, ChevronDown, Edit, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -24,8 +26,9 @@ import type { Race, Driver, Prediction } from "@/types/betting";
 
 const MyPredictions = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  const { data: predictions, isLoading } = useQuery({
+  const { data: predictions, isLoading, refetch } = useQuery({
     queryKey: ["my-predictions"],
     queryFn: async () => {
       const { data: predictionsData, error: predictionsError } = await supabase
@@ -61,6 +64,33 @@ const MyPredictions = () => {
       };
     },
   });
+
+  const handleDelete = async (predictionId: string) => {
+    const { error } = await supabase
+      .from('predictions')
+      .delete()
+      .eq('id', predictionId);
+
+    if (error) {
+      toast({
+        title: "Erro ao apagar aposta",
+        description: "Não foi possível apagar sua aposta. Tente novamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Aposta apagada",
+      description: "Sua aposta foi apagada com sucesso.",
+    });
+
+    refetch();
+  };
+
+  const handleEdit = (raceId: string) => {
+    navigate(`/race/${raceId}`);
+  };
 
   const formatDate = (date: string) => {
     return formatInTimeZone(
@@ -107,20 +137,46 @@ const MyPredictions = () => {
                 className="border-racing-silver/20 px-0 data-[state=open]:border-racing-red"
               >
                 <Card className="bg-racing-black border-racing-silver/20 hover:border-racing-red transition-colors duration-200 data-[state=open]:border-racing-red">
-                  <AccordionTrigger className="w-full hover:no-underline [&[data-state=open]>div]:border-racing-red">
-                    <CardHeader className="w-full border-b border-transparent">
-                      <div className="flex items-center justify-between w-full">
-                        <CardTitle className="text-2xl text-racing-white">
-                          {prediction.race.name}
-                        </CardTitle>
-                        <ChevronDown className="h-6 w-6 text-racing-silver shrink-0 transition-transform duration-200" />
-                      </div>
-                      <div className="text-racing-silver text-left">
-                        <p>Data da corrida: {formatDate(prediction.race.date)}</p>
-                        <p>Classificação: {formatDate(prediction.race.qualifying_date)}</p>
-                      </div>
-                    </CardHeader>
-                  </AccordionTrigger>
+                  <div className="flex justify-between items-start p-6">
+                    <AccordionTrigger className="w-full hover:no-underline [&[data-state=open]>div]:border-racing-red">
+                      <CardHeader className="w-full border-b border-transparent p-0">
+                        <div className="flex items-center justify-between w-full">
+                          <CardTitle className="text-2xl text-racing-white">
+                            {prediction.race.name}
+                          </CardTitle>
+                          <ChevronDown className="h-6 w-6 text-racing-silver shrink-0 transition-transform duration-200" />
+                        </div>
+                        <div className="text-racing-silver text-left">
+                          <p>Data da corrida: {formatDate(prediction.race.date)}</p>
+                          <p>Classificação: {formatDate(prediction.race.qualifying_date)}</p>
+                        </div>
+                      </CardHeader>
+                    </AccordionTrigger>
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(prediction.race_id);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(prediction.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                   <AccordionContent>
                     <CardContent className="space-y-6">
                       <div>
