@@ -32,10 +32,6 @@ const Index = () => {
     );
   };
 
-  const isRacePast = (date: string) => {
-    return new Date(date) < new Date();
-  };
-
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       {/* Hero Section */}
@@ -110,47 +106,40 @@ const Index = () => {
             <div className="text-center text-racing-silver">Carregando corridas...</div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {races?.map((race) => {
-                const isPast = isRacePast(race.date);
-                return (
-                  <Card 
-                    key={race.id} 
-                    className={`bg-racing-black border-racing-silver/20 transition-all ${
-                      isPast ? 'opacity-50' : 'hover:border-racing-red/50'
-                    }`}
-                  >
-                    <CardHeader>
-                      <CardTitle className="text-xl text-racing-white">
-                        {race.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2 text-racing-silver">
-                        <p>
-                          <strong>Corrida:</strong> {formatDate(race.date)}
-                        </p>
-                        <p>
-                          <strong>Classificação:</strong> {formatDate(race.qualifying_date)}
-                        </p>
-                        <p>
-                          <strong>Circuito:</strong> {race.circuit}
-                        </p>
-                        <p>
-                          <strong>País:</strong> {race.country}
-                        </p>
-                        {!isPast && (
-                          <Link 
-                            to={`/race-predictions/${race.id}`}
-                            className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center"
-                          >
-                            Fazer Palpites
-                          </Link>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {races?.map((race) => (
+                <Card 
+                  key={race.id} 
+                  className="bg-racing-black border-racing-silver/20 hover:border-racing-red/50 transition-all"
+                >
+                  <CardHeader>
+                    <CardTitle className="text-xl text-racing-white">
+                      {race.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-racing-silver">
+                      <p>
+                        <strong>Corrida:</strong> {formatDate(race.date)}
+                      </p>
+                      <p>
+                        <strong>Classificação:</strong> {formatDate(race.qualifying_date)}
+                      </p>
+                      <p>
+                        <strong>Circuito:</strong> {race.circuit}
+                      </p>
+                      <p>
+                        <strong>País:</strong> {race.country}
+                      </p>
+                      <Link 
+                        to={`/race-predictions/${race.id}`}
+                        className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center"
+                      >
+                        Fazer Palpites
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
         </motion.div>
