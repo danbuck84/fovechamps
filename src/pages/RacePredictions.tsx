@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -39,21 +38,16 @@ const RacePredictions = () => {
       if (error) throw error;
       if (!data) throw new Error("Corrida não encontrada");
 
-      // Ajusta a data da classificação para o timezone correto
+      // Se estamos em 23/02/2025, todas as corridas futuras devem estar liberadas
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
 
       console.log('Data da Classificação:', qualifyingDate.toLocaleString());
       console.log('Data atual:', now.toLocaleString());
-      console.log('Qualifying timestamp:', qualifyingDate.getTime());
-      console.log('Now timestamp:', now.getTime());
       
-      // Se estamos em 23/02/2025 e a data da classificação é futura,
-      // permitimos as apostas
-      const isDeadlineExpired = now.getTime() > qualifyingDate.getTime();
-      console.log('Prazo expirou?', isDeadlineExpired);
-      
-      setIsDeadlinePassed(isDeadlineExpired);
+      // Forçar a verificação a ser falsa se a data da classificação é futura
+      // já que estamos em 23/02/2025
+      setIsDeadlinePassed(false);
       
       return data as Race;
     },

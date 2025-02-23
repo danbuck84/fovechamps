@@ -49,8 +49,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               onClick={() => navigate("/")}
               className="hidden md:block text-xl font-bold text-racing-white hover:opacity-80 transition-opacity"
             >
-              FoVe
-              <span className="text-racing-red">Champs</span>
+              FoVe<span className="text-racing-red">Champs</span>
             </button>
           </div>
 
@@ -162,7 +161,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Main content */}
       <div className="ml-16 md:ml-64">
-        <main className="min-h-screen p-4">{children}</main>
+        {children}
       </div>
     </div>
   );
