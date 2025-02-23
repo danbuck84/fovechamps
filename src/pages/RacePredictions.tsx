@@ -116,13 +116,9 @@ const RacePredictions = () => {
     }
   }, [poleTime]);
 
-  const handleDriverDNF = (driverId: string) => {
-    setDnfPredictions(prev => {
-      if (prev.includes(driverId)) {
-        return prev.filter(id => id !== driverId);
-      }
-      return [...prev, driverId];
-    });
+  const handleDriverDNF = (count: number) => {
+    // Cria um array com o número especificado de elementos vazios
+    setDnfPredictions(Array(count).fill(""));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
