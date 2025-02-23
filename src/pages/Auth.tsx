@@ -28,12 +28,22 @@ export default function Auth() {
           password: password,
         });
 
-        if (error) throw error;
+        if (error) {
+          if (error.message.includes("User already registered")) {
+            throw new Error("Este email já está registrado. Por favor, faça login.");
+          }
+          throw error;
+        }
 
-        toast({
-          title: "Sucesso!",
-          description: "Você já pode fazer login com suas credenciais.",
-        });
+        // Verifica se o usuário foi criado com sucesso
+        if (data?.user) {
+          toast({
+            title: "Conta criada com sucesso!",
+            description: "Você já pode fazer login com suas credenciais.",
+          });
+          // Volta para a tela de login
+          setIsSignUp(false);
+        }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
@@ -47,13 +57,16 @@ export default function Auth() {
           throw error;
         }
 
-        toast({
-          title: "Bem-vindo!",
-          description: "Login realizado com sucesso.",
-        });
-        navigate("/dashboard");
+        if (data.user) {
+          toast({
+            title: "Bem-vindo!",
+            description: "Login realizado com sucesso.",
+          });
+          navigate("/dashboard");
+        }
       }
     } catch (error: any) {
+      console.error("Auth error:", error);
       toast({
         title: "Erro!",
         description: error.message,
