@@ -16,7 +16,7 @@ interface RacePredictionFormWrapperProps {
   raceTop10: string[];
   setRaceTop10: (value: string[]) => void;
   dnfPredictions: string[];
-  onDriverDNF: (driverId: string) => void;
+  onDriverDNF: (count: number) => void;
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
   isDeadlinePassed: boolean;
   onSubmit: (e: React.FormEvent) => Promise<void>;
