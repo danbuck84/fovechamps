@@ -25,22 +25,20 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider delayDuration={0}>
-        <>
+        <Router>
           <Toaster />
           <Sonner />
-          <Router>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route element={<MainLayout />}>
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/race-predictions/:id" element={<RacePredictions />} />
-                <Route path="/my-predictions" element={<MyPredictions />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Router>
-        </>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route element={<MainLayout />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/race-predictions/:id" element={<RacePredictions />} />
+              <Route path="/my-predictions" element={<MyPredictions />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
       </TooltipProvider>
     </QueryClientProvider>
   );
