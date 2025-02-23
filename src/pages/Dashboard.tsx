@@ -1,11 +1,13 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race, Prediction } from "@/types/betting";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const { data: nextRaces } = useQuery({
     queryKey: ["next-races"],
     queryFn: async () => {
@@ -84,7 +86,8 @@ const Dashboard = () => {
             {recentPredictions?.map((prediction) => (
               <div 
                 key={prediction.id}
-                className="p-4 border-b border-racing-silver/20 last:border-0"
+                onClick={() => navigate(`/race/${prediction.race_id}`)}
+                className="p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg cursor-pointer"
               >
                 <h3 className="font-semibold text-racing-white">
                   {prediction.race.name}
