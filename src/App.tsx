@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,7 +31,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route element={<MainLayout />}>
+            <Route path="/" element={<MainLayout><Outlet /></MainLayout>}>
               <Route path="/profile" element={<Profile />} />
               <Route path="/race-predictions/:id" element={<RacePredictions />} />
               <Route path="/my-predictions" element={<MyPredictions />} />
