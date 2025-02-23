@@ -2,6 +2,7 @@
 import { PolePositionForm } from "./PolePositionForm";
 import { QualifyingPredictionForm } from "./QualifyingPredictionForm";
 import { RacePredictionForm } from "./RacePredictionForm";
+import { DNFPredictionForm } from "./DNFPredictionForm";
 import { Button } from "@/components/ui/button";
 import type { Driver } from "@/types/betting";
 
@@ -53,10 +54,15 @@ export const RacePredictionFormWrapper = ({
       <RacePredictionForm
         raceTop10={raceTop10}
         setRaceTop10={setRaceTop10}
-        dnfPredictions={dnfPredictions}
-        onDriverDNF={onDriverDNF}
         getAvailableDrivers={getAvailableDrivers}
         allDrivers={drivers}
+        disabled={isDeadlinePassed}
+      />
+
+      <DNFPredictionForm
+        drivers={drivers}
+        dnfPredictions={dnfPredictions}
+        onDriverDNF={onDriverDNF}
         disabled={isDeadlinePassed}
       />
 
