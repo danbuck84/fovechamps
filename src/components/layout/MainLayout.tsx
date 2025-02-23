@@ -1,11 +1,34 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@/types/user";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    const getProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+        
+        if (profile) {
+          setUsername(profile.username);
+        }
+      }
+    };
+
+    getProfile();
+  }, []);
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -34,6 +57,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           {/* Navigation */}
           <nav className="flex-1 px-2 py-4">
             <ul className="space-y-2">
+              {username && (
+                <li className="mb-6">
+                  <div className="px-2 py-1">
+                    <span className="text-sm text-racing-silver">Bem-vindo,</span>
+                    <p className="text-racing-white font-semibold truncate">{username}</p>
+                  </div>
+                </li>
+              )}
               <li>
                 <button
                   onClick={() => navigate("/dashboard")}
@@ -86,12 +117,42 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   <span className="hidden md:block ml-3">Minhas Apostas</span>
                 </button>
               </li>
+              <li>
+                <button
+                  onClick={() => navigate("/users")}
+                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
+                    isActive("/users")
+                      ? "text-racing-red bg-racing-red/10"
+                      : "text-racing-silver hover:bg-racing-red/10"
+                  }`}
+                >
+                  <Users className="w-6 h-6" />
+                  <span className="hidden md:block ml-3">Participantes</span>
+                </button>
+              </li>
             </ul>
           </nav>
 
           {/* User section */}
           <div className="p-4 border-t border-racing-silver/20">
-            <button className="flex items-center w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors">
+            <button
+              onClick={() => navigate("/profile")}
+              className={`flex items-center w-full p-2 rounded-lg transition-colors mb-2 ${
+                isActive("/profile")
+                  ? "text-racing-red bg-racing-red/10"
+                  : "text-racing-silver hover:bg-racing-red/10"
+              }`}
+            >
+              <UserCircle className="w-6 h-6" />
+              <span className="hidden md:block ml-3">Meu Perfil</span>
+            </button>
+            <button 
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/auth");
+              }} 
+              className="flex items-center w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors"
+            >
               <LogOut className="w-6 h-6" />
               <span className="hidden md:block ml-3">Sair</span>
             </button>
