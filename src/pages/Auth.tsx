@@ -43,7 +43,7 @@ const Auth = () => {
           throw new Error(`A senha deve conter ${passwordErrors.join(", ")}`);
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -55,29 +55,36 @@ const Auth = () => {
         });
         
         if (error) {
+          console.error("Signup error details:", error);
           if (error.message.includes("user_already_exists") || error.message.includes("User already registered")) {
             throw new Error("Este email já está registrado. Por favor, faça login.");
           }
           throw error;
         }
+
+        console.log("Signup successful:", data);
         
         toast({
           title: "Cadastro realizado com sucesso!",
           description: "Você já pode fazer login com suas credenciais.",
         });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        console.log("Attempting login with:", { email }); // omit password for security
+        
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password: password,
         });
         
         if (error) {
+          console.error("Login error details:", error);
           if (error.message.includes("invalid_credentials") || error.message.includes("Invalid login credentials")) {
             throw new Error("Email ou senha incorretos. Por favor, tente novamente.");
           }
           throw error;
         }
-        
+
+        console.log("Login successful:", data);
         navigate("/dashboard");
       }
     } catch (error: any) {
@@ -141,7 +148,7 @@ const Auth = () => {
                 type="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.trim())}
                 className="mt-1 block w-full px-3 py-2 bg-racing-black border border-racing-silver/20 rounded-md text-racing-white focus:outline-none focus:ring-2 focus:ring-racing-red"
               />
             </div>
