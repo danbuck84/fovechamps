@@ -60,7 +60,6 @@ export const RacePredictionFormWrapper = ({
       />
 
       <DNFPredictionForm
-        drivers={drivers}
         dnfPredictions={dnfPredictions}
         onDriverDNF={onDriverDNF}
         disabled={isDeadlinePassed}
