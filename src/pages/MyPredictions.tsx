@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ptBR } from "date-fns/locale";
@@ -105,11 +104,11 @@ const MyPredictions = () => {
               <AccordionItem 
                 key={prediction.id} 
                 value={prediction.id}
-                className="border-racing-silver/20 px-0"
+                className="border-racing-silver/20 px-0 data-[state=open]:border-racing-red"
               >
-                <Card className="bg-racing-black border-racing-silver/20">
-                  <AccordionTrigger className="w-full hover:no-underline">
-                    <CardHeader className="w-full">
+                <Card className="bg-racing-black border-racing-silver/20 hover:border-racing-red transition-colors duration-200 data-[state=open]:border-racing-red">
+                  <AccordionTrigger className="w-full hover:no-underline [&[data-state=open]>div]:border-racing-red">
+                    <CardHeader className="w-full border-b border-transparent">
                       <div className="flex items-center justify-between w-full">
                         <CardTitle className="text-2xl text-racing-white">
                           {prediction.race.name}

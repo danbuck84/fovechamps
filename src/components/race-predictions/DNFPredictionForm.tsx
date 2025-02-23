@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Driver } from "@/types/betting";
 
 interface DNFPredictionFormProps {
   dnfPredictions: string[];
@@ -30,10 +29,7 @@ export const DNFPredictionForm = ({
       
       <Select
         value={dnfPredictions.length.toString()}
-        onValueChange={(value) => {
-          const newDNFs = Array(parseInt(value)).fill("");
-          onDriverDNF(value);
-        }}
+        onValueChange={onDriverDNF}
         disabled={disabled}
       >
         <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">

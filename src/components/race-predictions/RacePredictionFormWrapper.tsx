@@ -4,6 +4,7 @@ import { QualifyingPredictionForm } from "./QualifyingPredictionForm";
 import { RacePredictionForm } from "./RacePredictionForm";
 import { DNFPredictionForm } from "./DNFPredictionForm";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import type { Driver } from "@/types/betting";
 
 interface RacePredictionFormWrapperProps {
@@ -35,8 +36,45 @@ export const RacePredictionFormWrapper = ({
   isDeadlinePassed,
   onSubmit,
 }: RacePredictionFormWrapperProps) => {
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validar se todos os campos estão preenchidos
+    if (!poleTime) {
+      toast({
+        title: "Erro",
+        description: "Por favor, insira o tempo da pole position",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (qualifyingTop10.some(driver => !driver)) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione todos os pilotos para o grid de largada",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (raceTop10.some(driver => !driver)) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione todos os pilotos para o resultado da corrida",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Se passar por todas as validações, envia o formulário
+    await onSubmit(e);
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-8">
       <PolePositionForm
         poleTime={poleTime}
         onPoleTimeChange={onPoleTimeChange}
