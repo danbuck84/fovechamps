@@ -1,5 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race, Prediction } from "@/types/betting";
@@ -60,13 +61,14 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             {nextRaces?.map((race) => (
-              <div 
+              <Link 
                 key={race.id}
-                className="p-4 border-b border-racing-silver/20 last:border-0"
+                to={`/race-predictions/${race.id}`}
+                className="block p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg"
               >
                 <h3 className="font-semibold text-racing-white">{race.name}</h3>
                 <p className="text-sm text-racing-silver">{race.circuit}</p>
-              </div>
+              </Link>
             ))}
           </CardContent>
         </Card>
