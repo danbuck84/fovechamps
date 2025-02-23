@@ -65,7 +65,7 @@ const Profile = () => {
           full_name: fullName,
           username,
           avatar_url: avatarUrl,
-          updated_at: new Date(),
+          updated_at: new Date().toISOString(),
         })
         .eq("id", user.id);
 
