@@ -65,13 +65,24 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#000000e6]">
-      <Card className="w-full max-w-md p-8 space-y-6 bg-[#222] border-racing-red">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-racing-black">
+      {/* Logo */}
+      <div className="mb-8">
+        <button 
+          onClick={() => navigate("/")}
+          className="text-3xl font-bold text-racing-white hover:opacity-80 transition-opacity"
+        >
+          FoVe
+          <span className="text-racing-red">Champs</span>
+        </button>
+      </div>
+
+      <Card className="w-full max-w-md p-8 space-y-6 bg-racing-black border-racing-silver/20">
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-racing-white">
             {isSignUp ? "Criar Conta" : "Login"}
           </h1>
-          <p className="text-[#fff6]">
+          <p className="text-racing-silver">
             {isSignUp 
               ? "Crie sua conta para começar a fazer suas previsões" 
               : "Entre com suas credenciais para continuar"}
@@ -85,7 +96,7 @@ export default function Auth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6]"
+              className="w-full bg-[#333] text-racing-white border-racing-silver/20 placeholder:text-racing-silver"
               disabled={isLoading}
             />
           </div>
@@ -96,14 +107,14 @@ export default function Auth() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-[#333] text-white border-racing-red placeholder:text-[#fff6] pr-10"
+              className="w-full bg-[#333] text-racing-white border-racing-silver/20 placeholder:text-racing-silver pr-10"
               disabled={isLoading}
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#fff6] hover:text-white hover:bg-transparent"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-racing-silver hover:text-racing-white hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -111,7 +122,7 @@ export default function Auth() {
           </div>
           <Button 
             type="submit" 
-            className="w-full bg-racing-red hover:bg-racing-red/90 text-white"
+            className="w-full bg-racing-red hover:bg-racing-red/90 text-racing-white"
             disabled={isLoading}
           >
             {isSignUp ? "Criar Conta" : "Entrar"}
@@ -132,4 +143,4 @@ export default function Auth() {
       </Card>
     </div>
   );
-}
+};
