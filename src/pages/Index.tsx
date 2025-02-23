@@ -42,6 +42,12 @@ const Index = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-6"
         >
+          <Link 
+            to="/dashboard"
+            className="inline-block mb-8 px-6 py-2 bg-racing-red text-racing-white rounded-lg hover:bg-opacity-90 transition-all"
+          >
+            Ir para o Dashboard
+          </Link>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
             FoVe
             <span className="text-racing-red"> Champs</span>

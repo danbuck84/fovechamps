@@ -22,9 +22,9 @@ export const RaceInfoHeader = ({ race, isDeadlinePassed }: RaceInfoHeaderProps) 
         Classificação: {formatDate(race.qualifying_date)}
       </p>
       {isDeadlinePassed ? (
-        <div className="mt-4 p-4 bg-racing-red/10 border border-racing-red rounded-md flex items-center gap-2 text-racing-red">
-          <Clock className="h-5 w-5" />
-          <p>O prazo para apostas já encerrou</p>
+        <div className="mt-4 p-4 bg-racing-red/10 border border-racing-red rounded-md flex items-center gap-2">
+          <Clock className="h-5 w-5 text-racing-red" />
+          <p className="text-racing-red">O prazo para apostas já encerrou</p>
         </div>
       ) : (
         <div className="mt-4 p-4 bg-racing-silver/10 border border-racing-silver/20 rounded-md flex items-center gap-2">
