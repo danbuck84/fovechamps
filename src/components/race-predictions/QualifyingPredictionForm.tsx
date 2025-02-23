@@ -45,12 +45,16 @@ export const QualifyingPredictionForm = ({
               }}
               disabled={disabled}
             >
-              <SelectTrigger className="bg-racing-black border-racing-silver/20 text-racing-white">
-                <SelectValue placeholder="Selecione um piloto" className="text-racing-silver" />
+              <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">
+                <SelectValue placeholder="Selecione um piloto" className="text-racing-black" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-racing-white text-racing-black">
                 {getAvailableDrivers(index).map((driver) => (
-                  <SelectItem key={driver.id} value={driver.id}>
+                  <SelectItem 
+                    key={driver.id} 
+                    value={driver.id}
+                    className="hover:bg-racing-black hover:text-racing-white"
+                  >
                     {driver.name} ({driver.team.name})
                   </SelectItem>
                 ))}

@@ -95,7 +95,11 @@ const MyPredictions = () => {
 
         <div className="space-y-8">
           {predictions?.predictions.map((prediction) => (
-            <Card key={prediction.id} className="bg-racing-black border-racing-silver/20">
+            <Card 
+              key={prediction.id} 
+              className="bg-racing-black border-racing-silver/20 cursor-pointer hover:border-racing-red transition-colors"
+              onClick={() => navigate(`/race/${prediction.race_id}`)}
+            >
               <CardHeader>
                 <CardTitle className="text-2xl text-racing-white">
                   {prediction.race.name}
@@ -124,6 +128,9 @@ const MyPredictions = () => {
 
                 <div>
                   <h3 className="text-xl font-semibold mb-4">Grid de Largada Previsto</h3>
+                  <div className="mb-2 text-sm text-racing-silver">
+                    Sua previsão para o resultado da classificação:
+                  </div>
                   <Table>
                     <TableHeader>
                       <TableRow className="border-racing-silver/20">
@@ -145,13 +152,15 @@ const MyPredictions = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-4">Resultado da Corrida Previsto</h3>
+                  <h3 className="text-xl font-semibold mb-4">Grid de Chegada Previsto</h3>
+                  <div className="mb-2 text-sm text-racing-silver">
+                    Sua previsão para o resultado final da corrida:
+                  </div>
                   <Table>
                     <TableHeader>
                       <TableRow className="border-racing-silver/20">
                         <TableHead className="text-racing-silver">Posição</TableHead>
                         <TableHead className="text-racing-silver">Piloto</TableHead>
-                        <TableHead className="text-racing-silver">DNF</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -160,9 +169,6 @@ const MyPredictions = () => {
                           <TableCell className="text-racing-silver">{index + 1}º</TableCell>
                           <TableCell className="text-racing-white">
                             {getDriverName(driverId)}
-                          </TableCell>
-                          <TableCell className="text-racing-white">
-                            {prediction.dnf_predictions.includes(driverId) ? 'Sim' : 'Não'}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -176,6 +182,13 @@ const MyPredictions = () => {
                     <p className="text-racing-white">{getDriverName(prediction.fastest_lap)}</p>
                   </div>
                 )}
+
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Abandonos Previstos</h3>
+                  <p className="text-racing-silver">
+                    Você previu {prediction.dnf_predictions.length} abandono(s) nesta corrida
+                  </p>
+                </div>
               </CardContent>
             </Card>
           ))}
