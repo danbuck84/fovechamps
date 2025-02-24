@@ -26,7 +26,7 @@ const RaceResults = () => {
     },
   });
 
-  // Buscar lista de pilotos - Corrigida a query para garantir que os dados dos pilotos são carregados corretamente
+  // Buscar lista de pilotos com todos os campos necessários
   const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
@@ -35,6 +35,8 @@ const RaceResults = () => {
         .select(`
           id,
           name,
+          number,
+          team_id,
           team:teams (
             id,
             name
