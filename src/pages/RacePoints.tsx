@@ -6,6 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race, RacePoints, Profile } from "@/types/betting";
 
+interface RacePointWithProfile extends RacePoints {
+  profiles: {
+    username: string;
+    avatar_url: string | null;
+  };
+}
+
 const RacePoints = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
@@ -44,14 +51,18 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
+      if (!racePointsData) return [];
       
       // Validar e tipar corretamente os dados
-      const validatedData = racePointsData.map(point => {
-        if (!point.profiles || typeof point.profiles !== 'object' || !('username' in point.profiles)) {
-          throw new Error('Dados de perfil inválidos');
-        }
-        return point as RacePoints & { profiles: Pick<Profile, "username" | "avatar_url"> };
-      });
+      const validatedData = racePointsData
+        .filter((point): point is RacePointWithProfile => {
+          return (
+            point.profiles !== null &&
+            typeof point.profiles === 'object' &&
+            'username' in point.profiles &&
+            typeof point.profiles.username === 'string'
+          );
+        });
       
       return validatedData;
     },
