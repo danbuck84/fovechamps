@@ -159,16 +159,16 @@ const MyPredictions = () => {
                       })}
                   </p>
                   <div className="space-y-2">
-                    <p className="text-racing-white">
-                      <span className="text-racing-silver">Pole Position:</span>{" "}
-                      {driversMap[prediction.pole_position] || "Piloto não encontrado"}
-                    </p>
                     {prediction.pole_time && (
                       <p className="text-racing-white">
                         <span className="text-racing-silver">Tempo da Pole:</span>{" "}
                         {prediction.pole_time}
                       </p>
                     )}
+                    <p className="text-racing-white">
+                      <span className="text-racing-silver">Pole Position:</span>{" "}
+                      {driversMap[prediction.pole_position] || "Piloto não encontrado"}
+                    </p>
                     {prediction.fastest_lap && (
                       <p className="text-racing-white">
                         <span className="text-racing-silver">Volta mais rápida:</span>{" "}
