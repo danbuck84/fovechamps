@@ -11,8 +11,15 @@ interface ComparisonTableProps {
 
 const ComparisonTable = ({ prediction, raceResult, drivers, username }: ComparisonTableProps) => {
   const getDriverName = (driverId: string) => {
+    if (!driverId) return "Piloto não selecionado";
     const driver = drivers.find(d => d.id === driverId);
     return driver ? `${driver.name} (${driver.team.name})` : "Piloto não encontrado";
+  };
+
+  // Calcula o número real de DNFs (inverso do número de pilotos que terminam)
+  const calculateDNFs = (dnfPredictions: string[]) => {
+    const totalDrivers = 20; // Número total de pilotos
+    return totalDrivers - (totalDrivers - dnfPredictions.length);
   };
 
   return (
@@ -92,9 +99,9 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
               </div>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-racing-silver mb-2">Pilotos que não terminam</h3>
+              <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs</h3>
               <div className="p-2 bg-racing-silver/10 rounded">
-                <span className="text-racing-white">{prediction.dnf_predictions.length} pilotos</span>
+                <span className="text-racing-white">{calculateDNFs(prediction.dnf_predictions)} DNFs</span>
               </div>
             </div>
           </div>

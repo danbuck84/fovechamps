@@ -27,7 +27,7 @@ const RaceResults = () => {
   });
 
   // Buscar lista de pilotos
-  const { data: drivers } = useQuery({
+  const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -35,6 +35,7 @@ const RaceResults = () => {
         .select("*, team:teams(name)");
       
       if (error) throw error;
+      console.log("Drivers loaded:", data); // Debug log
       return data as (Driver & { team: { name: string } })[];
     },
   });
@@ -51,6 +52,7 @@ const RaceResults = () => {
         .single();
       
       if (error) throw error;
+      console.log("Race results loaded:", data); // Debug log
       return data as RaceResult;
     },
   });
@@ -75,7 +77,7 @@ const RaceResults = () => {
     },
   });
 
-  if (!race || !drivers || !raceResult || !predictions) {
+  if (!race || !drivers || !raceResult || !predictions || isLoadingDrivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
         <p className="text-racing-silver">Carregando resultados...</p>
@@ -85,6 +87,7 @@ const RaceResults = () => {
 
   const getDriverName = (driverId: string) => {
     if (!driverId) return "Piloto não selecionado";
+    console.log("Looking for driver:", driverId); // Debug log
     const driver = drivers.find(d => d.id === driverId);
     if (!driver) {
       console.error(`Driver not found for ID: ${driverId}`);
@@ -96,6 +99,10 @@ const RaceResults = () => {
   const handleBack = () => {
     navigate("/all-race-results");
   };
+
+  // Debug log para verificar os IDs dos pilotos nos resultados
+  console.log("Qualifying results:", raceResult.qualifying_results);
+  console.log("Available drivers:", drivers.map(d => ({ id: d.id, name: d.name })));
 
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
