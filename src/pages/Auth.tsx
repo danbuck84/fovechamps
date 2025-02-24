@@ -172,7 +172,7 @@ export default function Auth() {
               className="absolute right-2 top-1/2 -translate-y-1/2 text-racing-silver hover:text-racing-white hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </Button>
           </div>
           <Button 
@@ -208,4 +208,4 @@ export default function Auth() {
       </Card>
     </div>
   );
-};
+}
