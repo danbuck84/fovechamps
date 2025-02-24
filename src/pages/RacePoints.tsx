@@ -6,11 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race, RacePoints } from "@/types/betting";
 
-interface RacePointWithProfile extends Omit<RacePoints, 'profiles'> {
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
+type ProfileData = {
+  username: string;
+  avatar_url: string | null;
+};
+
+interface RacePointsResponse {
+  id: string;
+  user_id: string;
+  race_id: string;
+  qualifying_points: number;
+  race_points: number;
+  pole_time_points: number;
+  fastest_lap_points: number;
+  dnf_points: number;
+  total_points: number;
+  created_at: string;
+  prediction_id: string;
+  profiles: ProfileData | null;
 }
 
 const RacePoints = () => {
@@ -38,7 +51,8 @@ const RacePoints = () => {
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
-      const { data: racePointsData, error } = await supabase
+      
+      const { data, error } = await supabase
         .from("race_points")
         .select(`
           id,
@@ -61,18 +75,12 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      if (!racePointsData) return [];
+      if (!data) return [];
       
-      const validatedData = racePointsData.filter((point): point is RacePointWithProfile => {
-        if (!point.profiles) return false;
-        return (
-          typeof point.profiles === 'object' &&
-          'username' in point.profiles &&
-          typeof point.profiles.username === 'string'
-        );
+      // Filtra apenas pontuações com perfis válidos
+      return data.filter((point: RacePointsResponse): point is RacePointsResponse => {
+        return point.profiles !== null;
       });
-      
-      return validatedData;
     },
   });
 
