@@ -1,16 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button"; // Adicionando importação do Button
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
 import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
 import { PredictionForm } from "@/components/race-predictions/PredictionForm";
 import { ExistingPredictionCard } from "@/components/race-predictions/ExistingPredictionCard";
-import { formatPoleTime } from "@/utils/prediction-utils"; // Adicionando importação do formatPoleTime
+import { formatPoleTime } from "@/utils/prediction-utils";
 import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
@@ -20,7 +19,7 @@ const RacePredictions = () => {
   
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
-  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
+  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(20).fill(""));
   const [raceTop10, setRaceTop10] = useState<string[]>(Array(20).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
   const [existingPrediction, setExistingPrediction] = useState<any>(null);
@@ -40,15 +39,12 @@ const RacePredictions = () => {
       if (error) throw error;
       if (!data) throw new Error("Corrida não encontrada");
 
-      // Se estamos em 23/02/2025, todas as corridas futuras devem estar liberadas
       const qualifyingDate = new Date(data.qualifying_date);
       const now = new Date();
 
       console.log('Data da Classificação:', qualifyingDate.toLocaleString());
       console.log('Data atual:', now.toLocaleString());
       
-      // Forçar a verificação a ser falsa se a data da classificação é futura
-      // já que estamos em 23/02/2025
       setIsDeadlinePassed(false);
       
       return data as Race;
@@ -103,7 +99,7 @@ const RacePredictions = () => {
       setExistingPrediction(existingPredictionQuery);
       setPoleTime(existingPredictionQuery.pole_time || "");
       setFastestLap(existingPredictionQuery.fastest_lap || "");
-      setQualifyingTop10(existingPredictionQuery.qualifying_top_10 || Array(10).fill(""));
+      setQualifyingTop10(existingPredictionQuery.qualifying_top_10 || Array(20).fill(""));
       setRaceTop10(existingPredictionQuery.top_10 || Array(20).fill(""));
       setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
     }
@@ -133,7 +129,7 @@ const RacePredictions = () => {
       pole_position: qualifyingTop10[0] || "",
       pole_time: poleTime,
       fastest_lap: fastestLap,
-      qualifying_top_10: qualifyingTop10.filter(Boolean),
+      qualifying_results: qualifyingTop10.filter(Boolean),
       top_10: raceTop10.filter(Boolean),
       dnf_predictions: dnfPredictions,
     };

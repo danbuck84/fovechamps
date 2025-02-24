@@ -16,7 +16,7 @@ export interface Prediction {
   pole_time: string;
   fastest_lap: string;
   top_10: string[];
-  qualifying_top_10: string[];
+  qualifying_results: string[];
   dnf_predictions: string[];
   created_at: string;
 }
