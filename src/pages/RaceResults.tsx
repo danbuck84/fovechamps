@@ -19,7 +19,6 @@ const RaceResults = () => {
   const [raceResults, setRaceResults] = useState<string[]>(Array(20).fill(""));
   const [dnfDrivers, setDnfDrivers] = useState<string[]>([]);
 
-  // Buscar dados da corrida
   const { data: race } = useQuery({
     queryKey: ["race", raceId],
     queryFn: async () => {
@@ -35,7 +34,6 @@ const RaceResults = () => {
     },
   });
 
-  // Buscar lista de pilotos
   const { data: drivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
@@ -55,7 +53,6 @@ const RaceResults = () => {
     },
   });
 
-  // Buscar resultado existente
   const { data: existingResult } = useQuery({
     queryKey: ["raceResult", raceId],
     queryFn: async () => {
@@ -71,7 +68,6 @@ const RaceResults = () => {
     },
   });
 
-  // Usando useEffect para atualizar o estado quando os dados são carregados
   useEffect(() => {
     if (existingResult) {
       setPoleTime(existingResult.pole_time || "");
@@ -125,12 +121,17 @@ const RaceResults = () => {
 
       if (result.error) throw result.error;
 
-      toast({
-        title: "Sucesso",
-        description: "Resultados salvos com sucesso!",
+      const { error: pointsError } = await supabase.functions.invoke('update-points', {
+        body: { raceResult: resultData }
       });
 
-      // Aqui poderíamos disparar o cálculo das pontuações
+      if (pointsError) throw pointsError;
+
+      toast({
+        title: "Sucesso",
+        description: "Resultados salvos e pontuações atualizadas com sucesso!",
+      });
+
       navigate(`/races/${raceId}`);
     } catch (error: any) {
       console.error("Erro ao salvar resultados:", error);
@@ -161,7 +162,6 @@ const RaceResults = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Tempo da Pole */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Tempo da Pole</h3>
                 <Input
@@ -172,7 +172,6 @@ const RaceResults = () => {
                 />
               </div>
 
-              {/* Grid de Largada */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Grid de Largada</h3>
                 {Array(20).fill(0).map((_, index) => (
@@ -198,7 +197,6 @@ const RaceResults = () => {
                 ))}
               </div>
 
-              {/* Resultado da Corrida */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Resultado da Corrida</h3>
                 {Array(20).fill(0).map((_, index) => (
@@ -224,7 +222,6 @@ const RaceResults = () => {
                 ))}
               </div>
 
-              {/* Volta Mais Rápida */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Volta Mais Rápida</h3>
                 <select
@@ -241,7 +238,6 @@ const RaceResults = () => {
                 </select>
               </div>
 
-              {/* DNFs */}
               <div className="space-y-4">
                 <h3 className="text-xl font-semibold">Abandonos</h3>
                 <div className="grid grid-cols-2 gap-4">

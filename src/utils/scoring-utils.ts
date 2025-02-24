@@ -90,7 +90,7 @@ export const calculateTotalPoints = (
   total_points: number;
 } => {
   const qualifyingPoints = calculateQualifyingPoints(prediction.qualifying_top_10, result.qualifying_results);
-  const racePoints = calculateRacePoints(prediction.top_10, result.race_results);
+  const baseRacePoints = calculateRacePoints(prediction.top_10, result.race_results);
   const poleTimeDiff = calculatePoleTimeDifference(prediction.pole_time, result.pole_time);
   const fastestLapPoints = prediction.fastest_lap === result.fastest_lap ? 9 : 0;
   const dnfPoints = calculateDNFPoints(prediction.dnf_predictions, result.dnf_drivers);
@@ -102,8 +102,8 @@ export const calculateTotalPoints = (
   else if (poleTimeDiff <= 250) poleTimePoints = 3;
   else if (poleTimeDiff <= 500) poleTimePoints = 1;
 
-  // 5 pontos extras no jogo "Palpites" para quem acertou ou chegou mais perto do tempo da pole
-  if (poleTimeDiff === 0) racePoints += 5;
+  // Calcula pontos totais da corrida (incluindo bônus do tempo da pole)
+  const racePoints = baseRacePoints + (poleTimeDiff === 0 ? 5 : 0);
 
   return {
     qualifying_points: qualifyingPoints,
