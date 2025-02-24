@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
@@ -15,6 +14,7 @@ import Leaderboard from "@/pages/Leaderboard";
 import Profile from "@/pages/Profile";
 import Users from "@/pages/Users";
 import NotFound from "@/pages/NotFound";
+import AllRaceResults from "@/pages/AllRaceResults";
 
 function App() {
   return (
@@ -39,6 +39,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <Dashboard />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/all-race-results"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <AllRaceResults />
               </MainLayout>
             </PrivateRoute>
           }
