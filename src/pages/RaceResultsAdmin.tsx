@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { QualifyingResultsForm } from "@/components/race-results/QualifyingResultsForm";
 import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
 import { useRaceResults } from "@/hooks/useRaceResults";
+import type { RaceResult } from "@/types/betting";
 
 const RaceResultsAdmin = () => {
   const { raceId } = useParams();
@@ -15,10 +16,10 @@ const RaceResultsAdmin = () => {
   const { race, drivers, existingResult, refetch, loading, setLoading } = useRaceResults(raceId);
 
   const [formData, setFormData] = useState<Partial<RaceResult>>({
-    qualifying_results: existingResult?.qualifying_results || Array(20).fill(""),
-    race_results: existingResult?.race_results || Array(20).fill(""),
+    qualifying_results: existingResult?.qualifying_results || Array(20).fill("placeholder"),
+    race_results: existingResult?.race_results || Array(20).fill("placeholder"),
     pole_time: existingResult?.pole_time || "",
-    fastest_lap: existingResult?.fastest_lap || "",
+    fastest_lap: existingResult?.fastest_lap || "placeholder",
     dnf_drivers: existingResult?.dnf_drivers || [],
   });
 
@@ -29,7 +30,8 @@ const RaceResultsAdmin = () => {
       : formData.race_results;
     
     return drivers.filter(driver => {
-      const isSelected = selectedPositions?.includes(driver.id);
+      if (!selectedPositions) return true;
+      const isSelected = selectedPositions.includes(driver.id);
       return !isSelected || selectedPositions[position] === driver.id;
     });
   };
@@ -39,22 +41,26 @@ const RaceResultsAdmin = () => {
     setLoading(true);
 
     try {
-      const resultData = {
+      // Limpar os valores "placeholder" antes de salvar
+      const cleanedData = {
         ...formData,
+        qualifying_results: formData.qualifying_results?.map(r => r === "placeholder" ? "" : r) || [],
+        race_results: formData.race_results?.map(r => r === "placeholder" ? "" : r) || [],
+        fastest_lap: formData.fastest_lap === "placeholder" ? "" : formData.fastest_lap,
         race_id: raceId,
       };
 
       if (existingResult) {
         const { error } = await supabase
           .from("race_results")
-          .update(resultData)
+          .update(cleanedData)
           .eq("id", existingResult.id);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("race_results")
-          .insert([resultData]);
+          .insert([cleanedData]);
 
         if (error) throw error;
       }
@@ -107,20 +113,20 @@ const RaceResultsAdmin = () => {
             onPoleTimeChange={(value) => setFormData({ ...formData, pole_time: value })}
             qualifyingResults={formData.qualifying_results || []}
             onQualifyingDriverChange={(position, driverId) => {
-              const newQualifyingResults = [...formData.qualifying_results || []];
-              newQualifyingResults[position] = driverId === "placeholder" ? "" : driverId;
+              const newQualifyingResults = [...(formData.qualifying_results || [])];
+              newQualifyingResults[position] = driverId;
               setFormData({ ...formData, qualifying_results: newQualifyingResults });
             }}
             availableDrivers={(position) => getAvailableDrivers(position, true)}
           />
 
           <RaceResultsForm
-            fastestLap={formData.fastest_lap || ""}
-            onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value === "placeholder" ? "" : value })}
+            fastestLap={formData.fastest_lap || "placeholder"}
+            onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
             raceResults={formData.race_results || []}
             onRaceDriverChange={(position, driverId) => {
-              const newRaceResults = [...formData.race_results || []];
-              newRaceResults[position] = driverId === "placeholder" ? "" : driverId;
+              const newRaceResults = [...(formData.race_results || [])];
+              newRaceResults[position] = driverId;
               setFormData({ ...formData, race_results: newRaceResults });
             }}
             dnfDrivers={formData.dnf_drivers || []}
