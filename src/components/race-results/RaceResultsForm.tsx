@@ -24,6 +24,10 @@ export const RaceResultsForm = ({
   availableDrivers,
   allDrivers,
 }: RaceResultsFormProps) => {
+  const sortDrivers = (drivers: (Driver & { team: { name: string; engine: string } })[]) => {
+    return [...drivers].sort((a, b) => a.name.localeCompare(b.name));
+  };
+
   return (
     <Card className="bg-racing-black border-racing-silver/20">
       <CardHeader>
@@ -38,10 +42,10 @@ export const RaceResultsForm = ({
             <select
               value={fastestLap}
               onChange={(e) => onFastestLapChange(e.target.value)}
-              className="w-full bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2"
+              className="w-full bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 cursor-pointer [&>option]:bg-racing-black [&>option]:text-racing-white"
             >
               <option value="">Selecione um piloto</option>
-              {allDrivers.map((driver) => (
+              {sortDrivers(allDrivers).map((driver) => (
                 <option key={driver.id} value={driver.id}>
                   {driver.name} - {driver.team.name}
                 </option>
@@ -59,11 +63,11 @@ export const RaceResultsForm = ({
                 <select
                   value={raceResults[index] || ""}
                   onChange={(e) => onRaceDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 hover:bg-racing-white hover:text-racing-black transition-colors duration-200 cursor-pointer"
+                  className="flex-1 bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 cursor-pointer [&>option]:bg-racing-black [&>option]:text-racing-white [&>option:hover]:bg-racing-white [&>option:hover]:text-racing-black"
                 >
                   <option value="">Selecione um piloto</option>
-                  {availableDrivers(index).map((driver) => (
-                    <option key={driver.id} value={driver.id} className="bg-racing-black text-racing-white hover:bg-racing-white hover:text-racing-black">
+                  {sortDrivers(availableDrivers(index)).map((driver) => (
+                    <option key={driver.id} value={driver.id}>
                       {driver.name} - {driver.team.name}
                     </option>
                   ))}

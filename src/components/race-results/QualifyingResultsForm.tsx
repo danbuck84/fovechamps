@@ -17,6 +17,10 @@ export const QualifyingResultsForm = ({
   onQualifyingDriverChange,
   availableDrivers,
 }: QualifyingResultsFormProps) => {
+  const sortDrivers = (drivers: (Driver & { team: { name: string; engine: string } })[]) => {
+    return [...drivers].sort((a, b) => a.name.localeCompare(b.name));
+  };
+
   return (
     <Card className="bg-racing-black border-racing-silver/20">
       <CardHeader>
@@ -47,11 +51,11 @@ export const QualifyingResultsForm = ({
                 <select
                   value={qualifyingResults[index] || ""}
                   onChange={(e) => onQualifyingDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-white text-racing-black border border-racing-silver/20 rounded-md p-2 hover:bg-racing-black hover:text-racing-white transition-colors duration-200 cursor-pointer"
+                  className="flex-1 bg-racing-white text-racing-black border border-racing-silver/20 rounded-md p-2 cursor-pointer [&>option]:bg-racing-white [&>option]:text-racing-black [&>option:hover]:bg-racing-black [&>option:hover]:text-racing-white"
                 >
                   <option value="">Selecione um piloto</option>
-                  {availableDrivers(index).map((driver) => (
-                    <option key={driver.id} value={driver.id} className="bg-racing-white text-racing-black hover:bg-racing-black hover:text-racing-white">
+                  {sortDrivers(availableDrivers(index)).map((driver) => (
+                    <option key={driver.id} value={driver.id}>
                       {driver.name} - {driver.team.name}
                     </option>
                   ))}
