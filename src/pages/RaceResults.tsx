@@ -85,7 +85,11 @@ const RaceResults = () => {
 
   const getDriverName = (driverId: string) => {
     const driver = drivers.find(d => d.id === driverId);
-    return driver ? `${driver.name} (${driver.team.name})` : "Piloto não encontrado";
+    if (!driver) {
+      console.error(`Driver not found for ID: ${driverId}`);
+      return "Piloto não encontrado";
+    }
+    return `${driver.name} (${driver.team.name})`;
   };
 
   return (

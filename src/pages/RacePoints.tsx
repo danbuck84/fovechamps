@@ -5,14 +5,6 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race } from "@/types/betting";
-import { Database } from "@/integrations/supabase/types";
-
-type DbRacePoint = Database['public']['Tables']['race_points']['Row'] & {
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
-};
 
 const RacePoints = () => {
   const { raceId } = useParams();
@@ -43,27 +35,17 @@ const RacePoints = () => {
       const { data, error } = await supabase
         .from("race_points")
         .select(`
-          id,
-          user_id,
-          race_id,
-          qualifying_points,
-          race_points,
-          pole_time_points,
-          fastest_lap_points,
-          dnf_points,
-          total_points,
-          created_at,
-          prediction_id,
+          *,
           profiles:user_id (
             username,
             avatar_url
           )
         `)
         .eq("race_id", raceId)
-        .order("total_points", { ascending: false }) as { data: DbRacePoint[] | null, error: null } | { data: null, error: Error };
+        .order("total_points", { ascending: false });
       
       if (error) throw error;
-      return data || [];
+      return data;
     },
   });
 
@@ -91,20 +73,20 @@ const RacePoints = () => {
 
         <Card className="bg-racing-black border-racing-silver/20">
           <CardHeader>
-            <CardTitle>Pontuação Detalhada</CardTitle>
+            <CardTitle className="text-racing-white">Pontuação Detalhada</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-racing-silver/20">
-                    <th className="px-4 py-2 text-left">Participante</th>
-                    <th className="px-4 py-2 text-center">Classificação</th>
-                    <th className="px-4 py-2 text-center">Corrida</th>
-                    <th className="px-4 py-2 text-center">Pole Time</th>
-                    <th className="px-4 py-2 text-center">Volta Rápida</th>
-                    <th className="px-4 py-2 text-center">DNFs</th>
-                    <th className="px-4 py-2 text-center">Total</th>
+                    <th className="px-4 py-2 text-left text-racing-silver">Participante</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">Classificação</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">Corrida</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">Pole Time</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">Volta Rápida</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">DNFs</th>
+                    <th className="px-4 py-2 text-center text-racing-silver">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,14 +100,14 @@ const RacePoints = () => {
                             className="w-6 h-6 rounded-full"
                           />
                         )}
-                        {point.profiles?.username || "Usuário"}
+                        <span className="text-racing-white">{point.profiles?.username || "Usuário"}</span>
                       </td>
-                      <td className="px-4 py-2 text-center">{point.qualifying_points}</td>
-                      <td className="px-4 py-2 text-center">{point.race_points}</td>
-                      <td className="px-4 py-2 text-center">{point.pole_time_points}</td>
-                      <td className="px-4 py-2 text-center">{point.fastest_lap_points}</td>
-                      <td className="px-4 py-2 text-center">{point.dnf_points}</td>
-                      <td className="px-4 py-2 text-center font-bold">{point.total_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.qualifying_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.race_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.pole_time_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.fastest_lap_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.dnf_points}</td>
+                      <td className="px-4 py-2 text-center font-bold text-racing-white">{point.total_points}</td>
                     </tr>
                   ))}
                 </tbody>
