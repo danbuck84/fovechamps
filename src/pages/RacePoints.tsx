@@ -7,18 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race } from "@/types/betting";
 import { Database } from "@/integrations/supabase/types";
 
-type RacePointData = {
-  id: string;
-  user_id: string;
-  race_id: string;
-  qualifying_points: number;
-  race_points: number;
-  pole_time_points: number;
-  fastest_lap_points: number;
-  dnf_points: number;
-  total_points: number;
-  created_at: string;
-  prediction_id: string;
+type DbRacePoint = Database['public']['Tables']['race_points']['Row'] & {
   profiles: {
     username: string;
     avatar_url: string | null;
@@ -48,7 +37,7 @@ const RacePoints = () => {
   // Buscar pontuações da corrida
   const { data: points } = useQuery({
     queryKey: ["racePoints", raceId],
-    queryFn: async (): Promise<RacePointData[]> => {
+    queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
       
       const { data, error } = await supabase
@@ -71,12 +60,10 @@ const RacePoints = () => {
           )
         `)
         .eq("race_id", raceId)
-        .order("total_points", { ascending: false });
+        .order("total_points", { ascending: false }) as { data: DbRacePoint[] | null, error: null } | { data: null, error: Error };
       
       if (error) throw error;
-      if (!data) return [];
-
-      return data as RacePointData[];
+      return data || [];
     },
   });
 
