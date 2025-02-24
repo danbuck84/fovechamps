@@ -50,19 +50,27 @@ const RaceResultsAdmin = () => {
         race_id: raceId,
       };
 
+      console.log("Dados a serem salvos:", cleanedData); // Log para debug
+
       if (existingResult) {
         const { error } = await supabase
           .from("race_results")
           .update(cleanedData)
           .eq("id", existingResult.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erro ao atualizar:", error); // Log para debug
+          throw error;
+        }
       } else {
         const { error } = await supabase
           .from("race_results")
           .insert([cleanedData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erro ao inserir:", error); // Log para debug
+          throw error;
+        }
       }
 
       toast({
