@@ -84,12 +84,17 @@ const RaceResults = () => {
   }
 
   const getDriverName = (driverId: string) => {
+    if (!driverId) return "Piloto não selecionado";
     const driver = drivers.find(d => d.id === driverId);
     if (!driver) {
       console.error(`Driver not found for ID: ${driverId}`);
       return "Piloto não encontrado";
     }
     return `${driver.name} (${driver.team.name})`;
+  };
+
+  const handleBack = () => {
+    navigate("/all-race-results");
   };
 
   return (
@@ -99,7 +104,7 @@ const RaceResults = () => {
           <h1 className="text-2xl font-bold">Resultados: {race.name}</h1>
           <Button 
             variant="outline"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
           >
             Voltar
@@ -155,14 +160,14 @@ const RaceResults = () => {
               <div>
                 <h3 className="text-sm font-medium text-racing-silver mb-2">Volta Mais Rápida</h3>
                 <div className="p-2 bg-racing-silver/10 rounded">
-                  <span className="text-racing-white">{getDriverName(raceResult.fastest_lap || '')}</span>
+                  <span className="text-racing-white">{getDriverName(raceResult.fastest_lap)}</span>
                 </div>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs</h3>
                 <div className="p-2 bg-racing-silver/10 rounded">
                   <span className="text-racing-white">
-                    {(raceResult.dnf_drivers?.length || 0)} pilotos
+                    {raceResult.dnf_drivers?.length || 0} DNFs
                   </span>
                 </div>
               </div>

@@ -26,5 +26,5 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     </div>;
   }
 
-  return children;
+  return <>{children}</>;
 };
