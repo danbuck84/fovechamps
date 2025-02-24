@@ -4,23 +4,28 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  cursor: pointer;
 }
 
 /* Estilos para o Grid de Largada */
 .qualifying-select {
   background-color: #F8F8F8;
   color: #0A0A0A;
+  transition: all 0.2s ease;
 }
 
-.qualifying-select option {
+.qualifying-select:hover {
   background-color: #F8F8F8;
   color: #0A0A0A;
 }
 
-.qualifying-select option:hover,
-.qualifying-select option:focus,
-.qualifying-select option:active,
-.qualifying-select option:checked {
+.qualifying-select option {
+  background-color: #F8F8F8 !important;
+  color: #0A0A0A !important;
+  cursor: pointer;
+}
+
+.qualifying-select option:hover {
   background-color: #0A0A0A !important;
   color: #F8F8F8 !important;
 }
@@ -29,17 +34,47 @@ select {
 .race-select {
   background-color: #0A0A0A;
   color: #F8F8F8;
+  transition: all 0.2s ease;
 }
 
-.race-select option {
+.race-select:hover {
   background-color: #0A0A0A;
   color: #F8F8F8;
 }
 
-.race-select option:hover,
-.race-select option:focus,
-.race-select option:active,
+.race-select option {
+  background-color: #0A0A0A !important;
+  color: #F8F8F8 !important;
+  cursor: pointer;
+}
+
+.race-select option:hover {
+  background-color: #F8F8F8 !important;
+  color: #0A0A0A !important;
+}
+
+/* Forçar estilos mesmo com foco */
+.qualifying-select:focus option:checked,
+.qualifying-select option:checked {
+  background-color: #F8F8F8 !important;
+  color: #0A0A0A !important;
+}
+
+.race-select:focus option:checked,
 .race-select option:checked {
+  background-color: #0A0A0A !important;
+  color: #F8F8F8 !important;
+}
+
+/* Forçar estilos no hover mesmo com foco */
+.qualifying-select:focus option:hover,
+.qualifying-select option:hover {
+  background-color: #0A0A0A !important;
+  color: #F8F8F8 !important;
+}
+
+.race-select:focus option:hover,
+.race-select option:hover {
   background-color: #F8F8F8 !important;
   color: #0A0A0A !important;
 }
