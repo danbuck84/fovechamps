@@ -56,16 +56,16 @@ export const QualifyingResultsForm = ({
               <div key={`qualifying-${index}`} className="flex items-center gap-2">
                 <span className="w-8 text-racing-silver">{index + 1}.</span>
                 <Select
-                  value={qualifyingResults[index] || ""}
+                  value={qualifyingResults[index] || "placeholder"}
                   onValueChange={(value) => onQualifyingDriverChange(index, value)}
                 >
                   <SelectTrigger className="w-full bg-racing-white text-racing-black border-racing-silver/20">
                     <SelectValue placeholder="Selecione um piloto" />
                   </SelectTrigger>
                   <SelectContent className="bg-racing-white border-racing-silver/20">
-                    {qualifyingResults[index] === "" && (
-                      <SelectItem value="">Selecione um piloto</SelectItem>
-                    )}
+                    <SelectItem value="placeholder" className="text-racing-black">
+                      Selecione um piloto
+                    </SelectItem>
                     {sortDrivers(availableDrivers(index)).map((driver) => (
                       <SelectItem 
                         key={driver.id} 

@@ -47,16 +47,16 @@ export const RaceResultsForm = ({
               Volta Mais Rápida
             </label>
             <Select
-              value={fastestLap}
+              value={fastestLap || "placeholder"}
               onValueChange={onFastestLapChange}
             >
               <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
               <SelectContent className="bg-racing-black border-racing-silver/20">
-                {fastestLap === "" && (
-                  <SelectItem value="">Selecione um piloto</SelectItem>
-                )}
+                <SelectItem value="placeholder" className="text-racing-white">
+                  Selecione um piloto
+                </SelectItem>
                 {sortDrivers(allDrivers).map((driver) => (
                   <SelectItem 
                     key={driver.id} 
@@ -78,16 +78,16 @@ export const RaceResultsForm = ({
               <div key={`race-${index}`} className="flex items-center gap-2">
                 <span className="w-8 text-racing-silver">{index + 1}.</span>
                 <Select
-                  value={raceResults[index] || ""}
+                  value={raceResults[index] || "placeholder"}
                   onValueChange={(value) => onRaceDriverChange(index, value)}
                 >
                   <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
                     <SelectValue placeholder="Selecione um piloto" />
                   </SelectTrigger>
                   <SelectContent className="bg-racing-black border-racing-silver/20">
-                    {raceResults[index] === "" && (
-                      <SelectItem value="">Selecione um piloto</SelectItem>
-                    )}
+                    <SelectItem value="placeholder" className="text-racing-white">
+                      Selecione um piloto
+                    </SelectItem>
                     {sortDrivers(availableDrivers(index)).map((driver) => (
                       <SelectItem 
                         key={driver.id} 
