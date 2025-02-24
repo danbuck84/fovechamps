@@ -40,3 +40,28 @@ export interface Team {
   name: string;
   engine: string;
 }
+
+export interface RaceResult {
+  id: string;
+  race_id: string;
+  qualifying_results: string[];
+  race_results: string[];
+  pole_time: string;
+  fastest_lap: string;
+  dnf_drivers: string[];
+  created_at: string;
+}
+
+export interface RacePoints {
+  id: string;
+  user_id: string;
+  race_id: string;
+  prediction_id: string;
+  qualifying_points: number;
+  race_points: number;
+  pole_time_points: number;
+  fastest_lap_points: number;
+  dnf_points: number;
+  total_points: number;
+  created_at: string;
+}

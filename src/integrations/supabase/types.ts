@@ -125,6 +125,104 @@ export type Database = {
         }
         Relationships: []
       }
+      race_points: {
+        Row: {
+          created_at: string
+          dnf_points: number | null
+          fastest_lap_points: number | null
+          id: string
+          pole_time_points: number | null
+          prediction_id: string
+          qualifying_points: number | null
+          race_id: string
+          race_points: number | null
+          total_points: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dnf_points?: number | null
+          fastest_lap_points?: number | null
+          id?: string
+          pole_time_points?: number | null
+          prediction_id: string
+          qualifying_points?: number | null
+          race_id: string
+          race_points?: number | null
+          total_points?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dnf_points?: number | null
+          fastest_lap_points?: number | null
+          id?: string
+          pole_time_points?: number | null
+          prediction_id?: string
+          qualifying_points?: number | null
+          race_id?: string
+          race_points?: number | null
+          total_points?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_points_prediction_id_fkey"
+            columns: ["prediction_id"]
+            isOneToOne: false
+            referencedRelation: "predictions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "race_points_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      race_results: {
+        Row: {
+          created_at: string
+          dnf_drivers: string[] | null
+          fastest_lap: string | null
+          id: string
+          pole_time: string | null
+          qualifying_results: string[]
+          race_id: string
+          race_results: string[]
+        }
+        Insert: {
+          created_at?: string
+          dnf_drivers?: string[] | null
+          fastest_lap?: string | null
+          id?: string
+          pole_time?: string | null
+          qualifying_results?: string[]
+          race_id: string
+          race_results?: string[]
+        }
+        Update: {
+          created_at?: string
+          dnf_drivers?: string[] | null
+          fastest_lap?: string | null
+          id?: string
+          pole_time?: string | null
+          qualifying_results?: string[]
+          race_id?: string
+          race_results?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "race_results_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: true
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       races: {
         Row: {
           circuit: string
