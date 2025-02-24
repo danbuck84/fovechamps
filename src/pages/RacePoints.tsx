@@ -6,20 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race } from "@/types/betting";
 
+interface Profile {
+  username: string;
+  avatar_url: string | null;
+}
+
 interface RacePoint {
   id: string;
   user_id: string;
   race_id: string;
+  prediction_id: string;
   qualifying_points: number | null;
   race_points: number | null;
   pole_time_points: number | null;
   fastest_lap_points: number | null;
   dnf_points: number | null;
   total_points: number | null;
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
+  created_at: string;
+  profiles: Profile | null;
 }
 
 const RacePoints = () => {
@@ -43,7 +47,7 @@ const RacePoints = () => {
   });
 
   // Buscar pontuações da corrida
-  const { data: points } = useQuery<RacePoint[]>({
+  const { data: points } = useQuery({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -61,7 +65,7 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as RacePoint[];
     },
   });
 
