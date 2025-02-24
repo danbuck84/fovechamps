@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -70,16 +69,18 @@ const RaceResults = () => {
       if (error) throw error;
       return data as RaceResult | null;
     },
-    onSuccess: (data) => {
-      if (data) {
-        setPoleTime(data.pole_time || "");
-        setFastestLap(data.fastest_lap || "");
-        setQualifyingResults(data.qualifying_results);
-        setRaceResults(data.race_results);
-        setDnfDrivers(data.dnf_drivers);
-      }
-    },
   });
+
+  // Usando useEffect para atualizar o estado quando os dados são carregados
+  useEffect(() => {
+    if (existingResult) {
+      setPoleTime(existingResult.pole_time || "");
+      setFastestLap(existingResult.fastest_lap || "");
+      setQualifyingResults(existingResult.qualifying_results);
+      setRaceResults(existingResult.race_results);
+      setDnfDrivers(existingResult.dnf_drivers);
+    }
+  }, [existingResult]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
