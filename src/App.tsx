@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import MainLayout from "@/components/layout/MainLayout";
+import PrivateRoute from "@/components/auth/PrivateRoute";
 import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
@@ -23,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route element={<MainLayout><Outlet /></MainLayout>}>
+          <Route element={<PrivateRoute><MainLayout><Outlet /></MainLayout></PrivateRoute>}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/race-predictions/:raceId" element={<RacePredictions />} />
             <Route path="/my-predictions" element={<MyPredictions />} />

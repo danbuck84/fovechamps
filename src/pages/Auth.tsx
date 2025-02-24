@@ -78,6 +78,39 @@ export default function Auth() {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Digite seu email",
+        description: "Por favor, insira seu email para receber o link de recuperação de senha.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Email enviado!",
+        description: "Verifique sua caixa de entrada para recuperar sua senha.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro!",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const toggleMode = () => {
     setIsSignUp(!isSignUp);
     // Limpa os campos ao alternar entre modos
@@ -150,7 +183,7 @@ export default function Auth() {
             {isSignUp ? "Criar Conta" : "Entrar"}
           </Button>
         </form>
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <Button
             variant="link"
             onClick={toggleMode}
@@ -161,6 +194,16 @@ export default function Auth() {
               ? "Já tem uma conta? Faça login"
               : "Não tem uma conta? Cadastre-se"}
           </Button>
+          {!isSignUp && (
+            <Button
+              variant="link"
+              onClick={handleResetPassword}
+              className="text-sm text-racing-silver hover:text-racing-white block mx-auto"
+              disabled={isLoading}
+            >
+              Esqueci minha senha
+            </Button>
+          )}
         </div>
       </Card>
     </div>
