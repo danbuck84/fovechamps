@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,9 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
 import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
-import { RacePredictionFormWrapper } from "@/components/race-predictions/RacePredictionFormWrapper";
-import { formatPoleTime } from "@/utils/prediction-utils";
-import { Button } from "@/components/ui/button";
+import { PredictionForm } from "@/components/race-predictions/PredictionForm";
+import { ExistingPredictionCard } from "@/components/race-predictions/ExistingPredictionCard";
 import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
@@ -107,50 +107,7 @@ const RacePredictions = () => {
     }
   }, [existingPredictionQuery, isDeadlinePassed]);
 
-  useEffect(() => {
-    const checkExistingPrediction = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !raceId) return;
-
-      const { data: prediction, error } = await supabase
-        .from("predictions")
-        .select("*")
-        .eq("race_id", raceId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Erro ao buscar palpites:", error);
-        return;
-      }
-
-      if (prediction) {
-        setExistingPrediction(prediction);
-        if (!isDeadlinePassed) {
-          setPoleTime(prediction.pole_time || "");
-          setFastestLap(prediction.fastest_lap || "");
-          setQualifyingTop10(prediction.qualifying_top_10 || Array(10).fill(""));
-          setRaceTop10(prediction.top_10 || Array(10).fill(""));
-          setDnfPredictions(prediction.dnf_predictions || []);
-        }
-      }
-    };
-
-    checkExistingPrediction();
-  }, [raceId, isDeadlinePassed]);
-
-  useEffect(() => {
-    if (poleTime) {
-      setQualifyingTop10(prev => {
-        const newTop10 = [...prev];
-        newTop10[0] = poleTime;
-        return newTop10;
-      });
-    }
-  }, [poleTime]);
-
   const handleDriverDNF = (count: number) => {
-    // Cria um array com o número especificado de elementos vazios
     setDnfPredictions(Array(count).fill(""));
   };
 
@@ -178,14 +135,11 @@ const RacePredictions = () => {
       top_10: raceTop10.filter(Boolean),
       dnf_predictions: dnfPredictions,
     };
-
-    console.log('Dados a serem salvos:', predictionData);
     
     try {
       let result;
       
       if (existingPredictionQuery?.id) {
-        console.log('Atualizando previsão existente:', existingPredictionQuery.id);
         result = await supabase
           .from("predictions")
           .update(predictionData)
@@ -193,15 +147,12 @@ const RacePredictions = () => {
           .select()
           .single();
       } else {
-        console.log('Criando nova previsão');
         result = await supabase
           .from("predictions")
           .insert([predictionData])
           .select()
           .single();
       }
-
-      console.log('Resultado da operação:', result);
 
       if (result.error) {
         console.error("Erro ao salvar palpites:", result.error);
@@ -260,32 +211,12 @@ const RacePredictions = () => {
       <div className="min-h-screen bg-racing-black text-racing-white">
         <div className="container mx-auto px-4 py-8">
           <RacePredictionsHeader onBack={() => navigate(-1)} />
-          <Card className="bg-racing-black border-racing-silver/20">
-            <RaceInfoHeader 
-              race={race}
-              isDeadlinePassed={isDeadlinePassed}
-            />
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <p className="text-racing-silver mb-4">
-                Você já fez seus palpites para este Grande Prêmio.
-              </p>
-              <div className="space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate("/my-predictions")}
-                  className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-silver/20"
-                >
-                  Ver Meus Palpites
-                </Button>
-                <Button
-                  onClick={() => setExistingPrediction(null)}
-                  className="bg-racing-red hover:bg-racing-red/90"
-                >
-                  Editar Palpites
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ExistingPredictionCard
+            race={race}
+            isDeadlinePassed={isDeadlinePassed}
+            onEdit={() => setExistingPrediction(null)}
+            onViewPredictions={() => navigate("/my-predictions")}
+          />
         </div>
       </div>
     );
@@ -330,10 +261,10 @@ const RacePredictions = () => {
             isDeadlinePassed={isDeadlinePassed}
           />
           <CardContent>
-            <RacePredictionFormWrapper
+            <PredictionForm
               drivers={drivers}
               poleTime={poleTime}
-              onPoleTimeChange={ (e) => {
+              onPoleTimeChange={(e) => {
                 const formatted = formatPoleTime(e.target.value);
                 if (formatted !== undefined) {
                   setPoleTime(formatted);
