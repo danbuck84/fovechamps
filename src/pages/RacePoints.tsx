@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Race, RacePoints } from "@/types/betting";
+import type { Race } from "@/types/betting";
 
 type ProfileData = {
   username: string;
   avatar_url: string | null;
 };
 
-interface RacePointsResponse {
+type RacePointData = {
   id: string;
   user_id: string;
   race_id: string;
@@ -23,8 +23,8 @@ interface RacePointsResponse {
   total_points: number;
   created_at: string;
   prediction_id: string;
-  profiles: ProfileData | null;
-}
+  profiles?: ProfileData;
+};
 
 const RacePoints = () => {
   const { raceId } = useParams();
@@ -47,7 +47,7 @@ const RacePoints = () => {
   });
 
   // Buscar pontuações da corrida
-  const { data: points } = useQuery({
+  const { data: points } = useQuery<RacePointData[]>({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -75,12 +75,7 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      if (!data) return [];
-      
-      // Filtra apenas pontuações com perfis válidos
-      return data.filter((point: RacePointsResponse): point is RacePointsResponse => {
-        return point.profiles !== null;
-      });
+      return data || [];
     },
   });
 
@@ -135,7 +130,7 @@ const RacePoints = () => {
                             className="w-6 h-6 rounded-full"
                           />
                         )}
-                        {point.profiles?.username}
+                        {point.profiles?.username || "Usuário"}
                       </td>
                       <td className="px-4 py-2 text-center">{point.qualifying_points}</td>
                       <td className="px-4 py-2 text-center">{point.race_points}</td>
