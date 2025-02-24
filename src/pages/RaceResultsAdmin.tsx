@@ -96,13 +96,19 @@ const RaceResultsAdmin = () => {
           .update(resultData)
           .eq("id", existingResult.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erro ao atualizar resultados:", error);
+          throw error;
+        }
       } else {
         const { error } = await supabase
           .from("race_results")
           .insert([resultData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Erro ao inserir resultados:", error);
+          throw error;
+        }
       }
 
       toast({
@@ -115,7 +121,7 @@ const RaceResultsAdmin = () => {
       console.error("Erro ao salvar resultados:", error);
       toast({
         title: "Erro",
-        description: "Não foi possível salvar os resultados.",
+        description: "Não foi possível salvar os resultados. Verifique se você tem permissão.",
         variant: "destructive",
       });
     } finally {
@@ -132,68 +138,70 @@ const RaceResultsAdmin = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-racing-white">
-          Administrar Resultados: {race.name}
-        </h1>
-        <Button 
-          variant="outline"
-          onClick={() => navigate(-1)}
-          className="border-racing-silver/20"
-        >
-          Voltar
-        </Button>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <QualifyingResultsForm
-          poleTime={formData.pole_time || ""}
-          onPoleTimeChange={(value) => setFormData({ ...formData, pole_time: value })}
-          qualifyingResults={formData.qualifying_results || []}
-          onQualifyingDriverChange={(position, driverId) => {
-            const newQualifyingResults = [...formData.qualifying_results || []];
-            newQualifyingResults[position] = driverId;
-            setFormData({ ...formData, qualifying_results: newQualifyingResults });
-          }}
-          availableDrivers={(position) => getAvailableDrivers(position, true)}
-        />
-
-        <RaceResultsForm
-          fastestLap={formData.fastest_lap || ""}
-          onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
-          raceResults={formData.race_results || []}
-          onRaceDriverChange={(position, driverId) => {
-            const newRaceResults = [...formData.race_results || []];
-            newRaceResults[position] = driverId;
-            setFormData({ ...formData, race_results: newRaceResults });
-          }}
-          dnfDrivers={formData.dnf_drivers || []}
-          onDNFChange={(driverId, checked) => {
-            const currentDNFs = [...(formData.dnf_drivers || [])];
-            if (checked && !currentDNFs.includes(driverId)) {
-              setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
-            } else if (!checked) {
-              setFormData({
-                ...formData,
-                dnf_drivers: currentDNFs.filter(id => id !== driverId)
-              });
-            }
-          }}
-          availableDrivers={(position) => getAvailableDrivers(position, false)}
-          allDrivers={drivers}
-        />
-
-        <div className="flex justify-end">
+    <div className="min-h-screen bg-racing-black text-racing-white">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-racing-white">
+            Administrar Resultados: {race.name}
+          </h1>
           <Button 
-            type="submit" 
-            disabled={loading}
-            className="bg-racing-red hover:bg-racing-red/90"
+            variant="outline"
+            onClick={() => navigate(-1)}
+            className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
           >
-            {loading ? "Salvando..." : "Salvar Resultados"}
+            Voltar
           </Button>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
+          <QualifyingResultsForm
+            poleTime={formData.pole_time || ""}
+            onPoleTimeChange={(value) => setFormData({ ...formData, pole_time: value })}
+            qualifyingResults={formData.qualifying_results || []}
+            onQualifyingDriverChange={(position, driverId) => {
+              const newQualifyingResults = [...formData.qualifying_results || []];
+              newQualifyingResults[position] = driverId;
+              setFormData({ ...formData, qualifying_results: newQualifyingResults });
+            }}
+            availableDrivers={(position) => getAvailableDrivers(position, true)}
+          />
+
+          <RaceResultsForm
+            fastestLap={formData.fastest_lap || ""}
+            onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
+            raceResults={formData.race_results || []}
+            onRaceDriverChange={(position, driverId) => {
+              const newRaceResults = [...formData.race_results || []];
+              newRaceResults[position] = driverId;
+              setFormData({ ...formData, race_results: newRaceResults });
+            }}
+            dnfDrivers={formData.dnf_drivers || []}
+            onDNFChange={(driverId, checked) => {
+              const currentDNFs = [...(formData.dnf_drivers || [])];
+              if (checked && !currentDNFs.includes(driverId)) {
+                setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
+              } else if (!checked) {
+                setFormData({
+                  ...formData,
+                  dnf_drivers: currentDNFs.filter(id => id !== driverId)
+                });
+              }
+            }}
+            availableDrivers={(position) => getAvailableDrivers(position, false)}
+            allDrivers={drivers}
+          />
+
+          <div className="flex justify-end mt-8">
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="bg-racing-red hover:bg-racing-red/90 transition-colors duration-200 min-w-[150px]"
+            >
+              {loading ? "Salvando..." : "Salvar Resultados"}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
