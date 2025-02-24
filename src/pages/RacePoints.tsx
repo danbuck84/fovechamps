@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Race, RacePoints, Profile } from "@/types/betting";
+import type { Race, RacePoints } from "@/types/betting";
 
-interface RacePointWithProfile extends RacePoints {
+interface RacePointWithProfile extends Omit<RacePoints, 'profiles'> {
   profiles: {
     username: string;
     avatar_url: string | null;
-  };
+  } | null;
 }
 
 const RacePoints = () => {
@@ -41,7 +41,17 @@ const RacePoints = () => {
       const { data: racePointsData, error } = await supabase
         .from("race_points")
         .select(`
-          *,
+          id,
+          user_id,
+          race_id,
+          qualifying_points,
+          race_points,
+          pole_time_points,
+          fastest_lap_points,
+          dnf_points,
+          total_points,
+          created_at,
+          prediction_id,
           profiles:user_id (
             username,
             avatar_url
@@ -53,16 +63,14 @@ const RacePoints = () => {
       if (error) throw error;
       if (!racePointsData) return [];
       
-      // Validar e tipar corretamente os dados
-      const validatedData = racePointsData
-        .filter((point): point is RacePointWithProfile => {
-          return (
-            point.profiles !== null &&
-            typeof point.profiles === 'object' &&
-            'username' in point.profiles &&
-            typeof point.profiles.username === 'string'
-          );
-        });
+      const validatedData = racePointsData.filter((point): point is RacePointWithProfile => {
+        if (!point.profiles) return false;
+        return (
+          typeof point.profiles === 'object' &&
+          'username' in point.profiles &&
+          typeof point.profiles.username === 'string'
+        );
+      });
       
       return validatedData;
     },
@@ -112,14 +120,14 @@ const RacePoints = () => {
                   {points.map((point) => (
                     <tr key={point.id} className="border-b border-racing-silver/20">
                       <td className="px-4 py-2 flex items-center gap-2">
-                        {point.profiles.avatar_url && (
+                        {point.profiles?.avatar_url && (
                           <img 
                             src={point.profiles.avatar_url} 
                             alt={point.profiles.username} 
                             className="w-6 h-6 rounded-full"
                           />
                         )}
-                        {point.profiles.username}
+                        {point.profiles?.username}
                       </td>
                       <td className="px-4 py-2 text-center">{point.qualifying_points}</td>
                       <td className="px-4 py-2 text-center">{point.race_points}</td>
