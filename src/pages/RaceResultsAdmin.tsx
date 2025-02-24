@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { QualifyingResultsForm } from "@/components/race-results/QualifyingResultsForm";
 import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
 import { useRaceResults } from "@/hooks/useRaceResults";
+import { formatPoleTime } from "@/utils/prediction-utils";
 import type { RaceResult } from "@/types/betting";
 
 const RaceResultsAdmin = () => {
@@ -50,7 +51,7 @@ const RaceResultsAdmin = () => {
         race_id: raceId,
       };
 
-      console.log("Dados a serem salvos:", cleanedData); // Log para debug
+      console.log("Dados a serem salvos:", cleanedData);
 
       if (existingResult) {
         const { error } = await supabase
@@ -59,7 +60,7 @@ const RaceResultsAdmin = () => {
           .eq("id", existingResult.id);
 
         if (error) {
-          console.error("Erro ao atualizar:", error); // Log para debug
+          console.error("Erro ao atualizar:", error);
           throw error;
         }
       } else {
@@ -68,17 +69,19 @@ const RaceResultsAdmin = () => {
           .insert([cleanedData]);
 
         if (error) {
-          console.error("Erro ao inserir:", error); // Log para debug
+          console.error("Erro ao inserir:", error);
           throw error;
         }
       }
+
+      await refetch();
 
       toast({
         title: "Sucesso!",
         description: "Resultados salvos com sucesso.",
       });
 
-      await refetch();
+      navigate("/"); // Redireciona para a página inicial após salvar com sucesso
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
       toast({
@@ -89,6 +92,11 @@ const RaceResultsAdmin = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePoleTimeChange = (value: string) => {
+    const formattedTime = formatPoleTime(value);
+    setFormData(prev => ({ ...prev, pole_time: formattedTime }));
   };
 
   if (!race || !drivers) {
@@ -108,7 +116,7 @@ const RaceResultsAdmin = () => {
           </h1>
           <Button 
             variant="outline"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
           >
             Voltar
@@ -118,7 +126,7 @@ const RaceResultsAdmin = () => {
         <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
           <QualifyingResultsForm
             poleTime={formData.pole_time || ""}
-            onPoleTimeChange={(value) => setFormData({ ...formData, pole_time: value })}
+            onPoleTimeChange={handlePoleTimeChange}
             qualifyingResults={formData.qualifying_results || []}
             onQualifyingDriverChange={(position, driverId) => {
               const newQualifyingResults = [...(formData.qualifying_results || [])];
@@ -169,3 +177,4 @@ const RaceResultsAdmin = () => {
 };
 
 export default RaceResultsAdmin;
+
