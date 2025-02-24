@@ -9,6 +9,7 @@ import MyPredictions from "@/pages/MyPredictions";
 import RacePredictions from "@/pages/RacePredictions";
 import RaceResults from "@/pages/RaceResults";
 import RaceResultsAdmin from "@/pages/RaceResultsAdmin";
+import RacePoints from "@/pages/RacePoints";
 import Dashboard from "@/pages/Dashboard";
 import Leaderboard from "@/pages/Leaderboard";
 import Profile from "@/pages/Profile";
@@ -71,6 +72,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <RaceResults />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/race-points/:raceId"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <RacePoints />
               </MainLayout>
             </PrivateRoute>
           }
