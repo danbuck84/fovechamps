@@ -18,8 +18,8 @@ const RacePredictions = () => {
   
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
-  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(11).fill(""));
-  const [raceTop10, setRaceTop10] = useState<string[]>(Array(11).fill(""));
+  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(10).fill(""));
+  const [raceTop10, setRaceTop10] = useState<string[]>(Array(20).fill(""));
   const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
   const [existingPrediction, setExistingPrediction] = useState<any>(null);
   const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
@@ -101,8 +101,8 @@ const RacePredictions = () => {
       setExistingPrediction(existingPredictionQuery);
       setPoleTime(existingPredictionQuery.pole_time || "");
       setFastestLap(existingPredictionQuery.fastest_lap || "");
-      setQualifyingTop10(existingPredictionQuery.qualifying_top_10|| Array(11).fill(""));
-      setRaceTop10(existingPredictionQuery.top_10 || Array(11).fill(""));
+      setQualifyingTop10(existingPredictionQuery.qualifying_top_10 || Array(10).fill(""));
+      setRaceTop10(existingPredictionQuery.top_10 || Array(20).fill(""));
       setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
     }
   }, [existingPredictionQuery, isDeadlinePassed]);
@@ -180,8 +180,7 @@ const RacePredictions = () => {
     };
 
     console.log('Dados a serem salvos:', predictionData);
-    console.log('Previsão existente:', existingPredictionQuery);
-
+    
     try {
       let result;
       
@@ -334,7 +333,7 @@ const RacePredictions = () => {
             <RacePredictionFormWrapper
               drivers={drivers}
               poleTime={poleTime}
-              onPoleTimeChange={(e) => {
+              onPoleTimeChange={ (e) => {
                 const formatted = formatPoleTime(e.target.value);
                 if (formatted !== undefined) {
                   setPoleTime(formatted);
@@ -355,6 +354,8 @@ const RacePredictions = () => {
               getAvailableDrivers={getAvailableDrivers}
               isDeadlinePassed={isDeadlinePassed}
               onSubmit={handleSubmit}
+              fastestLap={fastestLap}
+              setFastestLap={setFastestLap}
             />
           </CardContent>
         </Card>

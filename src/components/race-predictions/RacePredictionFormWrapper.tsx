@@ -5,6 +5,13 @@ import { RacePredictionForm } from "./RacePredictionForm";
 import { DNFPredictionForm } from "./DNFPredictionForm";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Driver } from "@/types/betting";
 
 interface RacePredictionFormWrapperProps {
@@ -20,6 +27,8 @@ interface RacePredictionFormWrapperProps {
   getAvailableDrivers: (position: number, isQualifying?: boolean) => (Driver & { team: { name: string; engine: string } })[];
   isDeadlinePassed: boolean;
   onSubmit: (e: React.FormEvent) => Promise<void>;
+  fastestLap: string;
+  setFastestLap: (value: string) => void;
 }
 
 export const RacePredictionFormWrapper = ({
@@ -35,6 +44,8 @@ export const RacePredictionFormWrapper = ({
   getAvailableDrivers,
   isDeadlinePassed,
   onSubmit,
+  fastestLap,
+  setFastestLap,
 }: RacePredictionFormWrapperProps) => {
   const { toast } = useToast();
 
@@ -69,6 +80,15 @@ export const RacePredictionFormWrapper = ({
       return;
     }
 
+    if (!fastestLap) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione o piloto que fará a volta mais rápida",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Se passar por todas as validações, envia o formulário
     await onSubmit(e);
   };
@@ -96,6 +116,33 @@ export const RacePredictionFormWrapper = ({
         allDrivers={drivers}
         disabled={isDeadlinePassed}
       />
+
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold text-racing-white">Volta Mais Rápida</h3>
+        <p className="text-sm text-racing-silver mb-4">
+          Selecione o piloto que você acha que fará a volta mais rápida da corrida.
+        </p>
+        <Select
+          value={fastestLap}
+          onValueChange={setFastestLap}
+          disabled={isDeadlinePassed}
+        >
+          <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
+            <SelectValue placeholder="Selecione um piloto" />
+          </SelectTrigger>
+          <SelectContent className="bg-racing-black border-racing-silver/20">
+            {drivers.map((driver) => (
+              <SelectItem 
+                key={driver.id} 
+                value={driver.id}
+                className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+              >
+                {driver.name} ({driver.team.name})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <DNFPredictionForm
         dnfPredictions={dnfPredictions}
