@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
@@ -16,6 +18,7 @@ const RacePredictions = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isAdmin } = useAdmin();
   
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
@@ -215,6 +218,16 @@ const RacePredictions = () => {
             onEdit={() => setExistingPrediction(null)}
             onViewPredictions={() => navigate("/my-predictions")}
           />
+          {isAdmin && (
+            <div className="mt-4 flex justify-end">
+              <Button
+                onClick={() => navigate(`/admin/race-results/${raceId}`)}
+                className="bg-racing-red hover:bg-racing-red/90"
+              >
+                Editar Resultados
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -237,10 +250,18 @@ const RacePredictions = () => {
               <Button
                 variant="outline"
                 onClick={() => navigate("/my-predictions")}
-                className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-silver/20"
+                className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-silver/20 mb-4"
               >
                 Ver Meus Palpites
               </Button>
+              {isAdmin && (
+                <Button
+                  onClick={() => navigate(`/admin/race-results/${raceId}`)}
+                  className="bg-racing-red hover:bg-racing-red/90"
+                >
+                  Editar Resultados
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -286,6 +307,16 @@ const RacePredictions = () => {
               fastestLap={fastestLap}
               setFastestLap={setFastestLap}
             />
+            {isAdmin && (
+              <div className="mt-4 flex justify-end">
+                <Button
+                  onClick={() => navigate(`/admin/race-results/${raceId}`)}
+                  className="bg-racing-red hover:bg-racing-red/90"
+                >
+                  Editar Resultados
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -294,3 +325,4 @@ const RacePredictions = () => {
 };
 
 export default RacePredictions;
+
