@@ -92,7 +92,7 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
               </div>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs Previstos</h3>
+              <h3 className="text-sm font-medium text-racing-silver mb-2">Pilotos que não terminam</h3>
               <div className="p-2 bg-racing-silver/10 rounded">
                 <span className="text-racing-white">{prediction.dnf_predictions.length} pilotos</span>
               </div>
