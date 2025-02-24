@@ -7,11 +7,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race } from "@/types/betting";
 import type { Database } from "@/integrations/supabase/types";
 
-type RacePointRow = Database["public"]["Tables"]["race_points"]["Row"] & {
-  profiles: {
-    username: string;
-    avatar_url: string | null;
-  } | null;
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type RacePoint = Database["public"]["Tables"]["race_points"]["Row"];
+
+type RacePointWithProfile = RacePoint & {
+  profiles: Pick<Profile, "username" | "avatar_url"> | null;
 };
 
 const RacePoints = () => {
@@ -35,7 +35,7 @@ const RacePoints = () => {
   });
 
   // Buscar pontuações da corrida
-  const { data: points } = useQuery({
+  const { data: points } = useQuery<RacePointWithProfile[]>({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -53,7 +53,7 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      return data as RacePointRow[];
+      return data;
     },
   });
 
