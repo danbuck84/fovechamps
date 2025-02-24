@@ -111,7 +111,7 @@ const RaceResults = () => {
           <Button 
             variant="outline"
             onClick={handleBack}
-            className="border-racing-red/20 text-racing-red hover:bg-racing-red/10 transition-colors"
+            className="border-racing-red/20 text-racing-red hover:bg-racing-red/5 transition-colors"
           >
             Voltar
           </Button>

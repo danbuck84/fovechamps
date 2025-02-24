@@ -1,4 +1,3 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -112,7 +111,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <List className="w-6 h-6" />
-                  <span className={isCollapsed ? "hidden" : "ml-3"}>Resultados</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Ver Todos os Resultados</span>
                 </button>
               </li>
               <li>
