@@ -10,9 +10,9 @@ import type { Database } from "@/integrations/supabase/types";
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type RacePoint = Database["public"]["Tables"]["race_points"]["Row"];
 
-type RacePointWithProfile = RacePoint & {
+interface RacePointWithProfile extends RacePoint {
   profiles: Pick<Profile, "username" | "avatar_url"> | null;
-};
+}
 
 const RacePoints = () => {
   const { raceId } = useParams();
@@ -53,7 +53,7 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as unknown as RacePointWithProfile[];
     },
   });
 
