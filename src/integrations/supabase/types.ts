@@ -49,7 +49,7 @@ export type Database = {
           id: string
           pole_position: string
           pole_time: string | null
-          qualifying_top_10: string[]
+          qualifying_results: string[]
           race_id: string
           top_10: string[]
           user_id: string
@@ -61,7 +61,7 @@ export type Database = {
           id?: string
           pole_position: string
           pole_time?: string | null
-          qualifying_top_10?: string[]
+          qualifying_results?: string[]
           race_id: string
           top_10: string[]
           user_id: string
@@ -73,7 +73,7 @@ export type Database = {
           id?: string
           pole_position?: string
           pole_time?: string | null
-          qualifying_top_10?: string[]
+          qualifying_results?: string[]
           race_id?: string
           top_10?: string[]
           user_id?: string
