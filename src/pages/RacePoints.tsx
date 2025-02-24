@@ -6,6 +6,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Race } from "@/types/betting";
 
+interface RacePoint {
+  id: string;
+  user_id: string;
+  race_id: string;
+  qualifying_points: number | null;
+  race_points: number | null;
+  pole_time_points: number | null;
+  fastest_lap_points: number | null;
+  dnf_points: number | null;
+  total_points: number | null;
+  profiles: {
+    username: string;
+    avatar_url: string | null;
+  } | null;
+}
+
 const RacePoints = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
@@ -27,7 +43,7 @@ const RacePoints = () => {
   });
 
   // Buscar pontuações da corrida
-  const { data: points } = useQuery({
+  const { data: points } = useQuery<RacePoint[]>({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -102,12 +118,12 @@ const RacePoints = () => {
                         )}
                         <span className="text-racing-white">{point.profiles?.username || "Usuário"}</span>
                       </td>
-                      <td className="px-4 py-2 text-center text-racing-white">{point.qualifying_points}</td>
-                      <td className="px-4 py-2 text-center text-racing-white">{point.race_points}</td>
-                      <td className="px-4 py-2 text-center text-racing-white">{point.pole_time_points}</td>
-                      <td className="px-4 py-2 text-center text-racing-white">{point.fastest_lap_points}</td>
-                      <td className="px-4 py-2 text-center text-racing-white">{point.dnf_points}</td>
-                      <td className="px-4 py-2 text-center font-bold text-racing-white">{point.total_points}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.qualifying_points || 0}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.race_points || 0}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.pole_time_points || 0}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.fastest_lap_points || 0}</td>
+                      <td className="px-4 py-2 text-center text-racing-white">{point.dnf_points || 0}</td>
+                      <td className="px-4 py-2 text-center font-bold text-racing-white">{point.total_points || 0}</td>
                     </tr>
                   ))}
                 </tbody>
