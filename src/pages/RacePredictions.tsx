@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -74,6 +73,40 @@ const RacePredictions = () => {
     },
   });
 
+  const { data: existingPredictionQuery } = useQuery({
+    queryKey: ["prediction", raceId],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !raceId) return null;
+
+      const { data, error } = await supabase
+        .from("predictions")
+        .select("*")
+        .eq("race_id", raceId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Erro ao buscar palpite existente:", error);
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!raceId,
+  });
+
+  useEffect(() => {
+    if (existingPredictionQuery && !isDeadlinePassed) {
+      setExistingPrediction(existingPredictionQuery);
+      setPoleTime(existingPredictionQuery.pole_time || "");
+      setFastestLap(existingPredictionQuery.fastest_lap || "");
+      setQualifyingTop10(existingPredictionQuery.qualifying_top_10|| Array(11).fill(""));
+      setRaceTop10(existingPredictionQuery.top_10 || Array(11).fill(""));
+      setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
+    }
+  }, [existingPredictionQuery, isDeadlinePassed]);
+
   useEffect(() => {
     const checkExistingPrediction = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -147,17 +180,17 @@ const RacePredictions = () => {
     };
 
     console.log('Dados a serem salvos:', predictionData);
-    console.log('Previsão existente:', existingPrediction);
+    console.log('Previsão existente:', existingPredictionQuery);
 
     try {
       let result;
       
-      if (existingPrediction?.id) {
-        console.log('Atualizando previsão existente:', existingPrediction.id);
+      if (existingPredictionQuery?.id) {
+        console.log('Atualizando previsão existente:', existingPredictionQuery.id);
         result = await supabase
           .from("predictions")
           .update(predictionData)
-          .eq("id", existingPrediction.id)
+          .eq("id", existingPredictionQuery.id)
           .select()
           .single();
       } else {
@@ -331,4 +364,3 @@ const RacePredictions = () => {
 };
 
 export default RacePredictions;
-
