@@ -13,6 +13,7 @@ const MyPredictions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
+  const [driversMap, setDriversMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const checkUser = async () => {
@@ -26,6 +27,29 @@ const MyPredictions = () => {
 
     checkUser();
   }, [navigate]);
+
+  // Buscar todos os pilotos uma vez
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      const { data: drivers, error } = await supabase
+        .from('drivers')
+        .select('id, name');
+      
+      if (error) {
+        console.error('Erro ao buscar pilotos:', error);
+        return;
+      }
+
+      const driverMapping = drivers.reduce((acc: Record<string, string>, driver) => {
+        acc[driver.id] = driver.name;
+        return acc;
+      }, {});
+
+      setDriversMap(driverMapping);
+    };
+
+    fetchDrivers();
+  }, []);
 
   const { data: predictions, isLoading, error, refetch } = useQuery({
     queryKey: ["my-predictions", userId],
@@ -137,7 +161,7 @@ const MyPredictions = () => {
                   <div className="space-y-2">
                     <p className="text-racing-white">
                       <span className="text-racing-silver">Pole Position:</span>{" "}
-                      {prediction.pole_position}
+                      {driversMap[prediction.pole_position] || "Piloto não encontrado"}
                     </p>
                     {prediction.pole_time && (
                       <p className="text-racing-white">
@@ -148,7 +172,7 @@ const MyPredictions = () => {
                     {prediction.fastest_lap && (
                       <p className="text-racing-white">
                         <span className="text-racing-silver">Volta mais rápida:</span>{" "}
-                        {prediction.fastest_lap}
+                        {driversMap[prediction.fastest_lap] || "Piloto não encontrado"}
                       </p>
                     )}
                   </div>
