@@ -4,11 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button"; // Adicionando importação do Button
 import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
 import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
 import { PredictionForm } from "@/components/race-predictions/PredictionForm";
 import { ExistingPredictionCard } from "@/components/race-predictions/ExistingPredictionCard";
+import { formatPoleTime } from "@/utils/prediction-utils"; // Adicionando importação do formatPoleTime
 import type { Race, Driver } from "@/types/betting";
 
 const RacePredictions = () => {
