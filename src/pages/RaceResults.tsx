@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -25,17 +26,28 @@ const RaceResults = () => {
     },
   });
 
-  // Buscar lista de pilotos
+  // Buscar lista de pilotos - Corrigida a query para garantir que os dados dos pilotos são carregados corretamente
   const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: driversData, error } = await supabase
         .from("drivers")
-        .select("*, team:teams(name)");
+        .select(`
+          id,
+          name,
+          team:teams (
+            id,
+            name
+          )
+        `);
       
-      if (error) throw error;
-      console.log("Drivers loaded:", data); // Debug log
-      return data as (Driver & { team: { name: string } })[];
+      if (error) {
+        console.error("Erro ao carregar pilotos:", error);
+        throw error;
+      }
+
+      console.log("Drivers loaded successfully:", driversData);
+      return driversData as (Driver & { team: { name: string } })[];
     },
   });
 
@@ -51,7 +63,7 @@ const RaceResults = () => {
         .single();
       
       if (error) throw error;
-      console.log("Race results loaded:", data); // Debug log
+      console.log("Race results loaded:", data);
       return data as RaceResult;
     },
   });
@@ -86,7 +98,6 @@ const RaceResults = () => {
 
   const getDriverName = (driverId: string) => {
     if (!driverId) return "Piloto não selecionado";
-    console.log("Looking for driver:", driverId); // Debug log
     const driver = drivers.find(d => d.id === driverId);
     if (!driver) {
       console.error(`Driver not found for ID: ${driverId}`);
@@ -99,10 +110,6 @@ const RaceResults = () => {
     navigate("/all-race-results");
   };
 
-  // Debug log para verificar os IDs dos pilotos nos resultados
-  console.log("Qualifying results:", raceResult.qualifying_results);
-  console.log("Available drivers:", drivers.map(d => ({ id: d.id, name: d.name })));
-
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       <div className="container mx-auto px-4 py-8">
@@ -111,7 +118,7 @@ const RaceResults = () => {
           <Button 
             variant="outline"
             onClick={handleBack}
-            className="border-racing-red/20 text-racing-red hover:bg-racing-red/5 transition-colors"
+            className="border-racing-red/20 text-racing-red hover:bg-[#ff000010] transition-colors"
           >
             Voltar
           </Button>

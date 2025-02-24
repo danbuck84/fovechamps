@@ -1,3 +1,4 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Driver, Prediction, RaceResult } from "@/types/betting";
 
