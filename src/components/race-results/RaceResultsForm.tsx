@@ -63,7 +63,7 @@ export const RaceResultsForm = ({
                 <select
                   value={raceResults[index] || ""}
                   onChange={(e) => onRaceDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 cursor-pointer hover:bg-racing-white hover:text-racing-black [&>option]:bg-racing-black [&>option]:text-racing-white [&>option:hover]:bg-racing-white [&>option:hover]:text-racing-black"
+                  className="flex-1 bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 cursor-pointer hover:bg-racing-white hover:text-racing-black [&>option]:bg-racing-black [&>option]:text-racing-white [&>option:hover]:bg-racing-white [&>option:hover]:text-racing-black [&>option:checked]:bg-racing-white [&>option:checked]:text-racing-black [&>option:focus]:bg-racing-white [&>option:focus]:text-racing-black"
                 >
                   <option value="">Selecione um piloto</option>
                   {sortDrivers(availableDrivers(index)).map((driver) => (
