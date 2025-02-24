@@ -33,7 +33,7 @@ export const QualifyingResultsForm = ({
               value={poleTime}
               onChange={(e) => onPoleTimeChange(e.target.value)}
               placeholder="ex: 1:23.456"
-              className="w-full bg-racing-black border border-racing-silver/20 rounded-md p-2"
+              className="w-full bg-racing-white text-racing-black border border-racing-silver/20 rounded-md p-2"
             />
           </div>
 
@@ -47,11 +47,11 @@ export const QualifyingResultsForm = ({
                 <select
                   value={qualifyingResults[index] || ""}
                   onChange={(e) => onQualifyingDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-black border border-racing-silver/20 rounded-md p-2"
+                  className="flex-1 bg-racing-white text-racing-black border border-racing-silver/20 rounded-md p-2 hover:bg-racing-black hover:text-racing-white transition-colors duration-200 cursor-pointer"
                 >
                   <option value="">Selecione um piloto</option>
                   {availableDrivers(index).map((driver) => (
-                    <option key={driver.id} value={driver.id}>
+                    <option key={driver.id} value={driver.id} className="bg-racing-white text-racing-black hover:bg-racing-black hover:text-racing-white">
                       {driver.name} - {driver.team.name}
                     </option>
                   ))}

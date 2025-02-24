@@ -38,7 +38,7 @@ export const RaceResultsForm = ({
             <select
               value={fastestLap}
               onChange={(e) => onFastestLapChange(e.target.value)}
-              className="w-full bg-racing-black border border-racing-silver/20 rounded-md p-2"
+              className="w-full bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2"
             >
               <option value="">Selecione um piloto</option>
               {allDrivers.map((driver) => (
@@ -59,11 +59,11 @@ export const RaceResultsForm = ({
                 <select
                   value={raceResults[index] || ""}
                   onChange={(e) => onRaceDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-black border border-racing-silver/20 rounded-md p-2"
+                  className="flex-1 bg-racing-black text-racing-white border border-racing-silver/20 rounded-md p-2 hover:bg-racing-white hover:text-racing-black transition-colors duration-200 cursor-pointer"
                 >
                   <option value="">Selecione um piloto</option>
                   {availableDrivers(index).map((driver) => (
-                    <option key={driver.id} value={driver.id}>
+                    <option key={driver.id} value={driver.id} className="bg-racing-black text-racing-white hover:bg-racing-white hover:text-racing-black">
                       {driver.name} - {driver.team.name}
                     </option>
                   ))}
