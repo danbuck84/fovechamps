@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Race, Driver, RaceResult, Prediction, RacePoints } from "@/types/betting";
+import type { Race, Driver, RaceResult, Prediction } from "@/types/betting";
 import { calculateTotalPoints } from "@/utils/scoring-utils";
 
 const RaceResultsView = () => {
@@ -95,10 +95,10 @@ const RaceResultsView = () => {
   // Calcular pontuações
   const results = predictions.map(prediction => {
     const points = calculateTotalPoints({
-      pole_time: prediction.pole_time,
+      pole_time: prediction.pole_time || "",
       qualifying_results: prediction.qualifying_results,
       top_10: prediction.top_10,
-      fastest_lap: prediction.fastest_lap,
+      fastest_lap: prediction.fastest_lap || "",
       dnf_predictions: prediction.dnf_predictions
     }, raceResult);
 
