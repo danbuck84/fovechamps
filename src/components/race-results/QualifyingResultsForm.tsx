@@ -1,6 +1,6 @@
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { Driver } from "@/types/betting";
+import "@/styles/select-styles.css";
 
 interface QualifyingResultsFormProps {
   poleTime: string;
@@ -51,7 +51,7 @@ export const QualifyingResultsForm = ({
                 <select
                   value={qualifyingResults[index] || ""}
                   onChange={(e) => onQualifyingDriverChange(index, e.target.value)}
-                  className="flex-1 bg-racing-white text-racing-black border border-racing-silver/20 rounded-md p-2 cursor-pointer hover:bg-racing-black hover:text-racing-white [&>option]:bg-racing-white [&>option]:text-racing-black [&>option:hover]:bg-racing-black [&>option:hover]:text-racing-white [&>option:checked]:bg-racing-black [&>option:checked]:text-racing-white [&>option:focus]:bg-racing-black [&>option:focus]:text-racing-white"
+                  className="qualifying-select flex-1 border border-racing-silver/20 rounded-md p-2 cursor-pointer"
                 >
                   <option value="">Selecione um piloto</option>
                   {sortDrivers(availableDrivers(index)).map((driver) => (

@@ -1,0 +1,45 @@
+
+/* Remove a estilização padrão do navegador */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Estilos para o Grid de Largada */
+.qualifying-select {
+  background-color: #F8F8F8;
+  color: #0A0A0A;
+}
+
+.qualifying-select option {
+  background-color: #F8F8F8;
+  color: #0A0A0A;
+}
+
+.qualifying-select option:hover,
+.qualifying-select option:focus,
+.qualifying-select option:active,
+.qualifying-select option:checked {
+  background-color: #0A0A0A !important;
+  color: #F8F8F8 !important;
+}
+
+/* Estilos para o Grid de Chegada */
+.race-select {
+  background-color: #0A0A0A;
+  color: #F8F8F8;
+}
+
+.race-select option {
+  background-color: #0A0A0A;
+  color: #F8F8F8;
+}
+
+.race-select option:hover,
+.race-select option:focus,
+.race-select option:active,
+.race-select option:checked {
+  background-color: #F8F8F8 !important;
+  color: #0A0A0A !important;
+}
