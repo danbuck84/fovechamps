@@ -7,6 +7,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Race } from "@/types/betting";
 
+interface RaceWithResults extends Race {
+  race_results: { id: string; } | null;
+}
+
 const AllRaceResults = () => {
   const { data: races, isLoading } = useQuery({
     queryKey: ["races-with-results"],
@@ -20,7 +24,7 @@ const AllRaceResults = () => {
         .order('date', { ascending: false });
 
       if (error) throw error;
-      return races as (Race & { race_results: { id: string }[] })[];
+      return races as RaceWithResults[];
     },
   });
 
@@ -55,7 +59,7 @@ const AllRaceResults = () => {
                   </p>
                   
                   <div className="flex flex-col gap-2">
-                    {race.race_results?.length > 0 ? (
+                    {race.race_results ? (
                       <>
                         <Link to={`/race-results/${race.id}`}>
                           <Button 
