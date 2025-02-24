@@ -91,7 +91,7 @@ const Dashboard = () => {
                   {prediction.race.name}
                 </h3>
                 <p className="text-sm text-racing-silver">
-                  {prediction.qualifying_top_10[0] && "Pole Position Prevista"}
+                  {prediction.qualifying_results[0] && "Pole Position Prevista"}
                 </p>
               </div>
             ))}

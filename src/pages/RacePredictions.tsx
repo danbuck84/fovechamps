@@ -99,7 +99,7 @@ const RacePredictions = () => {
       setExistingPrediction(existingPredictionQuery);
       setPoleTime(existingPredictionQuery.pole_time || "");
       setFastestLap(existingPredictionQuery.fastest_lap || "");
-      setQualifyingTop10(existingPredictionQuery.qualifying_top_10 || Array(20).fill(""));
+      setQualifyingTop10(existingPredictionQuery.qualifying_results || Array(20).fill(""));
       setRaceTop10(existingPredictionQuery.top_10 || Array(20).fill(""));
       setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
     }

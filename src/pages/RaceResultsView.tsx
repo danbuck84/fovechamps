@@ -94,7 +94,14 @@ const RaceResultsView = () => {
 
   // Calcular pontuações
   const results = predictions.map(prediction => {
-    const points = calculateTotalPoints(prediction, raceResult);
+    const points = calculateTotalPoints({
+      pole_time: prediction.pole_time,
+      qualifying_results: prediction.qualifying_results,
+      top_10: prediction.top_10,
+      fastest_lap: prediction.fastest_lap,
+      dnf_predictions: prediction.dnf_predictions
+    }, raceResult);
+
     return {
       username: prediction.user.username,
       avatar_url: prediction.user.avatar_url,
