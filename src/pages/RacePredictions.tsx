@@ -143,13 +143,17 @@ const RacePredictions = () => {
       fastest_lap: fastestLap,
       qualifying_top_10: qualifyingTop10.filter(Boolean),
       top_10: raceTop10.filter(Boolean),
-      dnf_predictions: dnfPredictions.filter(Boolean),
+      dnf_predictions: dnfPredictions,
     };
+
+    console.log('Dados a serem salvos:', predictionData);
+    console.log('Previsão existente:', existingPrediction);
 
     try {
       let result;
       
-      if (existingPrediction) {
+      if (existingPrediction?.id) {
+        console.log('Atualizando previsão existente:', existingPrediction.id);
         result = await supabase
           .from("predictions")
           .update(predictionData)
@@ -157,12 +161,15 @@ const RacePredictions = () => {
           .select()
           .single();
       } else {
+        console.log('Criando nova previsão');
         result = await supabase
           .from("predictions")
           .insert([predictionData])
           .select()
           .single();
       }
+
+      console.log('Resultado da operação:', result);
 
       if (result.error) {
         console.error("Erro ao salvar palpites:", result.error);
