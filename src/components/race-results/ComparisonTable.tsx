@@ -27,7 +27,7 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
               <h3 className="text-sm font-medium text-racing-silver mb-2">Pole Position</h3>
               <div className="flex justify-between items-center p-2 bg-racing-silver/10 rounded">
                 <span className="text-racing-white">{getDriverName(prediction.pole_position)}</span>
-                {prediction.pole_position === raceResult.pole_position && (
+                {prediction.pole_position === raceResult.qualifying_results[0] && (
                   <span className="text-green-500">✓</span>
                 )}
               </div>

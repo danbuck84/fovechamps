@@ -31,7 +31,7 @@ const RacePoints = () => {
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
-      const { data, error } = await supabase
+      const { data: racePointsData, error } = await supabase
         .from("race_points")
         .select(`
           *,
@@ -44,7 +44,16 @@ const RacePoints = () => {
         .order("total_points", { ascending: false });
       
       if (error) throw error;
-      return data as (RacePoints & { profiles: Pick<Profile, "username" | "avatar_url"> })[];
+      
+      // Validar e tipar corretamente os dados
+      const validatedData = racePointsData.map(point => {
+        if (!point.profiles || typeof point.profiles !== 'object' || !('username' in point.profiles)) {
+          throw new Error('Dados de perfil inválidos');
+        }
+        return point as RacePoints & { profiles: Pick<Profile, "username" | "avatar_url"> };
+      });
+      
+      return validatedData;
     },
   });
 
