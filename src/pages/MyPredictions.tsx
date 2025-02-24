@@ -43,13 +43,13 @@ const MyPredictions = () => {
             country,
             date,
             qualifying_date
-          ),
-          pole_driver:drivers!drivers(name)
+          )
         `)
         .eq("user_id", userId)
         .order('created_at', { ascending: false });
 
       if (error) {
+        console.error("Erro na consulta:", error);
         throw error;
       }
 
@@ -137,7 +137,7 @@ const MyPredictions = () => {
                   <div className="space-y-2">
                     <p className="text-racing-white">
                       <span className="text-racing-silver">Pole Position:</span>{" "}
-                      {prediction.pole_driver?.name}
+                      {prediction.pole_position}
                     </p>
                     {prediction.pole_time && (
                       <p className="text-racing-white">
