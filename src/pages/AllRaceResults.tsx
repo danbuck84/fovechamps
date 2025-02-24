@@ -21,7 +21,7 @@ const AllRaceResults = () => {
           *,
           race_results(id)
         `)
-        .order('date', { ascending: true }); // Mudado para true para mostrar as mais antigas primeiro
+        .order('date', { ascending: true });
 
       if (error) throw error;
       return races as RaceWithResults[];
@@ -64,7 +64,7 @@ const AllRaceResults = () => {
                         <Link to={`/race-results/${race.id}`}>
                           <Button 
                             variant="outline" 
-                            className="w-full border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
+                            className="w-full bg-racing-black/50 border-racing-red/20 text-racing-red hover:bg-racing-red/10 hover:text-racing-red transition-colors"
                           >
                             <Eye className="mr-2 h-4 w-4" />
                             Ver Resultados
@@ -73,7 +73,7 @@ const AllRaceResults = () => {
                         <Link to={`/race-points/${race.id}`}>
                           <Button 
                             variant="outline"
-                            className="w-full border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
+                            className="w-full bg-racing-black/50 border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10 hover:text-racing-silver transition-colors"
                           >
                             <BarChart2 className="mr-2 h-4 w-4" />
                             Ver Pontuação
