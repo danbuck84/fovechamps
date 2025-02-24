@@ -4,9 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { QualifyingResultsForm } from "@/components/race-results/QualifyingResultsForm";
+import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
 import type { Race, Driver, RaceResult } from "@/types/betting";
 
 const RaceResultsAdmin = () => {
@@ -60,7 +60,6 @@ const RaceResultsAdmin = () => {
     },
   });
 
-  // Estado para grids e DNFs
   const [formData, setFormData] = useState<Partial<RaceResult>>({
     qualifying_results: existingResult?.qualifying_results || Array(20).fill(""),
     race_results: existingResult?.race_results || Array(20).fill(""),
@@ -69,31 +68,16 @@ const RaceResultsAdmin = () => {
     dnf_drivers: existingResult?.dnf_drivers || [],
   });
 
-  // Atualizar piloto na grid de largada
-  const handleQualifyingDriverChange = (position: number, driverId: string) => {
-    const newQualifyingResults = [...formData.qualifying_results || []];
-    newQualifyingResults[position] = driverId;
-    setFormData({ ...formData, qualifying_results: newQualifyingResults });
-  };
-
-  // Atualizar piloto na grid de chegada
-  const handleRaceDriverChange = (position: number, driverId: string) => {
-    const newRaceResults = [...formData.race_results || []];
-    newRaceResults[position] = driverId;
-    setFormData({ ...formData, race_results: newRaceResults });
-  };
-
-  // Atualizar DNF de um piloto
-  const handleDNFChange = (driverId: string, checked: boolean) => {
-    const currentDNFs = [...(formData.dnf_drivers || [])];
-    if (checked && !currentDNFs.includes(driverId)) {
-      setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
-    } else if (!checked) {
-      setFormData({
-        ...formData,
-        dnf_drivers: currentDNFs.filter(id => id !== driverId)
-      });
-    }
+  const getAvailableDrivers = (position: number, isQualifying: boolean) => {
+    if (!drivers) return [];
+    const selectedPositions = isQualifying 
+      ? formData.qualifying_results 
+      : formData.race_results;
+    
+    return drivers.filter(driver => {
+      const isSelected = selectedPositions?.includes(driver.id);
+      return !isSelected || selectedPositions[position] === driver.id;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,18 +131,6 @@ const RaceResultsAdmin = () => {
     );
   }
 
-  const getAvailableDrivers = (position: number, isQualifying: boolean) => {
-    if (!drivers) return [];
-    const selectedPositions = isQualifying 
-      ? formData.qualifying_results 
-      : formData.race_results;
-    
-    return drivers.filter(driver => {
-      const isSelected = selectedPositions?.includes(driver.id);
-      return !isSelected || selectedPositions[position] === driver.id;
-    });
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -175,119 +147,42 @@ const RaceResultsAdmin = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle>Resultados da Classificação</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-racing-silver mb-2">
-                  Tempo da Pole
-                </label>
-                <input
-                  type="text"
-                  value={formData.pole_time || ""}
-                  onChange={(e) => setFormData({ ...formData, pole_time: e.target.value })}
-                  placeholder="ex: 1:23.456"
-                  className="w-full bg-racing-black border border-racing-silver/20 rounded-md p-2"
-                />
-              </div>
+        <QualifyingResultsForm
+          poleTime={formData.pole_time || ""}
+          onPoleTimeChange={(value) => setFormData({ ...formData, pole_time: value })}
+          qualifyingResults={formData.qualifying_results || []}
+          onQualifyingDriverChange={(position, driverId) => {
+            const newQualifyingResults = [...formData.qualifying_results || []];
+            newQualifyingResults[position] = driverId;
+            setFormData({ ...formData, qualifying_results: newQualifyingResults });
+          }}
+          availableDrivers={(position) => getAvailableDrivers(position, true)}
+        />
 
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-racing-silver">
-                  Grid de Largada
-                </label>
-                {Array.from({ length: 20 }).map((_, index) => (
-                  <div key={`qualifying-${index}`} className="flex items-center gap-2">
-                    <span className="w-8 text-racing-silver">{index + 1}.</span>
-                    <select
-                      value={formData.qualifying_results?.[index] || ""}
-                      onChange={(e) => handleQualifyingDriverChange(index, e.target.value)}
-                      className="flex-1 bg-racing-black border border-racing-silver/20 rounded-md p-2"
-                    >
-                      <option value="">Selecione um piloto</option>
-                      {getAvailableDrivers(index, true).map((driver) => (
-                        <option key={driver.id} value={driver.id}>
-                          {driver.name} - {driver.team.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle>Resultados da Corrida</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-racing-silver mb-2">
-                  Volta Mais Rápida
-                </label>
-                <select
-                  value={formData.fastest_lap || ""}
-                  onChange={(e) => setFormData({ ...formData, fastest_lap: e.target.value })}
-                  className="w-full bg-racing-black border border-racing-silver/20 rounded-md p-2"
-                >
-                  <option value="">Selecione um piloto</option>
-                  {drivers.map((driver) => (
-                    <option key={driver.id} value={driver.id}>
-                      {driver.name} - {driver.team.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-4">
-                <label className="block text-sm font-medium text-racing-silver">
-                  Grid de Chegada
-                </label>
-                {Array.from({ length: 20 }).map((_, index) => (
-                  <div key={`race-${index}`} className="flex items-center gap-2">
-                    <span className="w-8 text-racing-silver">{index + 1}.</span>
-                    <select
-                      value={formData.race_results?.[index] || ""}
-                      onChange={(e) => handleRaceDriverChange(index, e.target.value)}
-                      className="flex-1 bg-racing-black border border-racing-silver/20 rounded-md p-2"
-                    >
-                      <option value="">Selecione um piloto</option>
-                      {getAvailableDrivers(index, false).map((driver) => (
-                        <option key={driver.id} value={driver.id}>
-                          {driver.name} - {driver.team.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`dnf-${index}`}
-                        checked={formData.dnf_drivers?.includes(formData.race_results?.[index] || "")}
-                        onCheckedChange={(checked) => {
-                          const driverId = formData.race_results?.[index];
-                          if (driverId) {
-                            handleDNFChange(driverId, checked as boolean);
-                          }
-                        }}
-                        disabled={!formData.race_results?.[index]}
-                      />
-                      <label
-                        htmlFor={`dnf-${index}`}
-                        className="text-sm font-medium text-racing-silver leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        DNF
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <RaceResultsForm
+          fastestLap={formData.fastest_lap || ""}
+          onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
+          raceResults={formData.race_results || []}
+          onRaceDriverChange={(position, driverId) => {
+            const newRaceResults = [...formData.race_results || []];
+            newRaceResults[position] = driverId;
+            setFormData({ ...formData, race_results: newRaceResults });
+          }}
+          dnfDrivers={formData.dnf_drivers || []}
+          onDNFChange={(driverId, checked) => {
+            const currentDNFs = [...(formData.dnf_drivers || [])];
+            if (checked && !currentDNFs.includes(driverId)) {
+              setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
+            } else if (!checked) {
+              setFormData({
+                ...formData,
+                dnf_drivers: currentDNFs.filter(id => id !== driverId)
+              });
+            }
+          }}
+          availableDrivers={(position) => getAvailableDrivers(position, false)}
+          allDrivers={drivers}
+        />
 
         <div className="flex justify-end">
           <Button 
