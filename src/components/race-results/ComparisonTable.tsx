@@ -44,9 +44,9 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-racing-silver mb-2">Resultado da Classificação</h3>
+            <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Classificação</h3>
             <div className="space-y-2">
-              {prediction.qualifying_results.map((driverId, index) => (
+              {prediction.qualifying_results.slice(0, 10).map((driverId, index) => (
                 <div 
                   key={`qual-${index}`}
                   className="flex justify-between items-center p-2 bg-racing-silver/10 rounded"
@@ -63,9 +63,9 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-racing-silver mb-2">Top 10 da Corrida</h3>
+            <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Corrida</h3>
             <div className="space-y-2">
-              {prediction.top_10.map((driverId, index) => (
+              {prediction.top_10.slice(0, 10).map((driverId, index) => (
                 <div 
                   key={`race-${index}`}
                   className="flex justify-between items-center p-2 bg-racing-silver/10 rounded"
@@ -94,20 +94,7 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
             <div>
               <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs Previstos</h3>
               <div className="p-2 bg-racing-silver/10 rounded">
-                <div className="flex flex-wrap gap-2">
-                  {prediction.dnf_predictions.map((driverId) => (
-                    <span 
-                      key={driverId}
-                      className={`text-sm px-2 py-1 rounded ${
-                        raceResult.dnf_drivers?.includes(driverId) 
-                          ? 'bg-green-500/20 text-green-500' 
-                          : 'bg-racing-silver/20 text-racing-silver'
-                      }`}
-                    >
-                      {getDriverName(driverId)}
-                    </span>
-                  ))}
-                </div>
+                <span className="text-racing-white">{prediction.dnf_predictions.length} pilotos</span>
               </div>
             </div>
           </div>

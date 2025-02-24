@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import type { Race, Driver, Prediction, RaceResult } from "@/types/betting";
 import ComparisonTable from "@/components/race-results/ComparisonTable";
-import type { Race, Driver, Prediction, RaceResult, Profile } from "@/types/betting";
 
 const RaceResults = () => {
   const { raceId } = useParams();
@@ -71,7 +71,7 @@ const RaceResults = () => {
         .eq("race_id", raceId);
       
       if (error) throw error;
-      return data as (Prediction & { profiles: Pick<Profile, "username"> })[];
+      return data as (Prediction & { profiles: { username: string } })[];
     },
   });
 
@@ -82,6 +82,11 @@ const RaceResults = () => {
       </div>
     );
   }
+
+  const getDriverName = (driverId: string) => {
+    const driver = drivers.find(d => d.id === driverId);
+    return driver ? `${driver.name} (${driver.team.name})` : "Piloto não encontrado";
+  };
 
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
@@ -97,16 +102,82 @@ const RaceResults = () => {
           </Button>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {predictions.map((prediction) => (
-            <ComparisonTable
-              key={prediction.id}
-              prediction={prediction}
-              raceResult={raceResult}
-              drivers={drivers}
-              username={prediction.profiles.username}
-            />
-          ))}
+        {/* Resultados Oficiais */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 text-racing-white">Resultados Oficiais</h2>
+          <div className="bg-racing-black border border-racing-silver/20 rounded-lg p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-sm font-medium text-racing-silver mb-2">Pole Position</h3>
+                <div className="p-2 bg-racing-silver/10 rounded">
+                  <span className="text-racing-white">{getDriverName(raceResult.qualifying_results[0])}</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-racing-silver mb-2">Tempo da Pole</h3>
+                <div className="p-2 bg-racing-silver/10 rounded">
+                  <span className="text-racing-white">{raceResult.pole_time}</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Classificação</h3>
+              <div className="space-y-2">
+                {raceResult.qualifying_results.slice(0, 10).map((driverId, index) => (
+                  <div key={`qual-${driverId}`} className="p-2 bg-racing-silver/10 rounded">
+                    <span className="text-racing-white">
+                      {index + 1}. {getDriverName(driverId)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Corrida</h3>
+              <div className="space-y-2">
+                {raceResult.race_results.slice(0, 10).map((driverId, index) => (
+                  <div key={`race-${driverId}`} className="p-2 bg-racing-silver/10 rounded">
+                    <span className="text-racing-white">
+                      {index + 1}. {getDriverName(driverId)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-sm font-medium text-racing-silver mb-2">Volta Mais Rápida</h3>
+                <div className="p-2 bg-racing-silver/10 rounded">
+                  <span className="text-racing-white">{getDriverName(raceResult.fastest_lap || '')}</span>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs</h3>
+                <div className="p-2 bg-racing-silver/10 rounded">
+                  <span className="text-racing-white">{raceResult.dnf_drivers?.length || 0} pilotos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Apostas dos Usuários */}
+        <div>
+          <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {predictions.map((prediction) => (
+              <ComparisonTable
+                key={prediction.id}
+                prediction={prediction}
+                raceResult={raceResult}
+                drivers={drivers}
+                username={prediction.profiles.username}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
