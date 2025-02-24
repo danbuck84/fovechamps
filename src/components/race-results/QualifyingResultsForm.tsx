@@ -1,6 +1,13 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Driver } from "@/types/betting";
-import "@/styles/select-styles.css";
 
 interface QualifyingResultsFormProps {
   poleTime: string;
@@ -48,18 +55,28 @@ export const QualifyingResultsForm = ({
             {Array.from({ length: 20 }).map((_, index) => (
               <div key={`qualifying-${index}`} className="flex items-center gap-2">
                 <span className="w-8 text-racing-silver">{index + 1}.</span>
-                <select
+                <Select
                   value={qualifyingResults[index] || ""}
-                  onChange={(e) => onQualifyingDriverChange(index, e.target.value)}
-                  className="qualifying-select flex-1 border border-racing-silver/20 rounded-md p-2 cursor-pointer"
+                  onValueChange={(value) => onQualifyingDriverChange(index, value)}
                 >
-                  <option value="">Selecione um piloto</option>
-                  {sortDrivers(availableDrivers(index)).map((driver) => (
-                    <option key={driver.id} value={driver.id}>
-                      {driver.name} - {driver.team.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full bg-racing-white text-racing-black border-racing-silver/20">
+                    <SelectValue placeholder="Selecione um piloto" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-racing-white border-racing-silver/20">
+                    {qualifyingResults[index] === "" && (
+                      <SelectItem value="">Selecione um piloto</SelectItem>
+                    )}
+                    {sortDrivers(availableDrivers(index)).map((driver) => (
+                      <SelectItem 
+                        key={driver.id} 
+                        value={driver.id}
+                        className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+                      >
+                        {driver.name} ({driver.team.name})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             ))}
           </div>

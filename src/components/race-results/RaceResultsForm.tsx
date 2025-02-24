@@ -1,7 +1,14 @@
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Driver } from "@/types/betting";
-import "@/styles/select-styles.css";
 
 interface RaceResultsFormProps {
   fastestLap: string;
@@ -39,18 +46,28 @@ export const RaceResultsForm = ({
             <label className="block text-sm font-medium text-racing-silver mb-2">
               Volta Mais Rápida
             </label>
-            <select
+            <Select
               value={fastestLap}
-              onChange={(e) => onFastestLapChange(e.target.value)}
-              className="race-select w-full border border-racing-silver/20 rounded-md p-2 cursor-pointer"
+              onValueChange={onFastestLapChange}
             >
-              <option value="">Selecione um piloto</option>
-              {sortDrivers(allDrivers).map((driver) => (
-                <option key={driver.id} value={driver.id}>
-                  {driver.name} - {driver.team.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
+                <SelectValue placeholder="Selecione um piloto" />
+              </SelectTrigger>
+              <SelectContent className="bg-racing-black border-racing-silver/20">
+                {fastestLap === "" && (
+                  <SelectItem value="">Selecione um piloto</SelectItem>
+                )}
+                {sortDrivers(allDrivers).map((driver) => (
+                  <SelectItem 
+                    key={driver.id} 
+                    value={driver.id}
+                    className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+                  >
+                    {driver.name} ({driver.team.name})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-4">
@@ -60,18 +77,28 @@ export const RaceResultsForm = ({
             {Array.from({ length: 20 }).map((_, index) => (
               <div key={`race-${index}`} className="flex items-center gap-2">
                 <span className="w-8 text-racing-silver">{index + 1}.</span>
-                <select
+                <Select
                   value={raceResults[index] || ""}
-                  onChange={(e) => onRaceDriverChange(index, e.target.value)}
-                  className="race-select flex-1 border border-racing-silver/20 rounded-md p-2 cursor-pointer"
+                  onValueChange={(value) => onRaceDriverChange(index, value)}
                 >
-                  <option value="">Selecione um piloto</option>
-                  {sortDrivers(availableDrivers(index)).map((driver) => (
-                    <option key={driver.id} value={driver.id}>
-                      {driver.name} - {driver.team.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
+                    <SelectValue placeholder="Selecione um piloto" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-racing-black border-racing-silver/20">
+                    {raceResults[index] === "" && (
+                      <SelectItem value="">Selecione um piloto</SelectItem>
+                    )}
+                    {sortDrivers(availableDrivers(index)).map((driver) => (
+                      <SelectItem 
+                        key={driver.id} 
+                        value={driver.id}
+                        className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+                      >
+                        {driver.name} ({driver.team.name})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={`dnf-${index}`}
