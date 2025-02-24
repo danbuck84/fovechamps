@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -112,7 +111,7 @@ const RaceResults = () => {
           <Button 
             variant="outline"
             onClick={handleBack}
-            className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
+            className="border-racing-red/20 text-racing-red hover:bg-racing-red/10 transition-colors"
           >
             Voltar
           </Button>

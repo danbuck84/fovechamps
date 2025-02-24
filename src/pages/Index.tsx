@@ -115,15 +115,15 @@ const Index = () => {
               {races?.map((race) => (
                 <Card 
                   key={race.id} 
-                  className="bg-racing-black border-racing-silver/20 hover:border-racing-red/50 transition-all"
+                  className="bg-racing-black border-racing-silver/20 hover:border-racing-red/50 transition-all flex flex-col h-[400px]"
                 >
                   <CardHeader>
                     <CardTitle className="text-xl text-racing-white">
                       {race.name}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-racing-silver">
+                  <CardContent className="flex flex-col flex-1">
+                    <div className="space-y-2 text-racing-silver flex-1">
                       <p>
                         <strong>Corrida:</strong> {formatDate(race.date)}
                       </p>
@@ -136,13 +136,13 @@ const Index = () => {
                       <p>
                         <strong>País:</strong> {race.country}
                       </p>
-                      <Link 
-                        to={`/race-predictions/${race.id}`}
-                        className="mt-4 w-full px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center"
-                      >
-                        Fazer Palpites
-                      </Link>
                     </div>
+                    <Link 
+                      to={`/race-predictions/${race.id}`}
+                      className="mt-4 px-4 py-2 bg-racing-red text-racing-white rounded-lg font-semibold hover:bg-opacity-90 transition-all block text-center w-full"
+                    >
+                      Fazer Palpites
+                    </Link>
                   </CardContent>
                 </Card>
               ))}

@@ -1,14 +1,16 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [username, setUsername] = useState<string>("");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -34,19 +36,30 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen bg-racing-black">
+    <div className="min-h-screen bg-racing-black flex">
       {/* Sidebar */}
       <motion.div
-        initial={{ x: -100 }}
-        animate={{ x: 0 }}
-        className="fixed top-0 left-0 h-full w-16 md:w-64 bg-racing-black border-r border-racing-silver/20"
+        initial={{ width: isCollapsed ? 64 : 256 }}
+        animate={{ width: isCollapsed ? 64 : 256 }}
+        transition={{ duration: 0.3 }}
+        className="fixed top-0 left-0 h-full bg-racing-black border-r border-racing-silver/20 z-50"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full relative">
+          {/* Toggle button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute -right-3 top-6 bg-racing-black border border-racing-silver/20 text-racing-silver hover:text-racing-red hover:bg-racing-black"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
+
           {/* Logo */}
           <div className="p-4 border-b border-racing-silver/20">
             <button 
               onClick={() => navigate("/")}
-              className="hidden md:block text-xl font-bold text-racing-white hover:opacity-80 transition-opacity"
+              className={`text-xl font-bold text-racing-white hover:opacity-80 transition-opacity ${isCollapsed ? 'hidden' : 'block'}`}
             >
               FoVe<span className="text-racing-red">Champs</span>
             </button>
@@ -55,7 +68,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           {/* Navigation */}
           <nav className="flex-1 px-2 py-4">
             <ul className="space-y-2">
-              {username && (
+              {username && !isCollapsed && (
                 <li className="mb-6">
                   <div className="px-2 py-1">
                     <span className="text-sm text-racing-silver">Bem-vindo,</span>
@@ -73,7 +86,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <Trophy className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Dashboard</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Dashboard</span>
                 </button>
               </li>
               <li>
@@ -86,7 +99,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <Calendar className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Corridas</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Corridas</span>
                 </button>
               </li>
               <li>
@@ -99,7 +112,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <List className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Resultados</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Resultados</span>
                 </button>
               </li>
               <li>
@@ -112,7 +125,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <Users className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Classificação</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Classificação</span>
                 </button>
               </li>
               <li>
@@ -125,7 +138,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <FileText className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Minhas Apostas</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Minhas Apostas</span>
                 </button>
               </li>
               <li>
@@ -138,7 +151,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                   }`}
                 >
                   <Users className="w-6 h-6" />
-                  <span className="hidden md:block ml-3">Participantes</span>
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Participantes</span>
                 </button>
               </li>
             </ul>
@@ -155,7 +168,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               }`}
             >
               <UserCircle className="w-6 h-6" />
-              <span className="hidden md:block ml-3">Meu Perfil</span>
+              <span className={isCollapsed ? "hidden" : "ml-3"}>Meu Perfil</span>
             </button>
             <button 
               onClick={async () => {
@@ -165,14 +178,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               className="flex items-center w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors"
             >
               <LogOut className="w-6 h-6" />
-              <span className="hidden md:block ml-3">Sair</span>
+              <span className={isCollapsed ? "hidden" : "ml-3"}>Sair</span>
             </button>
           </div>
         </div>
       </motion.div>
 
       {/* Main content */}
-      <div className="ml-16 md:ml-64">
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {children}
       </div>
     </div>
