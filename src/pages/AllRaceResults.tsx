@@ -21,7 +21,7 @@ const AllRaceResults = () => {
           *,
           race_results(id)
         `)
-        .order('date', { ascending: false });
+        .order('date', { ascending: true }); // Mudado para true para mostrar as mais antigas primeiro
 
       if (error) throw error;
       return races as RaceWithResults[];

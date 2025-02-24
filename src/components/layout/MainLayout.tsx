@@ -1,10 +1,9 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText, UserCircle } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import type { User } from "@/types/user";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
@@ -88,6 +87,19 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   <Calendar className="w-6 h-6" />
                   <span className="hidden md:block ml-3">Corridas</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("/all-race-results")}
+                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
+                    isActive("/all-race-results")
+                      ? "text-racing-red bg-racing-red/10"
+                      : "text-racing-silver hover:bg-racing-red/10"
+                  }`}
+                >
+                  <List className="w-6 h-6" />
+                  <span className="hidden md:block ml-3">Resultados</span>
                 </button>
               </li>
               <li>
