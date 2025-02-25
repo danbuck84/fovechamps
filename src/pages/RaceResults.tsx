@@ -116,11 +116,11 @@ const RaceResults = () => {
     <div className="min-h-screen bg-racing-black text-racing-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Resultados: {race.name}</h1>
+          <h1 className="text-2xl font-bold">Resultados: {race?.name}</h1>
           <Button 
             variant="outline"
-            onClick={handleBack}
-            className="border-racing-red/20 text-racing-red hover:bg-[#ff000010] transition-colors"
+            onClick={() => navigate("/all-race-results")}
+            className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-red/20"
           >
             Voltar
           </Button>
