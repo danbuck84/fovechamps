@@ -49,7 +49,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -right-3 top-[40px] bg-racing-black border border-racing-silver/20 text-racing-silver hover:text-racing-red hover:bg-racing-black"
+            className="absolute -right-3 top-6 bg-racing-black border border-racing-silver/20 text-racing-silver hover:text-racing-red hover:bg-racing-black"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
