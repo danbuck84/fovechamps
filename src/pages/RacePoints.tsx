@@ -19,7 +19,7 @@ const RacePoints = () => {
   const navigate = useNavigate();
 
   // Buscar dados da corrida
-  const { data: race } = useQuery({
+  const { data: race, isLoading: isLoadingRace } = useQuery({
     queryKey: ["race", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -29,13 +29,16 @@ const RacePoints = () => {
         .eq("id", raceId)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao buscar corrida:", error);
+        throw error;
+      }
       return data as Race;
     },
   });
 
   // Buscar pontuações da corrida
-  const { data: points } = useQuery<RacePointWithProfile[]>({
+  const { data: points, isLoading: isLoadingPoints } = useQuery<RacePointWithProfile[]>({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -52,15 +55,28 @@ const RacePoints = () => {
         .eq("race_id", raceId)
         .order("total_points", { ascending: false });
       
-      if (error) throw error;
-      return data as unknown as RacePointWithProfile[];
+      if (error) {
+        console.error("Erro ao buscar pontuações:", error);
+        throw error;
+      }
+      
+      console.log("Pontuações carregadas:", data);
+      return data as RacePointWithProfile[];
     },
   });
+
+  if (isLoadingRace || isLoadingPoints) {
+    return (
+      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
+        <p className="text-racing-silver">Carregando pontuações...</p>
+      </div>
+    );
+  }
 
   if (!race || !points) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Carregando pontuações...</p>
+        <p className="text-racing-silver">Nenhuma pontuação encontrada.</p>
       </div>
     );
   }
@@ -104,7 +120,7 @@ const RacePoints = () => {
                         {point.profiles?.avatar_url && (
                           <img 
                             src={point.profiles.avatar_url} 
-                            alt={point.profiles.username} 
+                            alt={point.profiles.username || "Usuário"}
                             className="w-6 h-6 rounded-full"
                           />
                         )}
