@@ -15,6 +15,7 @@ import Profile from "@/pages/Profile";
 import Users from "@/pages/Users";
 import NotFound from "@/pages/NotFound";
 import AllRaceResults from "@/pages/AllRaceResults";
+import Tables from "@/pages/Tables";
 
 function App() {
   return (
@@ -50,6 +51,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <AllRaceResults />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/tables"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <Tables />
               </MainLayout>
             </PrivateRoute>
           }

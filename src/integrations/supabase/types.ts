@@ -9,6 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      constructor_race_points: {
+        Row: {
+          created_at: string
+          id: string
+          points: number
+          race_id: string
+          team_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points?: number
+          race_id: string
+          team_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points?: number
+          race_id?: string
+          team_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "constructor_race_points_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "constructor_race_points_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driver_race_points: {
+        Row: {
+          created_at: string
+          driver_id: string
+          id: string
+          points: number
+          race_id: string
+        }
+        Insert: {
+          created_at?: string
+          driver_id: string
+          id?: string
+          points?: number
+          race_id: string
+        }
+        Update: {
+          created_at?: string
+          driver_id?: string
+          id?: string
+          points?: number
+          race_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_race_points_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_race_points_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drivers: {
         Row: {
           created_at: string
@@ -37,6 +115,48 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_points: {
+        Row: {
+          created_at: string
+          game_type: string
+          id: string
+          points: number
+          race_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          game_type: string
+          id?: string
+          points?: number
+          race_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          game_type?: string
+          id?: string
+          points?: number
+          race_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_points_race_id_fkey"
+            columns: ["race_id"]
+            isOneToOne: false
+            referencedRelation: "races"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_points_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]

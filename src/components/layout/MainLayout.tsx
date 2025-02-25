@@ -1,6 +1,5 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight, Table } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -87,6 +86,19 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
                 >
                   <Trophy className="w-6 h-6" />
                   <span className={isCollapsed ? "hidden" : "ml-3"}>Dashboard</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("/tables")}
+                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
+                    isActive("/tables")
+                      ? "text-racing-red bg-racing-red/10"
+                      : "text-racing-silver hover:bg-racing-red/10"
+                  }`}
+                >
+                  <Table className="w-6 h-6" />
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Tabelas</span>
                 </button>
               </li>
               <li>
