@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -43,35 +44,38 @@ const RaceResultsAdmin = () => {
     setLoading(true);
 
     try {
+      // Limpar os valores "placeholder" antes de salvar
       const cleanedData = {
         ...formData,
         qualifying_results: formData.qualifying_results?.map(r => r === "placeholder" ? "" : r) || [],
         race_results: formData.race_results?.map(r => r === "placeholder" ? "" : r) || [],
         fastest_lap: formData.fastest_lap === "placeholder" ? "" : formData.fastest_lap,
+        pole_time: formData.pole_time || "",
+        dnf_drivers: formData.dnf_drivers || [],
         race_id: raceId,
       };
 
       console.log("Dados a serem salvos:", cleanedData);
 
+      let error;
       if (existingResult) {
-        const { error } = await supabase
+        const result = await supabase
           .from("race_results")
           .update(cleanedData)
           .eq("id", existingResult.id);
-
-        if (error) {
-          console.error("Erro ao atualizar:", error);
-          throw error;
-        }
+        
+        error = result.error;
       } else {
-        const { error } = await supabase
+        const result = await supabase
           .from("race_results")
           .insert([cleanedData]);
+        
+        error = result.error;
+      }
 
-        if (error) {
-          console.error("Erro ao inserir:", error);
-          throw error;
-        }
+      if (error) {
+        console.error("Erro ao salvar:", error);
+        throw error;
       }
 
       await refetch();
@@ -79,8 +83,10 @@ const RaceResultsAdmin = () => {
       toast({
         title: "Sucesso!",
         description: "Resultados salvos com sucesso.",
+        duration: 3000,
       });
 
+      // Redirecionar para a página de resultados da corrida
       navigate(`/race-results/${raceId}`);
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
@@ -88,6 +94,7 @@ const RaceResultsAdmin = () => {
         title: "Erro",
         description: "Não foi possível salvar os resultados. Verifique se você tem permissão.",
         variant: "destructive",
+        duration: 5000,
       });
     } finally {
       setLoading(false);
@@ -193,3 +200,4 @@ const RaceResultsAdmin = () => {
 };
 
 export default RaceResultsAdmin;
+
