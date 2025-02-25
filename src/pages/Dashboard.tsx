@@ -52,16 +52,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-racing-white">Dashboard</h1>
-        <Link 
-          to="/all-race-results" 
-          className="flex items-center gap-2 px-4 py-2 bg-racing-red text-white rounded-lg hover:bg-racing-red/90 transition-colors"
-        >
-          <List className="w-4 h-4" />
-          Ver Todos os Resultados
-        </Link>
-      </div>
+      <h1 className="text-3xl font-bold text-racing-white">Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-racing-black border-racing-silver/20">
