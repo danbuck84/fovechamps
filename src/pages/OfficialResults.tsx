@@ -17,7 +17,7 @@ const OfficialResults = () => {
   const { data: races, isLoading } = useQuery({
     queryKey: ["races-with-results"],
     queryFn: async () => {
-      const { data: races, error } = await supabase
+      const { data, error } = await supabase
         .from("races")
         .select(`
           *,
@@ -26,7 +26,7 @@ const OfficialResults = () => {
         .order('date', { ascending: true });
 
       if (error) throw error;
-      return races as RaceWithResults[];
+      return data as RaceWithResults[];
     },
   });
 
@@ -65,9 +65,9 @@ const OfficialResults = () => {
                       <Link to={`/admin/race-results/${race.id}`}>
                         <Button 
                           variant="outline" 
-                          className="w-full bg-racing-black border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white transition-colors"
+                          className="w-full border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white"
                         >
-                          <Edit className="mr-2 h-4 w-4" />
+                          <Edit className="w-4 h-4" />
                           Editar Resultados
                         </Button>
                       </Link>
@@ -77,18 +77,18 @@ const OfficialResults = () => {
                         <Link to={`/race-results/${race.id}`}>
                           <Button 
                             variant="outline" 
-                            className="w-full bg-racing-black border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white transition-colors"
+                            className="w-full border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white"
                           >
-                            <Eye className="mr-2 h-4 w-4" />
+                            <Eye className="w-4 h-4" />
                             Ver Resultados
                           </Button>
                         </Link>
                         <Link to={`/race-points/${race.id}`}>
                           <Button 
                             variant="outline"
-                            className="w-full bg-racing-black border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white transition-colors"
+                            className="w-full border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white"
                           >
-                            <BarChart2 className="mr-2 h-4 w-4" />
+                            <BarChart2 className="w-4 h-4" />
                             Ver Pontuação
                           </Button>
                         </Link>
