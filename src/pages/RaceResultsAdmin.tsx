@@ -84,11 +84,11 @@ const RaceResultsAdmin = () => {
 
       // Redirecionar para a página de resultados da corrida
       navigate(`/race-results/${raceId}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao salvar resultados:", error);
       toast({
         title: "Erro",
-        description: "Não foi possível salvar os resultados. Verifique se você tem permissão.",
+        description: error.message || "Não foi possível salvar os resultados. Verifique se você tem permissão.",
         variant: "destructive",
         duration: 5000,
       });
@@ -127,7 +127,7 @@ const RaceResultsAdmin = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div className="space-y-6">
             <QualifyingResultsForm
               poleTime={formData.pole_time || ""}
               onPoleTimeChange={handlePoleTimeChange}
@@ -140,44 +140,42 @@ const RaceResultsAdmin = () => {
               availableDrivers={(position) => getAvailableDrivers(position, true)}
             />
 
-            <div className="space-y-6">
-              <RaceResultsForm
-                fastestLap={formData.fastest_lap || "placeholder"}
-                onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
-                raceResults={formData.race_results || []}
-                onRaceDriverChange={(position, driverId) => {
-                  const newRaceResults = [...(formData.race_results || [])];
-                  newRaceResults[position] = driverId;
-                  setFormData({ ...formData, race_results: newRaceResults });
-                }}
-                dnfDrivers={formData.dnf_drivers || []}
-                onDNFChange={(driverId, checked) => {
-                  const currentDNFs = [...(formData.dnf_drivers || [])];
-                  if (checked && !currentDNFs.includes(driverId)) {
-                    setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
-                  } else if (!checked) {
-                    setFormData({
-                      ...formData,
-                      dnf_drivers: currentDNFs.filter(id => id !== driverId)
-                    });
-                  }
-                }}
-                availableDrivers={(position) => getAvailableDrivers(position, false)}
-                allDrivers={drivers}
-              />
+            <RaceResultsForm
+              fastestLap={formData.fastest_lap || "placeholder"}
+              onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
+              raceResults={formData.race_results || []}
+              onRaceDriverChange={(position, driverId) => {
+                const newRaceResults = [...(formData.race_results || [])];
+                newRaceResults[position] = driverId;
+                setFormData({ ...formData, race_results: newRaceResults });
+              }}
+              dnfDrivers={formData.dnf_drivers || []}
+              onDNFChange={(driverId, checked) => {
+                const currentDNFs = [...(formData.dnf_drivers || [])];
+                if (checked && !currentDNFs.includes(driverId)) {
+                  setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
+                } else if (!checked) {
+                  setFormData({
+                    ...formData,
+                    dnf_drivers: currentDNFs.filter(id => id !== driverId)
+                  });
+                }
+              }}
+              availableDrivers={(position) => getAvailableDrivers(position, false)}
+              allDrivers={drivers}
+            />
 
-              <Card className="bg-racing-black border-racing-silver/20">
-                <CardContent className="pt-6">
-                  <DNFPredictionForm
-                    dnfPredictions={formData.dnf_drivers || []}
-                    onDriverDNF={(count) => {
-                      const lastDrivers = formData.race_results?.slice(-count) || [];
-                      setFormData({ ...formData, dnf_drivers: lastDrivers.filter(d => d !== "placeholder") });
-                    }}
-                  />
-                </CardContent>
-              </Card>
-            </div>
+            <Card className="bg-racing-black border-racing-silver/20">
+              <CardContent className="pt-6">
+                <DNFPredictionForm
+                  dnfPredictions={formData.dnf_drivers || []}
+                  onDriverDNF={(count) => {
+                    const lastDrivers = formData.race_results?.slice(-count) || [];
+                    setFormData({ ...formData, dnf_drivers: lastDrivers.filter(d => d !== "placeholder") });
+                  }}
+                />
+              </CardContent>
+            </Card>
           </div>
 
           <div className="flex justify-end mt-8">
