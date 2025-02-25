@@ -127,7 +127,7 @@ const RacePoints = () => {
                   {points.map((point) => (
                     <tr key={point.id} className="border-b border-racing-silver/20">
                       <td className="px-4 py-2 flex items-center gap-2">
-                        {point.profiles?.avatar_url && (
+                        {point.profiles.avatar_url && (
                           <img 
                             src={point.profiles.avatar_url} 
                             alt={point.profiles.username}
@@ -155,3 +155,4 @@ const RacePoints = () => {
 };
 
 export default RacePoints;
+
