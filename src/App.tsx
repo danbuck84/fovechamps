@@ -11,7 +11,6 @@ import RaceResults from "@/pages/RaceResults";
 import RaceResultsAdmin from "@/pages/RaceResultsAdmin";
 import RacePoints from "@/pages/RacePoints";
 import Dashboard from "@/pages/Dashboard";
-import Leaderboard from "@/pages/Leaderboard";
 import Profile from "@/pages/Profile";
 import Users from "@/pages/Users";
 import NotFound from "@/pages/NotFound";
@@ -138,17 +137,6 @@ function App() {
         />
 
         <Route
-          path="/leaderboard"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Leaderboard />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
           path="/profile"
           element={
             <PrivateRoute>
@@ -177,4 +165,3 @@ function App() {
 }
 
 export default App;
-
