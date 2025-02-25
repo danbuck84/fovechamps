@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
@@ -16,6 +17,7 @@ import Users from "@/pages/Users";
 import NotFound from "@/pages/NotFound";
 import AllRaceResults from "@/pages/AllRaceResults";
 import Tables from "@/pages/Tables";
+import OfficialResults from "@/pages/OfficialResults";
 
 function App() {
   return (
@@ -62,6 +64,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <Tables />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/official-results"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <OfficialResults />
               </MainLayout>
             </PrivateRoute>
           }
@@ -164,3 +177,4 @@ function App() {
 }
 
 export default App;
+

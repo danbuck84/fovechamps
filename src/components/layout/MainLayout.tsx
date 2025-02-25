@@ -1,5 +1,6 @@
+
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight, Table } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight, Table, Flag } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -116,6 +117,19 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               </li>
               <li>
                 <button
+                  onClick={() => navigate("/official-results")}
+                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
+                    isActive("/official-results")
+                      ? "text-racing-red bg-racing-red/10"
+                      : "text-racing-silver hover:bg-racing-red/10"
+                  }`}
+                >
+                  <Flag className="w-6 h-6" />
+                  <span className={isCollapsed ? "hidden" : "ml-3"}>Resultados Oficiais</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => navigate("/all-race-results")}
                   className={`flex items-center w-full p-2 rounded-lg transition-colors ${
                     isActive("/all-race-results")
@@ -205,3 +219,4 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default MainLayout;
+
