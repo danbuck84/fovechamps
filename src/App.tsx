@@ -13,6 +13,7 @@ import RacePoints from "@/pages/RacePoints";
 import Dashboard from "@/pages/Dashboard";
 import Profile from "@/pages/Profile";
 import Users from "@/pages/Users";
+import UserProfile from "@/pages/UserProfile";
 import NotFound from "@/pages/NotFound";
 import AllRaceResults from "@/pages/AllRaceResults";
 import Tables from "@/pages/Tables";
@@ -153,6 +154,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <Users />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/users/:userId"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <UserProfile />
               </MainLayout>
             </PrivateRoute>
           }
