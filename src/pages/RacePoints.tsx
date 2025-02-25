@@ -11,7 +11,7 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type RacePoint = Database["public"]["Tables"]["race_points"]["Row"];
 
 interface RacePointWithProfile extends RacePoint {
-  profiles: Pick<Profile, "username" | "avatar_url"> | null;
+  profiles: Pick<Profile, "username" | "avatar_url">;
 }
 
 const RacePoints = () => {
@@ -38,7 +38,7 @@ const RacePoints = () => {
   });
 
   // Buscar pontuações da corrida
-  const { data: points, isLoading: isLoadingPoints } = useQuery<RacePointWithProfile[]>({
+  const { data: points, isLoading: isLoadingPoints } = useQuery({
     queryKey: ["racePoints", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -47,7 +47,7 @@ const RacePoints = () => {
         .from("race_points")
         .select(`
           *,
-          profiles:user_id (
+          profiles!race_points_user_id_fkey (
             username,
             avatar_url
           )
@@ -61,7 +61,17 @@ const RacePoints = () => {
       }
       
       console.log("Pontuações carregadas:", data);
-      return data as RacePointWithProfile[];
+      
+      // Transformar os dados para garantir a tipagem correta
+      const formattedData = data.map(point => ({
+        ...point,
+        profiles: point.profiles || {
+          username: "Usuário Desconhecido",
+          avatar_url: null
+        }
+      }));
+
+      return formattedData as RacePointWithProfile[];
     },
   });
 
@@ -120,11 +130,11 @@ const RacePoints = () => {
                         {point.profiles?.avatar_url && (
                           <img 
                             src={point.profiles.avatar_url} 
-                            alt={point.profiles.username || "Usuário"}
+                            alt={point.profiles.username}
                             className="w-6 h-6 rounded-full"
                           />
                         )}
-                        <span className="text-racing-white">{point.profiles?.username || "Usuário"}</span>
+                        <span className="text-racing-white">{point.profiles.username}</span>
                       </td>
                       <td className="px-4 py-2 text-center text-racing-white">{point.qualifying_points || 0}</td>
                       <td className="px-4 py-2 text-center text-racing-white">{point.race_points || 0}</td>
