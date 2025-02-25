@@ -1,4 +1,6 @@
 
+import { supabase } from "@/lib/supabase";
+
 // Sistema de pontuação da F1
 export const POINTS_SYSTEM = {
   1: 25,
@@ -89,3 +91,6 @@ export const calculateConstructorPoints = async (raceId: string) => {
 
   await Promise.all(pointsPromises);
 };
+
+// Re-exportar calculatePoints como calculateTotalPoints para manter compatibilidade
+export const calculateTotalPoints = calculatePoints;
