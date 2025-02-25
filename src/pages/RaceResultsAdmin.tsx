@@ -44,6 +44,10 @@ const RaceResultsAdmin = () => {
     setLoading(true);
 
     try {
+      if (!raceId) {
+        throw new Error("ID da corrida não encontrado");
+      }
+
       // Limpar os valores "placeholder" antes de salvar
       const cleanedData = {
         ...formData,
@@ -57,28 +61,20 @@ const RaceResultsAdmin = () => {
 
       console.log("Dados a serem salvos:", cleanedData);
 
-      let error;
       if (existingResult) {
-        const result = await supabase
+        const { error } = await supabase
           .from("race_results")
           .update(cleanedData)
           .eq("id", existingResult.id);
-        
-        error = result.error;
+
+        if (error) throw error;
       } else {
-        const result = await supabase
+        const { error } = await supabase
           .from("race_results")
           .insert([cleanedData]);
-        
-        error = result.error;
-      }
 
-      if (error) {
-        console.error("Erro ao salvar:", error);
-        throw error;
+        if (error) throw error;
       }
-
-      await refetch();
 
       toast({
         title: "Sucesso!",
