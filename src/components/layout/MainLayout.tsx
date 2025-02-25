@@ -143,19 +143,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
               </li>
               <li>
                 <button
-                  onClick={() => navigate("/leaderboard")}
-                  className={`flex items-center w-full p-2 rounded-lg transition-colors ${
-                    isActive("/leaderboard")
-                      ? "text-racing-red bg-racing-red/10"
-                      : "text-racing-silver hover:bg-racing-red/10"
-                  }`}
-                >
-                  <Users className="w-6 h-6" />
-                  <span className={isCollapsed ? "hidden" : "ml-3"}>Classificação</span>
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => navigate("/my-predictions")}
                   className={`flex items-center w-full p-2 rounded-lg transition-colors ${
                     isActive("/my-predictions")
