@@ -100,6 +100,11 @@ const Tables = () => {
     },
   });
 
+  // Log para debug
+  console.log("Driver Points:", driverPoints);
+  console.log("Constructor Points:", constructorPoints);
+  console.log("Game Points:", gamePoints);
+
   if (!races || !driverPoints || !constructorPoints || !gamePoints) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white p-8">
