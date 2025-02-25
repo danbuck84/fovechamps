@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Race, Driver, RaceResult, Prediction } from "@/types/betting";
-import { calculateTotalPoints } from "@/utils/scoring-utils";
+import { calculatePoints } from "@/utils/scoring-utils";
 
 const RaceResultsView = () => {
   const { raceId } = useParams();
@@ -94,24 +94,21 @@ const RaceResultsView = () => {
 
   // Calcular pontuações
   const results = predictions.map(prediction => {
-    const points = calculateTotalPoints({
-      pole_time: prediction.pole_time || "",
-      qualifying_results: prediction.qualifying_results,
-      top_10: prediction.top_10,
-      fastest_lap: prediction.fastest_lap || "",
-      dnf_predictions: prediction.dnf_predictions
-    }, raceResult);
+    // Calcular pontos baseados na posição final
+    const points = prediction.top_10.reduce((total, driverId, index) => {
+      return total + calculatePoints(index + 1);
+    }, 0);
 
     return {
       username: prediction.user.username,
       avatar_url: prediction.user.avatar_url,
+      points,
       created_at: prediction.created_at,
-      ...points
     };
   }).sort((a, b) => {
     // Primeiro critério: maior pontuação
-    if (b.total_points !== a.total_points) {
-      return b.total_points - a.total_points;
+    if (b.points !== a.points) {
+      return b.points - a.points;
     }
     // Critério de desempate: aposta mais antiga
     return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
@@ -160,14 +157,14 @@ const RaceResultsView = () => {
               
               <div>
                 <h3 className="text-xl font-semibold mb-2">Volta Mais Rápida</h3>
-                <p>{getDriverName(raceResult.fastest_lap)}</p>
+                <p>{getDriverName(raceResult.fastest_lap || "")}</p>
               </div>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2">Abandonos ({raceResult.dnf_drivers.length})</h3>
+              <h3 className="text-xl font-semibold mb-2">Abandonos ({raceResult.dnf_drivers?.length || 0})</h3>
               <div className="flex flex-wrap gap-2">
-                {raceResult.dnf_drivers.map((driverId) => (
+                {raceResult.dnf_drivers?.map((driverId) => (
                   <span key={driverId} className="bg-racing-red/10 px-2 py-1 rounded">
                     {getDriverName(driverId)}
                   </span>
@@ -189,12 +186,7 @@ const RaceResultsView = () => {
                   <tr className="border-b border-racing-silver/20">
                     <th className="px-4 py-2 text-left">Posição</th>
                     <th className="px-4 py-2 text-left">Participante</th>
-                    <th className="px-4 py-2 text-center">Grid</th>
-                    <th className="px-4 py-2 text-center">Corrida</th>
-                    <th className="px-4 py-2 text-center">Pole</th>
-                    <th className="px-4 py-2 text-center">Volta +R</th>
-                    <th className="px-4 py-2 text-center">DNFs</th>
-                    <th className="px-4 py-2 text-center">Total</th>
+                    <th className="px-4 py-2 text-center">Pontos</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -202,12 +194,7 @@ const RaceResultsView = () => {
                     <tr key={result.username} className="border-b border-racing-silver/20">
                       <td className="px-4 py-2">{index + 1}º</td>
                       <td className="px-4 py-2">{result.username}</td>
-                      <td className="px-4 py-2 text-center">{result.qualifying_points}</td>
-                      <td className="px-4 py-2 text-center">{result.race_points}</td>
-                      <td className="px-4 py-2 text-center">{result.pole_time_points}</td>
-                      <td className="px-4 py-2 text-center">{result.fastest_lap_points}</td>
-                      <td className="px-4 py-2 text-center">{result.dnf_points}</td>
-                      <td className="px-4 py-2 text-center font-bold">{result.total_points}</td>
+                      <td className="px-4 py-2 text-center font-bold">{result.points}</td>
                     </tr>
                   ))}
                 </tbody>
