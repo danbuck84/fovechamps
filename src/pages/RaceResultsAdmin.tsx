@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -16,15 +15,28 @@ const RaceResultsAdmin = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { race, drivers, existingResult, refetch, loading, setLoading } = useRaceResults(raceId);
+  const { race, drivers, existingResult, loading: dataLoading, setLoading: setDataLoading } = useRaceResults(raceId);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState<Partial<RaceResult>>({
-    qualifying_results: existingResult?.qualifying_results || Array(20).fill("placeholder"),
-    race_results: existingResult?.race_results || Array(20).fill("placeholder"),
-    pole_time: existingResult?.pole_time || "",
-    fastest_lap: existingResult?.fastest_lap || "placeholder",
-    dnf_drivers: existingResult?.dnf_drivers || [],
+    qualifying_results: Array(20).fill("placeholder"),
+    race_results: Array(20).fill("placeholder"),
+    pole_time: "",
+    fastest_lap: "placeholder",
+    dnf_drivers: [],
   });
+
+  useEffect(() => {
+    if (existingResult) {
+      setFormData({
+        qualifying_results: existingResult.qualifying_results,
+        race_results: existingResult.race_results,
+        pole_time: existingResult.pole_time || "",
+        fastest_lap: existingResult.fastest_lap || "placeholder",
+        dnf_drivers: existingResult.dnf_drivers || [],
+      });
+    }
+  }, [existingResult]);
 
   const getAvailableDrivers = (position: number, isQualifying: boolean) => {
     if (!drivers) return [];
@@ -41,14 +53,18 @@ const RaceResultsAdmin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setIsSubmitting(true);
 
     try {
       if (!raceId) {
         throw new Error("ID da corrida não encontrado");
       }
 
-      // Limpar os valores "placeholder" antes de salvar
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Você precisa estar logado para salvar os resultados");
+      }
+
       const cleanedData = {
         ...formData,
         qualifying_results: formData.qualifying_results?.map(r => r === "placeholder" ? "" : r) || [],
@@ -61,19 +77,24 @@ const RaceResultsAdmin = () => {
 
       console.log("Dados a serem salvos:", cleanedData);
 
+      let result;
       if (existingResult) {
-        const { error } = await supabase
+        result = await supabase
           .from("race_results")
           .update(cleanedData)
-          .eq("id", existingResult.id);
-
-        if (error) throw error;
+          .eq("id", existingResult.id)
+          .select()
+          .single();
       } else {
-        const { error } = await supabase
+        result = await supabase
           .from("race_results")
-          .insert([cleanedData]);
+          .insert([cleanedData])
+          .select()
+          .single();
+      }
 
-        if (error) throw error;
+      if (result.error) {
+        throw result.error;
       }
 
       toast({
@@ -82,18 +103,20 @@ const RaceResultsAdmin = () => {
         duration: 3000,
       });
 
-      // Redirecionar para a página de resultados da corrida
-      navigate(`/race-results/${raceId}`);
+      setTimeout(() => {
+        navigate(`/race-results/${raceId}`);
+      }, 1000);
+
     } catch (error: any) {
       console.error("Erro ao salvar resultados:", error);
       toast({
-        title: "Erro",
-        description: error.message || "Não foi possível salvar os resultados. Verifique se você tem permissão.",
+        title: "Erro ao salvar",
+        description: error.message || "Não foi possível salvar os resultados. Tente novamente.",
         variant: "destructive",
         duration: 5000,
       });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -102,7 +125,7 @@ const RaceResultsAdmin = () => {
     setFormData(prev => ({ ...prev, pole_time: formattedTime }));
   };
 
-  if (!race || !drivers) {
+  if (dataLoading || !race || !drivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
         <p className="text-racing-silver">Carregando dados da corrida...</p>
@@ -181,10 +204,10 @@ const RaceResultsAdmin = () => {
           <div className="flex justify-end mt-8">
             <Button 
               type="submit" 
-              disabled={loading}
+              disabled={isSubmitting}
               className="bg-racing-red hover:bg-racing-red/90 transition-colors duration-200 min-w-[150px] text-racing-white"
             >
-              {loading ? "Salvando..." : "Salvar Resultados"}
+              {isSubmitting ? "Salvando..." : "Salvar Resultados"}
             </Button>
           </div>
         </form>
@@ -194,4 +217,3 @@ const RaceResultsAdmin = () => {
 };
 
 export default RaceResultsAdmin;
-
