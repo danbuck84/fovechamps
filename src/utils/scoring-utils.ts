@@ -1,65 +1,91 @@
 
-import type { RaceResult } from "@/types/betting";
+// Sistema de pontuação da F1
+export const POINTS_SYSTEM = {
+  1: 25,
+  2: 18,
+  3: 15,
+  4: 12,
+  5: 10,
+  6: 8,
+  7: 6,
+  8: 4,
+  9: 2,
+  10: 1
+};
 
-interface ScoringInput {
-  pole_time: string;
-  qualifying_results: string[];
-  top_10: string[];
-  fastest_lap: string;
-  dnf_predictions: string[];
-}
+export const calculatePoints = (position: number): number => {
+  return POINTS_SYSTEM[position as keyof typeof POINTS_SYSTEM] || 0;
+};
 
-export const calculateTotalPoints = (prediction: ScoringInput, result: RaceResult) => {
-  let total = 0;
-  let qualifyingPoints = 0;
-  let racePoints = 0;
-  let poleTimePoints = 0;
-  let fastestLapPoints = 0;
-  let dnfPoints = 0;
+export const calculateDriverPoints = async (raceId: string) => {
+  const { data: raceResults, error: raceError } = await supabase
+    .from('race_results')
+    .select('race_results')
+    .eq('race_id', raceId)
+    .single();
 
-  // Pontuação para grid de largada
-  prediction.qualifying_results.forEach((driverId, index) => {
-    if (result.qualifying_results[index] === driverId) {
-      qualifyingPoints += 10;
-    } else if (result.qualifying_results.includes(driverId)) {
-      qualifyingPoints += 5;
-    }
+  if (raceError) throw raceError;
+  if (!raceResults?.race_results) return;
+
+  // Para cada piloto nos resultados, calcular e salvar os pontos
+  const pointsPromises = raceResults.race_results.map(async (driverId, position) => {
+    if (!driverId) return null;
+
+    const points = calculatePoints(position + 1);
+    
+    // Salvar pontos do piloto
+    const { error } = await supabase
+      .from('driver_race_points')
+      .upsert({
+        driver_id: driverId,
+        race_id: raceId,
+        points
+      });
+
+    if (error) throw error;
+    return { driverId, points };
   });
 
-  // Pontuação para resultado da corrida
-  prediction.top_10.forEach((driverId, index) => {
-    if (result.race_results[index] === driverId) {
-      racePoints += 10;
-    } else if (result.race_results.includes(driverId)) {
-      racePoints += 5;
-    }
+  await Promise.all(pointsPromises.filter(p => p !== null));
+};
+
+export const calculateConstructorPoints = async (raceId: string) => {
+  // Buscar resultados da corrida com os pontos dos pilotos
+  const { data: driverPoints, error: driverError } = await supabase
+    .from('driver_race_points')
+    .select(`
+      driver_id,
+      points,
+      driver:drivers(
+        team_id
+      )
+    `)
+    .eq('race_id', raceId);
+
+  if (driverError) throw driverError;
+  if (!driverPoints) return;
+
+  // Agrupar pontos por equipe
+  const constructorPoints = driverPoints.reduce((acc, curr) => {
+    const teamId = curr.driver?.team_id;
+    if (!teamId) return acc;
+
+    acc[teamId] = (acc[teamId] || 0) + (curr.points || 0);
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Salvar pontos das equipes
+  const pointsPromises = Object.entries(constructorPoints).map(async ([teamId, points]) => {
+    const { error } = await supabase
+      .from('constructor_race_points')
+      .upsert({
+        team_id: teamId,
+        race_id: raceId,
+        points
+      });
+
+    if (error) throw error;
   });
 
-  // Pontuação para tempo da pole
-  if (prediction.pole_time === result.pole_time) {
-    poleTimePoints = 20;
-  }
-
-  // Pontuação para volta mais rápida
-  if (prediction.fastest_lap === result.fastest_lap) {
-    fastestLapPoints = 15;
-  }
-
-  // Pontuação para abandonos
-  prediction.dnf_predictions.forEach(driverId => {
-    if (result.dnf_drivers.includes(driverId)) {
-      dnfPoints += 10;
-    }
-  });
-
-  total = qualifyingPoints + racePoints + poleTimePoints + fastestLapPoints + dnfPoints;
-
-  return {
-    qualifying_points: qualifyingPoints,
-    race_points: racePoints,
-    pole_time_points: poleTimePoints,
-    fastest_lap_points: fastestLapPoints,
-    dnf_points: dnfPoints,
-    total_points: total,
-  };
+  await Promise.all(pointsPromises);
 };
