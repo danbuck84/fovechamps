@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
@@ -9,6 +8,8 @@ import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
 import { useRaceResults } from "@/hooks/useRaceResults";
 import { formatPoleTime } from "@/utils/prediction-utils";
 import type { RaceResult } from "@/types/betting";
+import { DNFPredictionForm } from "@/components/race-predictions/DNFPredictionForm";
+import { Card, CardContent } from "@/components/ui/card";
 
 const RaceResultsAdmin = () => {
   const { raceId } = useParams();
@@ -42,7 +43,6 @@ const RaceResultsAdmin = () => {
     setLoading(true);
 
     try {
-      // Limpar os valores "placeholder" antes de salvar
       const cleanedData = {
         ...formData,
         qualifying_results: formData.qualifying_results?.map(r => r === "placeholder" ? "" : r) || [],
@@ -81,7 +81,7 @@ const RaceResultsAdmin = () => {
         description: "Resultados salvos com sucesso.",
       });
 
-      navigate("/official-results");
+      navigate(`/race-results/${raceId}`);
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
       toast({
@@ -109,7 +109,7 @@ const RaceResultsAdmin = () => {
 
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container max-w-[1600px] mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold text-racing-white">
             Administrar Resultados: {race.name}
@@ -123,43 +123,59 @@ const RaceResultsAdmin = () => {
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
-          <QualifyingResultsForm
-            poleTime={formData.pole_time || ""}
-            onPoleTimeChange={handlePoleTimeChange}
-            qualifyingResults={formData.qualifying_results || []}
-            onQualifyingDriverChange={(position, driverId) => {
-              const newQualifyingResults = [...(formData.qualifying_results || [])];
-              newQualifyingResults[position] = driverId;
-              setFormData({ ...formData, qualifying_results: newQualifyingResults });
-            }}
-            availableDrivers={(position) => getAvailableDrivers(position, true)}
-          />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <QualifyingResultsForm
+              poleTime={formData.pole_time || ""}
+              onPoleTimeChange={handlePoleTimeChange}
+              qualifyingResults={formData.qualifying_results || []}
+              onQualifyingDriverChange={(position, driverId) => {
+                const newQualifyingResults = [...(formData.qualifying_results || [])];
+                newQualifyingResults[position] = driverId;
+                setFormData({ ...formData, qualifying_results: newQualifyingResults });
+              }}
+              availableDrivers={(position) => getAvailableDrivers(position, true)}
+            />
 
-          <RaceResultsForm
-            fastestLap={formData.fastest_lap || "placeholder"}
-            onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
-            raceResults={formData.race_results || []}
-            onRaceDriverChange={(position, driverId) => {
-              const newRaceResults = [...(formData.race_results || [])];
-              newRaceResults[position] = driverId;
-              setFormData({ ...formData, race_results: newRaceResults });
-            }}
-            dnfDrivers={formData.dnf_drivers || []}
-            onDNFChange={(driverId, checked) => {
-              const currentDNFs = [...(formData.dnf_drivers || [])];
-              if (checked && !currentDNFs.includes(driverId)) {
-                setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
-              } else if (!checked) {
-                setFormData({
-                  ...formData,
-                  dnf_drivers: currentDNFs.filter(id => id !== driverId)
-                });
-              }
-            }}
-            availableDrivers={(position) => getAvailableDrivers(position, false)}
-            allDrivers={drivers}
-          />
+            <div className="space-y-6">
+              <RaceResultsForm
+                fastestLap={formData.fastest_lap || "placeholder"}
+                onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
+                raceResults={formData.race_results || []}
+                onRaceDriverChange={(position, driverId) => {
+                  const newRaceResults = [...(formData.race_results || [])];
+                  newRaceResults[position] = driverId;
+                  setFormData({ ...formData, race_results: newRaceResults });
+                }}
+                dnfDrivers={formData.dnf_drivers || []}
+                onDNFChange={(driverId, checked) => {
+                  const currentDNFs = [...(formData.dnf_drivers || [])];
+                  if (checked && !currentDNFs.includes(driverId)) {
+                    setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
+                  } else if (!checked) {
+                    setFormData({
+                      ...formData,
+                      dnf_drivers: currentDNFs.filter(id => id !== driverId)
+                    });
+                  }
+                }}
+                availableDrivers={(position) => getAvailableDrivers(position, false)}
+                allDrivers={drivers}
+              />
+
+              <Card className="bg-racing-black border-racing-silver/20">
+                <CardContent className="pt-6">
+                  <DNFPredictionForm
+                    dnfPredictions={formData.dnf_drivers || []}
+                    onDriverDNF={(count) => {
+                      const lastDrivers = formData.race_results?.slice(-count) || [];
+                      setFormData({ ...formData, dnf_drivers: lastDrivers.filter(d => d !== "placeholder") });
+                    }}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
           <div className="flex justify-end mt-8">
             <Button 
@@ -177,4 +193,3 @@ const RaceResultsAdmin = () => {
 };
 
 export default RaceResultsAdmin;
-

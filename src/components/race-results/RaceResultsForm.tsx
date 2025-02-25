@@ -1,6 +1,5 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -100,25 +99,6 @@ export const RaceResultsForm = ({
                       ))}
                     </SelectContent>
                   </Select>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`dnf-${index}`}
-                      checked={dnfDrivers.includes(raceResults[index] || "")}
-                      onCheckedChange={(checked) => {
-                        const driverId = raceResults[index];
-                        if (driverId) {
-                          onDNFChange(driverId, checked as boolean);
-                        }
-                      }}
-                      disabled={!raceResults[index]}
-                    />
-                    <label
-                      htmlFor={`dnf-${index}`}
-                      className="text-sm font-medium text-racing-silver leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      DNF
-                    </label>
-                  </div>
                 </div>
               ))}
             </div>
