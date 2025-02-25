@@ -81,7 +81,7 @@ const RaceResultsAdmin = () => {
         description: "Resultados salvos com sucesso.",
       });
 
-      navigate("/"); // Redireciona para a página inicial após salvar com sucesso
+      navigate("/official-results");
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
       toast({
@@ -116,8 +116,8 @@ const RaceResultsAdmin = () => {
           </h1>
           <Button 
             variant="outline"
-            onClick={() => navigate("/")}
-            className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
+            onClick={() => navigate("/official-results")}
+            className="bg-racing-black border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white transition-colors"
           >
             Voltar
           </Button>
@@ -165,7 +165,7 @@ const RaceResultsAdmin = () => {
             <Button 
               type="submit" 
               disabled={loading}
-              className="bg-racing-red hover:bg-racing-red/90 transition-colors duration-200 min-w-[150px]"
+              className="bg-racing-red hover:bg-racing-red/90 transition-colors duration-200 min-w-[150px] text-racing-white"
             >
               {loading ? "Salvando..." : "Salvar Resultados"}
             </Button>

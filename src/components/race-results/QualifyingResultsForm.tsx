@@ -52,36 +52,39 @@ export const QualifyingResultsForm = ({
             <label className="block text-sm font-medium text-racing-silver">
               Grid de Largada
             </label>
-            {Array.from({ length: 20 }).map((_, index) => (
-              <div key={`qualifying-${index}`} className="flex items-center gap-2">
-                <span className="w-8 text-racing-silver">{index + 1}.</span>
-                <Select
-                  value={qualifyingResults[index] || "placeholder"}
-                  onValueChange={(value) => onQualifyingDriverChange(index, value)}
-                >
-                  <SelectTrigger className="w-full bg-racing-white text-racing-black border-racing-silver/20">
-                    <SelectValue placeholder="Selecione um piloto" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-racing-white border-racing-silver/20">
-                    <SelectItem value="placeholder" className="text-racing-black">
-                      Selecione um piloto
-                    </SelectItem>
-                    {sortDrivers(availableDrivers(index)).map((driver) => (
-                      <SelectItem 
-                        key={driver.id} 
-                        value={driver.id}
-                        className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
-                      >
-                        {driver.name} ({driver.team.name})
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Array.from({ length: 20 }).map((_, index) => (
+                <div key={`qualifying-${index}`} className="flex items-center gap-2">
+                  <span className="w-8 text-racing-silver">{index + 1}.</span>
+                  <Select
+                    value={qualifyingResults[index] || "placeholder"}
+                    onValueChange={(value) => onQualifyingDriverChange(index, value)}
+                  >
+                    <SelectTrigger className="w-full bg-racing-white text-racing-black border-racing-silver/20">
+                      <SelectValue placeholder="Selecione um piloto" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-racing-white border-racing-silver/20">
+                      <SelectItem value="placeholder" className="text-racing-black">
+                        Selecione um piloto
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            ))}
+                      {sortDrivers(availableDrivers(index)).map((driver) => (
+                        <SelectItem 
+                          key={driver.id} 
+                          value={driver.id}
+                          className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+                        >
+                          {driver.name} ({driver.team.name})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>
     </Card>
   );
 };
+
