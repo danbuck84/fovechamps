@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -137,12 +138,12 @@ const RaceResultsView = () => {
           {raceResult.dnf_drivers && raceResult.dnf_drivers.length > 0 && (
             <Card className="bg-racing-black border-racing-silver/20">
               <CardHeader>
-                <CardTitle className="text-racing-red">Pilotos que não completaram o GP</CardTitle>
+                <CardTitle className="text-racing-red">Pilotos que não sobreviveram ao GP</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <p className="text-racing-silver mb-4">
-                    {raceResult.dnf_drivers.length} piloto{raceResult.dnf_drivers.length !== 1 ? 's' : ''} não conseguiu/conseguiram chegar até o final
+                    {raceResult.dnf_drivers.length} piloto{raceResult.dnf_drivers.length !== 1 ? 's' : ''} não {raceResult.dnf_drivers.length === 1 ? 'conseguiu' : 'conseguiram'} chegar até o final
                   </p>
                   {raceResult.dnf_drivers.map((driverId) => (
                     <div key={`dnf-${driverId}`} className="text-racing-white">
@@ -160,3 +161,4 @@ const RaceResultsView = () => {
 };
 
 export default RaceResultsView;
+

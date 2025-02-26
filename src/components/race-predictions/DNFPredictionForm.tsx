@@ -23,7 +23,7 @@ export const DNFPredictionForm = ({
       <div className="space-y-2">
         <h3 className="text-xl font-semibold text-racing-white">Sobreviventes</h3>
         <p className="text-sm text-racing-silver">
-          Quantos pilotos você acha que não terminarão a corrida?
+          Quantos pilotos sobreviverão à corrida?
         </p>
       </div>
       
