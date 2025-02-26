@@ -55,16 +55,16 @@ const RaceResultsView = () => {
 
   if (isLoadingRace || isLoadingResults) {
     return (
-      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Carregando resultados...</p>
+      <div className="min-h-screen bg-racing-black text-racing-silver flex items-center justify-center">
+        <p>Carregando resultados...</p>
       </div>
     );
   }
 
   if (!race || !raceResult || !drivers) {
     return (
-      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Nenhum resultado encontrado.</p>
+      <div className="min-h-screen bg-racing-black text-racing-silver flex items-center justify-center">
+        <p>Nenhum resultado encontrado.</p>
       </div>
     );
   }
@@ -76,25 +76,26 @@ const RaceResultsView = () => {
   };
 
   return (
-    <div className="min-h-screen bg-racing-black text-racing-white p-6">
+    <div className="min-h-screen bg-racing-black p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Resultados Oficiais: {race.name}</h1>
+        <h1 className="text-3xl font-bold mb-8 text-racing-white">{race.name} - Resultados Oficiais</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Resultados da Classificação */}
           <Card className="bg-racing-black border-racing-silver/20">
             <CardHeader>
-              <CardTitle>Resultados da Classificação</CardTitle>
+              <CardTitle className="text-racing-red">Resultados da Classificação</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <p className="text-racing-silver mb-4">
-                  Tempo da Pole: {raceResult.pole_time || "Não disponível"}
+                  <span className="text-racing-white">Tempo da Pole:</span>{" "}
+                  {raceResult.pole_time || "Não disponível"}
                 </p>
                 {raceResult.qualifying_results.map((driverId, index) => (
                   <div key={`qual-${driverId}`} className="flex items-center gap-2">
-                    <span className="w-8 text-racing-silver">{index + 1}.</span>
-                    <span>{getDriverName(driverId)}</span>
+                    <span className="w-8 text-racing-red font-semibold">{index + 1}.</span>
+                    <span className="text-racing-white">{getDriverName(driverId)}</span>
                   </div>
                 ))}
               </div>
@@ -104,33 +105,37 @@ const RaceResultsView = () => {
           {/* Resultados da Corrida */}
           <Card className="bg-racing-black border-racing-silver/20">
             <CardHeader>
-              <CardTitle>Resultados da Corrida</CardTitle>
+              <CardTitle className="text-racing-red">Resultados da Corrida</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <p className="text-racing-silver mb-4">
-                  Volta mais rápida: {getDriverName(raceResult.fastest_lap || "")}
+                  <span className="text-racing-white">Volta mais rápida:</span>{" "}
+                  {getDriverName(raceResult.fastest_lap || "")}
                 </p>
                 {raceResult.race_results.map((driverId, index) => (
                   <div key={`race-${driverId}`} className="flex items-center gap-2">
-                    <span className="w-8 text-racing-silver">{index + 1}.</span>
-                    <span>{getDriverName(driverId)}</span>
+                    <span className="w-8 text-racing-red font-semibold">{index + 1}.</span>
+                    <span className="text-racing-white">{getDriverName(driverId)}</span>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* DNFs */}
+          {/* Sobreviventes */}
           {raceResult.dnf_drivers && raceResult.dnf_drivers.length > 0 && (
             <Card className="bg-racing-black border-racing-silver/20">
               <CardHeader>
-                <CardTitle>Abandonos (DNF)</CardTitle>
+                <CardTitle className="text-racing-red">Pilotos que não completaram o GP</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
+                  <p className="text-racing-silver mb-4">
+                    {raceResult.dnf_drivers.length} piloto{raceResult.dnf_drivers.length !== 1 ? 's' : ''} não conseguiu/conseguiram chegar até o final
+                  </p>
                   {raceResult.dnf_drivers.map((driverId) => (
-                    <div key={`dnf-${driverId}`}>
+                    <div key={`dnf-${driverId}`} className="text-racing-white">
                       {getDriverName(driverId)}
                     </div>
                   ))}
