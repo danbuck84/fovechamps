@@ -78,3 +78,4 @@ export const useRaceResults = (raceId: string | undefined) => {
     processPoints,
   };
 };
+

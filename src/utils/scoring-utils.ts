@@ -94,3 +94,4 @@ export const calculateConstructorPoints = async (raceId: string) => {
 
 // Re-exportar calculatePoints como calculateTotalPoints para manter compatibilidade
 export const calculateTotalPoints = calculatePoints;
+

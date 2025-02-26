@@ -1,12 +1,13 @@
-
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import type { Race, Driver, RaceResult } from "@/types/betting";
 
 const RaceResultsView = () => {
   const { raceId } = useParams();
+  const navigate = useNavigate();
 
   // Buscar dados da corrida
   const { data: race, isLoading: isLoadingRace } = useQuery({
@@ -78,7 +79,16 @@ const RaceResultsView = () => {
   return (
     <div className="min-h-screen bg-racing-black p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-racing-white">{race.name} - Resultados Oficiais</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-racing-white">{race?.name} - Resultados Oficiais</h1>
+          <Button 
+            variant="outline"
+            onClick={() => navigate(-1)}
+            className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none transition-colors duration-200"
+          >
+            Voltar
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Resultados da Classificação */}
@@ -150,4 +160,3 @@ const RaceResultsView = () => {
 };
 
 export default RaceResultsView;
-
