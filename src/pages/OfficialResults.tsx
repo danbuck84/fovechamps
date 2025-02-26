@@ -74,7 +74,7 @@ const OfficialResults = () => {
                     )}
                     {race.race_results ? (
                       <>
-                        <Link to={`/race-results/${race.id}`}>
+                        <Link to={`/race-results-view/${race.id}`}>
                           <Button 
                             variant="outline" 
                             className="w-full border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white"
@@ -83,7 +83,7 @@ const OfficialResults = () => {
                             Ver Resultados
                           </Button>
                         </Link>
-                        <Link to={`/race-points/${race.id}`}>
+                        <Link to={`/tables`}>
                           <Button 
                             variant="outline"
                             className="w-full border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white"

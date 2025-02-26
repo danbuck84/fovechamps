@@ -18,6 +18,7 @@ import NotFound from "@/pages/NotFound";
 import AllRaceResults from "@/pages/AllRaceResults";
 import Tables from "@/pages/Tables";
 import OfficialResults from "@/pages/OfficialResults";
+import RaceResultsView from "@/pages/RaceResultsView";
 
 function App() {
   return (
@@ -75,6 +76,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <OfficialResults />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/race-results-view/:raceId"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <RaceResultsView />
               </MainLayout>
             </PrivateRoute>
           }
@@ -177,3 +189,4 @@ function App() {
 }
 
 export default App;
+
