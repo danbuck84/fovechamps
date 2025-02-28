@@ -3,12 +3,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import type { Race, Driver, Prediction, RaceResult } from "@/types/betting";
 import ComparisonTable from "@/components/race-results/ComparisonTable";
+import { useState } from "react";
+import { calculateAllPoints } from "@/utils/scoring-utils";
 
 const RaceResults = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
+  const [calculatingPoints, setCalculatingPoints] = useState(false);
 
   // Buscar dados da corrida
   const { data: race } = useQuery({
@@ -54,7 +58,7 @@ const RaceResults = () => {
   });
 
   // Buscar resultados oficiais
-  const { data: raceResult } = useQuery({
+  const { data: raceResult, refetch: refetchResults } = useQuery({
     queryKey: ["raceResult", raceId],
     queryFn: async () => {
       if (!raceId) throw new Error("Race ID não fornecido");
@@ -90,6 +94,26 @@ const RaceResults = () => {
     },
   });
 
+  const processPoints = async () => {
+    if (!raceId) {
+      toast.error("ID da corrida não fornecido");
+      return;
+    }
+    
+    setCalculatingPoints(true);
+    try {
+      await calculateAllPoints(raceId);
+      toast.success("Pontos calculados com sucesso!");
+      // Recarregar os dados após calcular os pontos
+      await refetchResults();
+    } catch (error) {
+      console.error("Erro ao calcular pontos:", error);
+      toast.error("Erro ao calcular pontos");
+    } finally {
+      setCalculatingPoints(false);
+    }
+  };
+
   if (!race || !drivers || !raceResult || !predictions || isLoadingDrivers) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
@@ -108,22 +132,28 @@ const RaceResults = () => {
     return `${driver.name} (${driver.team.name})`;
   };
 
-  const handleBack = () => {
-    navigate("/all-race-results");
-  };
-
   return (
     <div className="min-h-screen bg-racing-black text-racing-white">
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">Resultados: {race?.name}</h1>
-          <Button 
-            variant="outline"
-            onClick={() => navigate("/all-race-results")}
-            className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-red/20"
-          >
-            Voltar
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/all-race-results")}
+              className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-silver/20"
+            >
+              Voltar
+            </Button>
+            <Button 
+              variant="default"
+              onClick={processPoints}
+              disabled={calculatingPoints}
+              className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-red/20"
+            >
+              {calculatingPoints ? "Calculando..." : "Calcular Pontos"}
+            </Button>
+          </div>
         </div>
 
         {/* Resultados Oficiais */}

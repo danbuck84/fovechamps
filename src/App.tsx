@@ -2,7 +2,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
-import AdminRoute from "@/components/auth/AdminRoute";
 import Auth from "@/pages/Auth";
 import Index from "@/pages/Index";
 import MyPredictions from "@/pages/MyPredictions";
@@ -140,11 +139,9 @@ function App() {
           path="/admin/race-results/:raceId"
           element={
             <PrivateRoute>
-              <AdminRoute>
-                <MainLayout>
-                  <RaceResultsAdmin />
-                </MainLayout>
-              </AdminRoute>
+              <MainLayout>
+                <RaceResultsAdmin />
+              </MainLayout>
             </PrivateRoute>
           }
         />
@@ -189,4 +186,3 @@ function App() {
 }
 
 export default App;
-

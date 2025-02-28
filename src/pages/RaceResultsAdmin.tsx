@@ -126,21 +126,15 @@ const RaceResultsAdmin = () => {
       
       await refetch();
       toast.success("Resultados salvos com sucesso!");
+      
+      // Calcular pontos automaticamente após salvar
+      await processPoints();
+      toast.success("Pontos calculados e salvos com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
       toast.error("Erro ao salvar resultados");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleCalculatePoints = async () => {
-    try {
-      await processPoints();
-      toast.success("Pontos calculados e salvos com sucesso!");
-    } catch (error) {
-      console.error("Erro ao calcular pontos:", error);
-      toast.error("Erro ao calcular pontos");
     }
   };
 
@@ -162,21 +156,12 @@ const RaceResultsAdmin = () => {
               Voltar
             </Button>
             <Button 
-              disabled={saving}
+              disabled={saving || loading}
               onClick={saveResults}
               className="bg-racing-red hover:bg-racing-red/80 text-racing-white"
             >
-              {saving ? "Salvando..." : "Salvar Resultados"}
+              {saving || loading ? "Processando..." : "Salvar Resultados"}
             </Button>
-            {existingResult && (
-              <Button 
-                disabled={loading}
-                onClick={handleCalculatePoints}
-                className="bg-racing-green hover:bg-racing-green/80 text-racing-white"
-              >
-                {loading ? "Processando..." : "Calcular Pontos"}
-              </Button>
-            )}
           </div>
         </div>
 
