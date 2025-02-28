@@ -1,216 +1,205 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { useRaceResults } from "@/hooks/useRaceResults";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { QualifyingResultsForm } from "@/components/race-results/QualifyingResultsForm";
 import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
-import { useRaceResults } from "@/hooks/useRaceResults";
-import { formatPoleTime } from "@/utils/prediction-utils";
-import type { RaceResult } from "@/types/betting";
-import { DNFPredictionForm } from "@/components/race-predictions/DNFPredictionForm";
-import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const RaceResultsAdmin = () => {
-  const { raceId } = useParams();
+  const { raceId } = useParams<{ raceId: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { race, drivers, existingResult, loading: dataLoading, setLoading: setDataLoading } = useRaceResults(raceId);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  
+  const { 
+    race, 
+    drivers, 
+    existingResult, 
+    refetch,
+    loading,
+    processPoints
+  } = useRaceResults(raceId);
 
-  const [formData, setFormData] = useState<Partial<RaceResult>>({
-    qualifying_results: Array(20).fill("placeholder"),
-    race_results: Array(20).fill("placeholder"),
-    pole_time: "",
-    fastest_lap: "placeholder",
-    dnf_drivers: [],
-  });
+  const [poleTime, setPoleTime] = useState<string>(existingResult?.pole_time || "");
+  const [fastestLap, setFastestLap] = useState<string>(existingResult?.fastest_lap || "");
+  const [qualifyingResults, setQualifyingResults] = useState<string[]>(
+    existingResult?.qualifying_results || Array(20).fill("")
+  );
+  const [raceResults, setRaceResults] = useState<string[]>(
+    existingResult?.race_results || Array(20).fill("")
+  );
+  const [dnfDrivers, setDNFDrivers] = useState<string[]>(
+    existingResult?.dnf_drivers || []
+  );
 
-  useEffect(() => {
-    if (existingResult) {
-      setFormData({
-        qualifying_results: existingResult.qualifying_results,
-        race_results: existingResult.race_results,
-        pole_time: existingResult.pole_time || "",
-        fastest_lap: existingResult.fastest_lap || "placeholder",
-        dnf_drivers: existingResult.dnf_drivers || [],
-      });
+  const handleQualifyingDriverChange = (position: number, driverId: string) => {
+    if (driverId === "placeholder") {
+      // Remove o piloto da posição selecionada
+      const newResults = [...qualifyingResults];
+      newResults[position] = "";
+      setQualifyingResults(newResults);
+      return;
     }
-  }, [existingResult]);
 
-  const getAvailableDrivers = (position: number, isQualifying: boolean) => {
-    if (!drivers) return [];
-    const selectedPositions = isQualifying 
-      ? formData.qualifying_results 
-      : formData.race_results;
-    
-    return drivers.filter(driver => {
-      if (!selectedPositions) return true;
-      const isSelected = selectedPositions.includes(driver.id);
-      return !isSelected || selectedPositions[position] === driver.id;
-    });
+    // Verificar se o piloto já está em outra posição e removê-lo
+    const currentIndex = qualifyingResults.findIndex(id => id === driverId);
+    if (currentIndex !== -1 && currentIndex !== position) {
+      const newResults = [...qualifyingResults];
+      newResults[currentIndex] = "";
+      newResults[position] = driverId;
+      setQualifyingResults(newResults);
+    } else {
+      const newResults = [...qualifyingResults];
+      newResults[position] = driverId;
+      setQualifyingResults(newResults);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const handleRaceDriverChange = (position: number, driverId: string) => {
+    if (driverId === "placeholder") {
+      // Remove o piloto da posição selecionada
+      const newResults = [...raceResults];
+      newResults[position] = "";
+      setRaceResults(newResults);
+      return;
+    }
 
+    // Verificar se o piloto já está em outra posição e removê-lo
+    const currentIndex = raceResults.findIndex(id => id === driverId);
+    if (currentIndex !== -1 && currentIndex !== position) {
+      const newResults = [...raceResults];
+      newResults[currentIndex] = "";
+      newResults[position] = driverId;
+      setRaceResults(newResults);
+    } else {
+      const newResults = [...raceResults];
+      newResults[position] = driverId;
+      setRaceResults(newResults);
+    }
+  };
+
+  const handleDNFChange = (driverId: string, checked: boolean) => {
+    if (checked) {
+      setDNFDrivers(prev => [...prev, driverId]);
+    } else {
+      setDNFDrivers(prev => prev.filter(id => id !== driverId));
+    }
+  };
+
+  const getAvailableDrivers = (position: number) => {
+    if (!drivers) return [];
+    
+    // Filtrar pilotos que já estão em resultados
+    const currentResults = position < 10 ? qualifyingResults : raceResults;
+    const selectedDriverId = currentResults[position];
+    
+    // Retorna todos os pilotos que não estão em outras posições ou está na posição atual
+    return drivers.filter(driver => 
+      !currentResults.includes(driver.id) || 
+      driver.id === selectedDriverId
+    );
+  };
+
+  const saveResults = async () => {
+    if (!raceId) return;
+    
+    setSaving(true);
+    
     try {
-      if (!raceId) {
-        throw new Error("ID da corrida não encontrado");
-      }
-
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error("Você precisa estar logado para salvar os resultados");
-      }
-
-      const cleanedData = {
-        ...formData,
-        qualifying_results: formData.qualifying_results?.map(r => r === "placeholder" ? "" : r) || [],
-        race_results: formData.race_results?.map(r => r === "placeholder" ? "" : r) || [],
-        fastest_lap: formData.fastest_lap === "placeholder" ? "" : formData.fastest_lap,
-        pole_time: formData.pole_time || "",
-        dnf_drivers: formData.dnf_drivers || [],
+      const result = {
         race_id: raceId,
+        qualifying_results: qualifyingResults,
+        race_results: raceResults,
+        pole_time: poleTime,
+        fastest_lap: fastestLap,
+        dnf_drivers: dnfDrivers
       };
 
-      console.log("Dados a serem salvos:", cleanedData);
+      // Verificar se já existe um resultado para atualizar ou criar novo
+      const { error } = existingResult 
+        ? await supabase.from("race_results").update(result).eq("id", existingResult.id)
+        : await supabase.from("race_results").insert(result);
 
-      let result;
-      if (existingResult) {
-        result = await supabase
-          .from("race_results")
-          .update(cleanedData)
-          .eq("id", existingResult.id)
-          .select()
-          .single();
-      } else {
-        result = await supabase
-          .from("race_results")
-          .insert([cleanedData])
-          .select()
-          .single();
-      }
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      toast({
-        title: "Sucesso!",
-        description: "Resultados salvos com sucesso.",
-        duration: 3000,
-      });
-
-      setTimeout(() => {
-        navigate(`/race-results/${raceId}`);
-      }, 1000);
-
-    } catch (error: any) {
+      if (error) throw error;
+      
+      await refetch();
+      toast.success("Resultados salvos com sucesso!");
+    } catch (error) {
       console.error("Erro ao salvar resultados:", error);
-      toast({
-        title: "Erro ao salvar",
-        description: error.message || "Não foi possível salvar os resultados. Tente novamente.",
-        variant: "destructive",
-        duration: 5000,
-      });
+      toast.error("Erro ao salvar resultados");
     } finally {
-      setIsSubmitting(false);
+      setSaving(false);
     }
   };
 
-  const handlePoleTimeChange = (value: string) => {
-    const formattedTime = formatPoleTime(value);
-    setFormData(prev => ({ ...prev, pole_time: formattedTime }));
+  const handleCalculatePoints = async () => {
+    try {
+      await processPoints();
+      toast.success("Pontos calculados e salvos com sucesso!");
+    } catch (error) {
+      console.error("Erro ao calcular pontos:", error);
+      toast.error("Erro ao calcular pontos");
+    }
   };
 
-  if (dataLoading || !race || !drivers) {
-    return (
-      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Carregando dados da corrida...</p>
-      </div>
-    );
+  if (!race || !drivers) {
+    return <div className="p-6 text-center text-racing-silver">Carregando...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-racing-black text-racing-white">
-      <div className="container max-w-[1600px] mx-auto px-4 py-8">
+    <div className="min-h-screen bg-racing-black p-6">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-racing-white">
-            Administrar Resultados: {race.name}
-          </h1>
-          <Button 
-            variant="outline"
-            onClick={() => navigate("/official-results")}
-            className="bg-racing-black border-racing-red text-racing-red hover:bg-racing-red hover:text-racing-white transition-colors"
-          >
-            Voltar
-          </Button>
+          <h1 className="text-3xl font-bold text-racing-white">{race.name} - Resultados Oficiais</h1>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(-1)}
+              className="bg-transparent border-racing-silver text-racing-silver hover:bg-racing-silver/10"
+            >
+              Voltar
+            </Button>
+            <Button 
+              disabled={saving}
+              onClick={saveResults}
+              className="bg-racing-red hover:bg-racing-red/80 text-racing-white"
+            >
+              {saving ? "Salvando..." : "Salvar Resultados"}
+            </Button>
+            {existingResult && (
+              <Button 
+                disabled={loading}
+                onClick={handleCalculatePoints}
+                className="bg-racing-green hover:bg-racing-green/80 text-racing-white"
+              >
+                {loading ? "Processando..." : "Calcular Pontos"}
+              </Button>
+            )}
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-6">
-            <QualifyingResultsForm
-              poleTime={formData.pole_time || ""}
-              onPoleTimeChange={handlePoleTimeChange}
-              qualifyingResults={formData.qualifying_results || []}
-              onQualifyingDriverChange={(position, driverId) => {
-                const newQualifyingResults = [...(formData.qualifying_results || [])];
-                newQualifyingResults[position] = driverId;
-                setFormData({ ...formData, qualifying_results: newQualifyingResults });
-              }}
-              availableDrivers={(position) => getAvailableDrivers(position, true)}
-            />
+        <div className="grid grid-cols-1 gap-8">
+          <QualifyingResultsForm 
+            poleTime={poleTime}
+            onPoleTimeChange={setPoleTime}
+            qualifyingResults={qualifyingResults}
+            onQualifyingDriverChange={handleQualifyingDriverChange}
+            availableDrivers={getAvailableDrivers}
+          />
 
-            <RaceResultsForm
-              fastestLap={formData.fastest_lap || "placeholder"}
-              onFastestLapChange={(value) => setFormData({ ...formData, fastest_lap: value })}
-              raceResults={formData.race_results || []}
-              onRaceDriverChange={(position, driverId) => {
-                const newRaceResults = [...(formData.race_results || [])];
-                newRaceResults[position] = driverId;
-                setFormData({ ...formData, race_results: newRaceResults });
-              }}
-              dnfDrivers={formData.dnf_drivers || []}
-              onDNFChange={(driverId, checked) => {
-                const currentDNFs = [...(formData.dnf_drivers || [])];
-                if (checked && !currentDNFs.includes(driverId)) {
-                  setFormData({ ...formData, dnf_drivers: [...currentDNFs, driverId] });
-                } else if (!checked) {
-                  setFormData({
-                    ...formData,
-                    dnf_drivers: currentDNFs.filter(id => id !== driverId)
-                  });
-                }
-              }}
-              availableDrivers={(position) => getAvailableDrivers(position, false)}
-              allDrivers={drivers}
-            />
-
-            <Card className="bg-racing-black border-racing-silver/20">
-              <CardContent className="pt-6">
-                <DNFPredictionForm
-                  dnfPredictions={formData.dnf_drivers || []}
-                  onDriverDNF={(count) => {
-                    const lastDrivers = formData.race_results?.slice(-count) || [];
-                    setFormData({ ...formData, dnf_drivers: lastDrivers.filter(d => d !== "placeholder") });
-                  }}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex justify-end mt-8">
-            <Button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="bg-racing-red hover:bg-racing-red/90 transition-colors duration-200 min-w-[150px] text-racing-white"
-            >
-              {isSubmitting ? "Salvando..." : "Salvar Resultados"}
-            </Button>
-          </div>
-        </form>
+          <RaceResultsForm 
+            fastestLap={fastestLap}
+            onFastestLapChange={setFastestLap}
+            raceResults={raceResults}
+            onRaceDriverChange={handleRaceDriverChange}
+            dnfDrivers={dnfDrivers}
+            onDNFChange={handleDNFChange}
+            availableDrivers={getAvailableDrivers}
+            allDrivers={drivers}
+          />
+        </div>
       </div>
     </div>
   );

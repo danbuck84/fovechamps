@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { calculateDriverPoints, calculateConstructorPoints } from "@/utils/scoring-utils";
+import { calculateDriverPoints, calculateConstructorPoints, calculateAllPoints } from "@/utils/scoring-utils";
 import type { Race, Driver, RaceResult } from "@/types/betting";
 
 export const useRaceResults = (raceId: string | undefined) => {
@@ -55,11 +55,16 @@ export const useRaceResults = (raceId: string | undefined) => {
 
   // Função para processar os pontos
   const processPoints = async () => {
-    if (!raceId) return;
+    if (!raceId) {
+      console.error("ID da corrida não fornecido");
+      return;
+    }
+    
     setLoading(true);
     try {
-      await calculateDriverPoints(raceId);
-      await calculateConstructorPoints(raceId);
+      console.log(`Processando pontos para corrida ${raceId}`);
+      await calculateAllPoints(raceId);
+      console.log("Pontos processados com sucesso!");
     } catch (error) {
       console.error("Erro ao processar pontos:", error);
       throw error;
@@ -78,4 +83,3 @@ export const useRaceResults = (raceId: string | undefined) => {
     processPoints,
   };
 };
-

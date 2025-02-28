@@ -72,4 +72,3 @@ export const PointsTable = ({
     </Card>
   );
 };
-

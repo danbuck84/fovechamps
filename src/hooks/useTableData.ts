@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { Race, Driver, Team, Profile } from "@/types/betting";
-import type { DriverPoints, ConstructorPoints, GamePoints } from "@/types/tables";
+import type { DriverPoints, ConstructorPoints, GamePoints, GroupedPoints, TotalPointsData } from "@/types/tables";
 
 export const useTableData = () => {
   // Buscar todas as corridas para usar como colunas
@@ -77,10 +77,60 @@ export const useTableData = () => {
     },
   });
 
+  // Processar dados para o formato agrupado
+  const processTableData = (): TotalPointsData | undefined => {
+    if (!races || !driverPoints || !constructorPoints) return undefined;
+
+    // Agrupar pontos dos pilotos
+    const groupedDriverPoints = driverPoints.reduce((acc, point) => {
+      if (!point.driver) return acc;
+
+      const existingDriver = acc.find(d => d.id === point.driver_id);
+      if (existingDriver) {
+        existingDriver.points[point.race_id] = point.points;
+      } else {
+        const newDriver = {
+          id: point.driver_id,
+          name: point.driver.name,
+          number: point.driver.number,
+          team_id: point.driver.team_id,
+          points: { [point.race_id]: point.points } as Record<string, number>
+        };
+        acc.push(newDriver);
+      }
+      return acc;
+    }, [] as GroupedPoints[]);
+
+    // Agrupar pontos dos construtores
+    const groupedTeamPoints = constructorPoints.reduce((acc, point) => {
+      if (!point.team) return acc;
+
+      const existingTeam = acc.find(t => t.id === point.team_id);
+      if (existingTeam) {
+        existingTeam.points[point.race_id] = point.points;
+      } else {
+        const newTeam = {
+          id: point.team_id,
+          name: point.team.name,
+          engine: point.team.engine,
+          points: { [point.race_id]: point.points } as Record<string, number>
+        };
+        acc.push(newTeam);
+      }
+      return acc;
+    }, [] as GroupedPoints[]);
+
+    return {
+      drivers: groupedDriverPoints,
+      teams: groupedTeamPoints
+    };
+  };
+
   return {
     races,
     driverPoints,
     constructorPoints,
     gamePoints,
+    processTableData
   };
 };

@@ -30,3 +30,8 @@ export interface GroupedPoints {
   [key: string]: any;
 }
 
+export interface TotalPointsData {
+  drivers: GroupedPoints[];
+  teams: GroupedPoints[];
+  players?: GroupedPoints[];
+}
