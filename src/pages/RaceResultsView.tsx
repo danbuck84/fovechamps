@@ -82,22 +82,13 @@ const RaceResultsView = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-racing-white">{race?.name} - Resultados Oficiais</h1>
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline"
-              onClick={() => navigate(-1)}
-              className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white border-none"
-            >
-              Voltar
-            </Button>
-            <Button 
-              variant="default"
-              onClick={() => navigate(`/admin/race-results/${raceId}`)}
-              className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none"
-            >
-              Editar Resultados
-            </Button>
-          </div>
+          <Button 
+            variant="outline"
+            onClick={() => navigate(-1)}
+            className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white border-none"
+          >
+            Voltar
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -163,6 +154,17 @@ const RaceResultsView = () => {
               </CardContent>
             </Card>
           )}
+        </div>
+        
+        {/* Botão Editar Resultados no final da página */}
+        <div className="mt-8 flex justify-center">
+          <Button 
+            variant="default"
+            onClick={() => navigate(`/admin/race-results/${raceId}`)}
+            className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none"
+          >
+            Editar Resultados
+          </Button>
         </div>
       </div>
     </div>

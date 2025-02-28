@@ -23,7 +23,7 @@ export const calculateDriverPoints = async (raceId: string) => {
   // Buscar os resultados da corrida
   const { data: raceResults, error: raceError } = await supabase
     .from('race_results')
-    .select('race_results')
+    .select('race_results, fastest_lap')
     .eq('race_id', raceId)
     .single();
 
@@ -44,22 +44,48 @@ export const calculateDriverPoints = async (raceId: string) => {
     if (!driverId) return null;
 
     // Só os 10 primeiros marcam pontos
-    const points = calculatePoints(position + 1);
+    let points = calculatePoints(position + 1);
+    
+    // Ponto extra pela volta mais rápida (se estiver no top 10)
+    if (driverId === raceResults.fastest_lap && position < 10) {
+      points += 1;
+    }
     
     console.log(`Piloto ${driverId} na posição ${position + 1} recebe ${points} pontos`);
     
-    // Salvar pontos do piloto
-    const { error } = await supabase
+    // Verificar se já existe um registro para esta corrida/piloto
+    const { data: existingPoints } = await supabase
       .from('driver_race_points')
-      .upsert({
-        driver_id: driverId,
-        race_id: raceId,
-        points
-      });
-
-    if (error) {
-      console.error(`Erro ao salvar pontos para o piloto ${driverId}:`, error);
-      throw error;
+      .select('id')
+      .eq('driver_id', driverId)
+      .eq('race_id', raceId)
+      .maybeSingle();
+      
+    if (existingPoints) {
+      // Atualizar registro existente
+      const { error } = await supabase
+        .from('driver_race_points')
+        .update({ points })
+        .eq('id', existingPoints.id);
+      
+      if (error) {
+        console.error(`Erro ao atualizar pontos para o piloto ${driverId}:`, error);
+        throw error;
+      }
+    } else {
+      // Criar novo registro
+      const { error } = await supabase
+        .from('driver_race_points')
+        .insert([{
+          driver_id: driverId,
+          race_id: raceId,
+          points
+        }]);
+      
+      if (error) {
+        console.error(`Erro ao salvar pontos para o piloto ${driverId}:`, error);
+        throw error;
+      }
     }
     
     return { driverId, points };
@@ -71,61 +97,90 @@ export const calculateDriverPoints = async (raceId: string) => {
 
 export const calculateConstructorPoints = async (raceId: string) => {
   // Buscar resultados da corrida com os pontos dos pilotos
-  const { data: driverPoints, error: driverError } = await supabase
-    .from('driver_race_points')
-    .select(`
-      driver_id,
-      points,
-      driver:drivers(
-        team_id
-      )
-    `)
-    .eq('race_id', raceId);
-
-  if (driverError) {
-    console.error("Erro ao buscar pontos dos pilotos:", driverError);
-    throw driverError;
+  const { data: raceResults, error: raceError } = await supabase
+    .from('race_results')
+    .select('race_results, fastest_lap')
+    .eq('race_id', raceId)
+    .single();
+    
+  if (raceError) {
+    console.error("Erro ao buscar resultados da corrida:", raceError);
+    throw raceError;
   }
   
-  if (!driverPoints || !driverPoints.length) {
-    console.error("Nenhum ponto de piloto encontrado para calcular pontos de construtores");
-    return;
+  // Obter todos os pilotos e suas equipes
+  const { data: drivers, error: driversError } = await supabase
+    .from('drivers')
+    .select('id, team_id');
+    
+  if (driversError) {
+    console.error("Erro ao buscar pilotos:", driversError);
+    throw driversError;
   }
-
-  console.log("Calculando pontos para construtores com base nos pontos dos pilotos:", driverPoints);
-
-  // Agrupar pontos por equipe
-  const constructorPoints = driverPoints.reduce((acc, curr) => {
-    const teamId = curr.driver?.team_id;
-    if (!teamId) {
-      console.warn(`Piloto ${curr.driver_id} não tem equipe associada`);
-      return acc;
+  
+  // Calcular pontos por equipe
+  const constructorPoints: Record<string, number> = {};
+  
+  // Processar pontos da corrida
+  raceResults.race_results.forEach((driverId, position) => {
+    if (!driverId) return;
+    
+    const driver = drivers.find(d => d.id === driverId);
+    if (!driver || !driver.team_id) {
+      console.warn(`Piloto ${driverId} não tem equipe associada`);
+      return;
     }
-
-    acc[teamId] = (acc[teamId] || 0) + (curr.points || 0);
-    return acc;
-  }, {} as Record<string, number>);
-
-  console.log("Pontos agrupados por equipe:", constructorPoints);
-
+    
+    const points = position < 10 ? calculatePoints(position + 1) : 0;
+    
+    // Adicionar ponto pela volta mais rápida
+    const fastLapPoint = (driverId === raceResults.fastest_lap && position < 10) ? 1 : 0;
+    
+    constructorPoints[driver.team_id] = (constructorPoints[driver.team_id] || 0) + points + fastLapPoint;
+  });
+  
+  console.log("Pontos calculados por equipe:", constructorPoints);
+  
   // Salvar pontos das equipes
   const pointsPromises = Object.entries(constructorPoints).map(async ([teamId, points]) => {
     console.log(`Equipe ${teamId} recebe ${points} pontos`);
     
-    const { error } = await supabase
+    // Verificar se já existe um registro para esta corrida/equipe
+    const { data: existingPoints } = await supabase
       .from('constructor_race_points')
-      .upsert({
-        team_id: teamId,
-        race_id: raceId,
-        points
-      });
-
-    if (error) {
-      console.error(`Erro ao salvar pontos para a equipe ${teamId}:`, error);
-      throw error;
+      .select('id')
+      .eq('team_id', teamId)
+      .eq('race_id', raceId)
+      .maybeSingle();
+      
+    if (existingPoints) {
+      // Atualizar registro existente
+      const { error } = await supabase
+        .from('constructor_race_points')
+        .update({ points })
+        .eq('id', existingPoints.id);
+      
+      if (error) {
+        console.error(`Erro ao atualizar pontos para a equipe ${teamId}:`, error);
+        throw error;
+      }
+    } else {
+      // Criar novo registro
+      const { error } = await supabase
+        .from('constructor_race_points')
+        .insert([{
+          team_id: teamId,
+          race_id: raceId,
+          points
+        }]);
+      
+      if (error) {
+        console.error(`Erro ao salvar pontos para a equipe ${teamId}:`, error);
+        throw error;
+      }
     }
   });
-
+  
   await Promise.all(pointsPromises);
   console.log("Pontos dos construtores calculados e salvos com sucesso!");
 };

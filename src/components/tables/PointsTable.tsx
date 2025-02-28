@@ -32,13 +32,13 @@ export const PointsTable = ({
             <table className="w-full">
               <thead>
                 <tr className="border-b border-racing-silver/20">
-                  <th className="px-4 py-2 text-left sticky left-0 bg-racing-black">Nome</th>
+                  <th className="px-4 py-2 text-left sticky left-0 bg-racing-black text-racing-white">Nome</th>
                   {races.map((race) => (
-                    <th key={race.id} className="px-4 py-2 text-center whitespace-nowrap">
+                    <th key={race.id} className="px-4 py-2 text-center whitespace-nowrap text-racing-white">
                       {race.name}
                     </th>
                   ))}
-                  <th className="px-4 py-2 text-center sticky right-0 bg-racing-black">Total</th>
+                  <th className="px-4 py-2 text-center sticky right-0 bg-racing-black text-racing-white">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -52,13 +52,13 @@ export const PointsTable = ({
                     const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
                     return (
                       <tr key={item.id} className="border-b border-racing-silver/20">
-                        <td className="px-4 py-2 sticky left-0 bg-racing-black">{getName(item)}</td>
+                        <td className="px-4 py-2 sticky left-0 bg-racing-black text-racing-white">{getName(item)}</td>
                         {races.map((race) => (
-                          <td key={race.id} className="px-4 py-2 text-center">
+                          <td key={race.id} className="px-4 py-2 text-center text-racing-white">
                             {getPoints(item, race.id) || "-"}
                           </td>
                         ))}
-                        <td className="px-4 py-2 text-center font-bold sticky right-0 bg-racing-black">
+                        <td className="px-4 py-2 text-center font-bold sticky right-0 bg-racing-black text-racing-white">
                           {total}
                         </td>
                       </tr>
