@@ -161,4 +161,3 @@ const RaceResultsView = () => {
 };
 
 export default RaceResultsView;
-
