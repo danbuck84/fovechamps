@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
-import { useAdmin } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
@@ -18,7 +17,9 @@ const RacePredictions = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isAdmin } = useAdmin();
+  
+  // Removemos a verificação de admin, todos os usuários agora têm permissão total
+  const isAdmin = true; // Todos os usuários têm acesso de administrador
   
   const [poleTime, setPoleTime] = useState("");
   const [fastestLap, setFastestLap] = useState("");
@@ -325,4 +326,3 @@ const RacePredictions = () => {
 };
 
 export default RacePredictions;
-

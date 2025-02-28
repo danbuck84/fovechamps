@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Eye, BarChart2, Edit } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { useAdmin } from "@/hooks/useAdmin";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Race } from "@/types/betting";
@@ -13,7 +12,9 @@ interface RaceWithResults extends Race {
 }
 
 const OfficialResults = () => {
-  const { isAdmin } = useAdmin();
+  // Removemos a verificação de admin, todos os usuários agora têm permissão total
+  const isAdmin = true; // Todos os usuários têm acesso de administrador
+  
   const { data: races, isLoading } = useQuery({
     queryKey: ["races-with-results"],
     queryFn: async () => {
@@ -110,4 +111,3 @@ const OfficialResults = () => {
 };
 
 export default OfficialResults;
-
