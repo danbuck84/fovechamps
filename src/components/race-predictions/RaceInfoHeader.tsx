@@ -22,7 +22,7 @@ export const RaceInfoHeader = ({ race, isDeadlinePassed }: RaceInfoHeaderProps) 
   const getStatusColor = () => {
     const isRaceWeekend = isDuringRaceWeekend();
     
-    if (!isDeadlinePassed) return "bg-[#0FA0CE]/10 border-[#0FA0CE]"; // Verde para apostas abertas
+    if (!isDeadlinePassed) return "bg-[#0FA0CE]/10 border-[#0FA0CE]"; // Azul para apostas abertas
     if (isRaceWeekend) return "bg-racing-silver/10 border-racing-silver/20"; // Cinza durante o fim de semana
     return "bg-racing-red/10 border-racing-red"; // Vermelho após o fim de semana
   };
@@ -30,7 +30,7 @@ export const RaceInfoHeader = ({ race, isDeadlinePassed }: RaceInfoHeaderProps) 
   const getTextColor = () => {
     const isRaceWeekend = isDuringRaceWeekend();
     
-    if (!isDeadlinePassed) return "text-[#0FA0CE]"; // Verde para apostas abertas
+    if (!isDeadlinePassed) return "text-[#0FA0CE]"; // Azul para apostas abertas
     if (isRaceWeekend) return "text-racing-silver"; // Cinza durante o fim de semana
     return "text-racing-red"; // Vermelho após o fim de semana
   };
@@ -47,12 +47,12 @@ export const RaceInfoHeader = ({ race, isDeadlinePassed }: RaceInfoHeaderProps) 
         Classificação: {formatDate(race.qualifying_date)}
       </p>
       {isDeadlinePassed ? (
-        <div className={`mt-4 p-4 ${getStatusColor()} rounded-md flex items-center gap-2`}>
+        <div className={`mt-4 p-4 ${getStatusColor()} rounded-md flex items-center gap-2 border`}>
           <Clock className={`h-5 w-5 ${getTextColor()}`} />
           <p className={getTextColor()}>O prazo para apostas já encerrou</p>
         </div>
       ) : (
-        <div className={`mt-4 p-4 ${getStatusColor()} rounded-md flex items-center gap-2`}>
+        <div className={`mt-4 p-4 ${getStatusColor()} rounded-md flex items-center gap-2 border`}>
           <Clock className={`h-5 w-5 ${getTextColor()}`} />
           <p className={getTextColor()}>Prazo para apostas: até {formatDate(race.qualifying_date)}</p>
         </div>

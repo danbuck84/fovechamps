@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +17,6 @@ const RacePredictions = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Removemos a verificação de admin, todos os usuários agora têm permissão total
   const isAdmin = true; // Todos os usuários têm acesso de administrador
   
   const [poleTime, setPoleTime] = useState("");
@@ -49,7 +47,9 @@ const RacePredictions = () => {
       console.log('Data da Classificação:', qualifyingDate.toLocaleString());
       console.log('Data atual:', now.toLocaleString());
       
-      setIsDeadlinePassed(false);
+      const hasDeadlinePassed = now >= qualifyingDate;
+      console.log('Prazo encerrado?', hasDeadlinePassed);
+      setIsDeadlinePassed(hasDeadlinePassed);
       
       return data as Race;
     },
@@ -115,6 +115,19 @@ const RacePredictions = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (race) {
+      const qualifyingDate = new Date(race.qualifying_date);
+      const now = new Date();
+      if (now >= qualifyingDate) {
+        toast({
+          title: "Prazo encerrado",
+          description: "O prazo para palpites deste Grande Prêmio já encerrou.",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
