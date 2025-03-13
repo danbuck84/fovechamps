@@ -1,7 +1,7 @@
 
 import { Clock } from "lucide-react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
-import { formatDate } from "@/utils/date-utils";
+import { formatDate, isDeadlinePassed } from "@/utils/date-utils";
 import type { Race } from "@/types/betting";
 
 interface RaceInfoHeaderProps {
@@ -15,24 +15,24 @@ export const RaceInfoHeader = ({ race, isDeadlinePassed }: RaceInfoHeaderProps) 
     const raceDate = new Date(race.date);
     const now = new Date();
 
-    // Se estamos entre a data de classificação e a data da corrida
+    // If we're between qualifying and race date
     return now >= qualifyingDate && now <= raceDate;
   };
 
   const getStatusColor = () => {
     const isRaceWeekend = isDuringRaceWeekend();
     
-    if (!isDeadlinePassed) return "bg-[#0FA0CE]/10 border-[#0FA0CE]"; // Azul para apostas abertas
-    if (isRaceWeekend) return "bg-racing-silver/10 border-racing-silver/20"; // Cinza durante o fim de semana
-    return "bg-racing-red/10 border-racing-red"; // Vermelho após o fim de semana
+    if (!isDeadlinePassed) return "bg-[#0FA0CE]/10 border-[#0FA0CE]"; // Blue for open bets
+    if (isRaceWeekend) return "bg-racing-silver/10 border-racing-silver/20"; // Gray during race weekend
+    return "bg-racing-red/10 border-racing-red"; // Red after race weekend
   };
 
   const getTextColor = () => {
     const isRaceWeekend = isDuringRaceWeekend();
     
-    if (!isDeadlinePassed) return "text-[#0FA0CE]"; // Azul para apostas abertas
-    if (isRaceWeekend) return "text-racing-silver"; // Cinza durante o fim de semana
-    return "text-racing-red"; // Vermelho após o fim de semana
+    if (!isDeadlinePassed) return "text-[#0FA0CE]"; // Blue for open bets
+    if (isRaceWeekend) return "text-racing-silver"; // Gray during race weekend
+    return "text-racing-red"; // Red after race weekend
   };
 
   return (
