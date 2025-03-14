@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
@@ -18,6 +17,7 @@ import AllRaceResults from "@/pages/AllRaceResults";
 import Tables from "@/pages/Tables";
 import OfficialResults from "@/pages/OfficialResults";
 import RaceResultsView from "@/pages/RaceResultsView";
+import AdminRaceManagement from "@/pages/AdminRaceManagement";
 
 function App() {
   return (
@@ -130,6 +130,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <RacePoints />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/race-management"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <AdminRaceManagement />
               </MainLayout>
             </PrivateRoute>
           }

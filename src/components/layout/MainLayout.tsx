@@ -1,6 +1,5 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
-import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight, Table, Flag } from "lucide-react";
+import { Trophy, Calendar, Users, LogOut, FileText, UserCircle, List, ChevronLeft, ChevronRight, Table, Flag, Settings } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -11,6 +10,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const [username, setUsername] = useState<string>("");
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -37,7 +37,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-racing-black flex">
-      {/* Sidebar */}
       <motion.div
         initial={{ width: isCollapsed ? 64 : 256 }}
         animate={{ width: isCollapsed ? 64 : 256 }}
@@ -45,7 +44,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         className="fixed top-0 left-0 h-full bg-racing-black border-r border-racing-silver/20 z-50"
       >
         <div className="flex flex-col h-full relative">
-          {/* Toggle button */}
           <Button
             variant="ghost"
             size="icon"
@@ -55,7 +53,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </Button>
 
-          {/* Logo */}
           <div className="p-4 border-b border-racing-silver/20">
             <button 
               onClick={() => navigate("/")}
@@ -65,7 +62,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             </button>
           </div>
 
-          {/* Navigation */}
           <nav className="flex-1 px-2 py-4">
             <ul className="space-y-2">
               {username && !isCollapsed && (
@@ -170,7 +166,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             </ul>
           </nav>
 
-          {/* User section */}
           <div className="p-4 border-t border-racing-silver/20">
             <button
               onClick={() => navigate("/profile")}
@@ -197,7 +192,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </motion.div>
 
-      {/* Main content */}
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {children}
       </div>
@@ -206,4 +200,3 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default MainLayout;
-
