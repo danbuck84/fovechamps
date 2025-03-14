@@ -1,224 +1,48 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
-import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+
+import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { RacePredictionsHeader } from "@/components/race-predictions/RacePredictionsHeader";
 import { RaceInfoHeader } from "@/components/race-predictions/RaceInfoHeader";
 import { PredictionForm } from "@/components/race-predictions/PredictionForm";
 import { ExistingPredictionCard } from "@/components/race-predictions/ExistingPredictionCard";
-import { formatPoleTime } from "@/utils/prediction-utils";
-import type { Race, Driver } from "@/types/betting";
+import { RacePredictionLoading } from "@/components/race-predictions/RacePredictionLoading";
+import { RacePredictionNotFound } from "@/components/race-predictions/RacePredictionNotFound";
+import { DeadlinePassedView } from "@/components/race-predictions/DeadlinePassedView";
+import { useRacePrediction } from "@/hooks/useRacePrediction";
 
 const RacePredictions = () => {
   const { raceId } = useParams();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  const isAdmin = true; // Todos os usuários têm acesso de administrador
-  
-  const [poleTime, setPoleTime] = useState("");
-  const [fastestLap, setFastestLap] = useState("");
-  const [qualifyingTop10, setQualifyingTop10] = useState<string[]>(Array(20).fill(""));
-  const [raceTop10, setRaceTop10] = useState<string[]>(Array(20).fill(""));
-  const [dnfPredictions, setDnfPredictions] = useState<string[]>([]);
-  const [existingPrediction, setExistingPrediction] = useState<any>(null);
-  const [isDeadlinePassed, setIsDeadlinePassed] = useState(false);
-
-  const { data: race, isLoading: isLoadingRace } = useQuery({
-    queryKey: ["race", raceId],
-    queryFn: async () => {
-      if (!raceId) throw new Error("ID da corrida não fornecido");
-      
-      const { data, error } = await supabase
-        .from("races")
-        .select("*")
-        .eq("id", raceId)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data) throw new Error("Corrida não encontrada");
-
-      const qualifyingDate = new Date(data.qualifying_date);
-      const now = new Date();
-
-      console.log('Data da Classificação:', qualifyingDate.toLocaleString());
-      console.log('Data atual:', now.toLocaleString());
-      
-      const hasDeadlinePassed = now >= qualifyingDate;
-      console.log('Prazo encerrado?', hasDeadlinePassed);
-      setIsDeadlinePassed(hasDeadlinePassed);
-      
-      return data as Race;
-    },
-    enabled: !!raceId,
-  });
-
-  const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
-    queryKey: ["drivers"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("drivers")
-        .select(`
-          *,
-          team:teams (
-            name,
-            engine
-          )
-        `)
-        .order('name');
-
-      if (error) throw error;
-      return data as (Driver & { team: { name: string; engine: string } })[];
-    },
-  });
-
-  const { data: existingPredictionQuery } = useQuery({
-    queryKey: ["prediction", raceId],
-    queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !raceId) return null;
-
-      const { data, error } = await supabase
-        .from("predictions")
-        .select("*")
-        .eq("race_id", raceId)
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Erro ao buscar palpite existente:", error);
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!raceId,
-  });
-
-  useEffect(() => {
-    if (existingPredictionQuery && !isDeadlinePassed) {
-      setExistingPrediction(existingPredictionQuery);
-      setPoleTime(existingPredictionQuery.pole_time || "");
-      setFastestLap(existingPredictionQuery.fastest_lap || "");
-      setQualifyingTop10(existingPredictionQuery.qualifying_results || Array(20).fill(""));
-      setRaceTop10(existingPredictionQuery.top_10 || Array(20).fill(""));
-      setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
-    }
-  }, [existingPredictionQuery, isDeadlinePassed]);
-
-  const handleDriverDNF = (count: number) => {
-    setDnfPredictions(Array(count).fill(""));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (race) {
-      const qualifyingDate = new Date(race.qualifying_date);
-      const now = new Date();
-      if (now >= qualifyingDate) {
-        toast({
-          title: "Prazo encerrado",
-          description: "O prazo para palpites deste Grande Prêmio já encerrou.",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast({
-        title: "Erro",
-        description: "Você precisa estar logado para fazer palpites",
-        variant: "destructive",
-      });
-      navigate("/auth");
-      return;
-    }
-
-    const predictionData = {
-      race_id: raceId,
-      user_id: user.id,
-      pole_position: qualifyingTop10[0] || "",
-      pole_time: poleTime,
-      fastest_lap: fastestLap,
-      qualifying_results: qualifyingTop10.filter(Boolean),
-      top_10: raceTop10.filter(Boolean),
-      dnf_predictions: dnfPredictions,
-    };
-    
-    try {
-      let result;
-      
-      if (existingPredictionQuery?.id) {
-        result = await supabase
-          .from("predictions")
-          .update(predictionData)
-          .eq("id", existingPredictionQuery.id)
-          .select()
-          .single();
-      } else {
-        result = await supabase
-          .from("predictions")
-          .insert([predictionData])
-          .select()
-          .single();
-      }
-
-      if (result.error) {
-        console.error("Erro ao salvar palpites:", result.error);
-        toast({
-          title: "Erro ao salvar palpites",
-          description: result.error.message || "Por favor, tente novamente",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      toast({
-        title: "Palpites salvos com sucesso!",
-        description: "Boa sorte!",
-      });
-
-      navigate("/my-predictions");
-    } catch (error) {
-      console.error("Erro ao salvar palpites:", error);
-      toast({
-        title: "Erro ao salvar palpites",
-        description: "Por favor, tente novamente",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const getAvailableDrivers = (position: number, isQualifying: boolean = true) => {
-    if (!drivers) return [];
-    
-    const selectedDrivers = isQualifying ? qualifyingTop10 : raceTop10;
-    
-    return drivers.filter(driver => {
-      return !selectedDrivers.includes(driver.id) || selectedDrivers.indexOf(driver.id) === position;
-    });
-  };
+  const {
+    race,
+    drivers,
+    poleTime,
+    handlePoleTimeChange,
+    fastestLap,
+    setFastestLap,
+    qualifyingTop10,
+    setQualifyingTop10,
+    raceTop10,
+    setRaceTop10,
+    dnfPredictions,
+    handleDriverDNF,
+    getAvailableDrivers,
+    isAdmin,
+    isLoadingRace,
+    isLoadingDrivers,
+    isDeadlinePassed,
+    existingPrediction,
+    setExistingPrediction,
+    handleSubmit,
+    navigate
+  } = useRacePrediction(raceId);
 
   if (isLoadingRace || isLoadingDrivers) {
-    return (
-      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Carregando informações...</p>
-      </div>
-    );
+    return <RacePredictionLoading />;
   }
 
   if (!race || !drivers) {
-    return (
-      <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-        <p className="text-racing-silver">Corrida não encontrada</p>
-      </div>
-    );
+    return <RacePredictionNotFound />;
   }
 
   if (existingPrediction && !isDeadlinePassed) {
@@ -249,37 +73,14 @@ const RacePredictions = () => {
 
   if (isDeadlinePassed) {
     return (
-      <div className="min-h-screen bg-racing-black text-racing-white">
-        <div className="container mx-auto px-4 py-8">
-          <RacePredictionsHeader onBack={() => navigate(-1)} />
-          <Card className="bg-racing-black border-racing-silver/20">
-            <RaceInfoHeader 
-              race={race}
-              isDeadlinePassed={isDeadlinePassed}
-            />
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <p className="text-racing-silver mb-4">
-                O prazo para fazer palpites para este Grande Prêmio já encerrou.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/my-predictions")}
-                className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-silver/20 mb-4"
-              >
-                Ver Meus Palpites
-              </Button>
-              {isAdmin && (
-                <Button
-                  onClick={() => navigate(`/admin/race-results/${raceId}`)}
-                  className="bg-racing-red hover:bg-racing-red/90"
-                >
-                  Editar Resultados
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <DeadlinePassedView
+        race={race}
+        isDeadlinePassed={isDeadlinePassed}
+        onBack={() => navigate(-1)}
+        onViewPredictions={() => navigate("/my-predictions")}
+        onEditResults={() => navigate(`/admin/race-results/${raceId}`)}
+        isAdmin={isAdmin}
+      />
     );
   }
 
@@ -297,18 +98,7 @@ const RacePredictions = () => {
             <PredictionForm
               drivers={drivers}
               poleTime={poleTime}
-              onPoleTimeChange={(e) => {
-                const formatted = formatPoleTime(e.target.value);
-                if (formatted !== undefined) {
-                  setPoleTime(formatted);
-                } else {
-                  toast({
-                    title: "Tempo inválido",
-                    description: "Os segundos não podem ser maiores que 59",
-                    variant: "destructive",
-                  });
-                }
-              }}
+              onPoleTimeChange={handlePoleTimeChange}
               qualifyingTop10={qualifyingTop10}
               setQualifyingTop10={setQualifyingTop10}
               raceTop10={raceTop10}
