@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -45,8 +44,15 @@ export const usePredictionForm = (
       setExistingPrediction(existingPredictionQuery);
       setPoleTime(existingPredictionQuery.pole_time || "");
       setFastestLap(existingPredictionQuery.fastest_lap || "");
-      setQualifyingTop10(existingPredictionQuery.qualifying_results || Array(20).fill(""));
-      setRaceTop10(existingPredictionQuery.top_10 || Array(20).fill(""));
+      
+      // Ensure arrays are of correct length
+      const qualResults = existingPredictionQuery.qualifying_results || [];
+      const raceResults = existingPredictionQuery.top_10 || [];
+      
+      // Fill arrays with the existing values, and empty strings for the rest up to 20
+      setQualifyingTop10(Array(20).fill("").map((_, i) => qualResults[i] || ""));
+      setRaceTop10(Array(20).fill("").map((_, i) => raceResults[i] || ""));
+      
       setDnfPredictions(existingPredictionQuery.dnf_predictions || []);
     }
   }, [existingPredictionQuery, isDeadlinePassed]);
@@ -64,9 +70,15 @@ export const usePredictionForm = (
     if (!drivers) return [];
     
     const selectedDrivers = isQualifying ? qualifyingTop10 : raceTop10;
+    const currentPositionDriver = selectedDrivers[position];
     
+    // Include all drivers that are not selected in any position or are in the current position
     return drivers.filter(driver => {
-      return !selectedDrivers.includes(driver.id) || selectedDrivers.indexOf(driver.id) === position;
+      // If this is the current position's driver, include it
+      if (driver.id === currentPositionDriver) return true;
+      
+      // Otherwise, include it only if it's not used elsewhere (filter out blank/empty values)
+      return !selectedDrivers.filter(Boolean).includes(driver.id);
     });
   };
 

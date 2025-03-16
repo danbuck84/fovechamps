@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useRaceResults } from "@/hooks/useRaceResults";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,13 @@ import { QualifyingResultsForm } from "@/components/race-results/QualifyingResul
 import { RaceResultsForm } from "@/components/race-results/RaceResultsForm";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { useFormatters } from "@/hooks/race/useFormatters";
 
 const RaceResultsAdmin = () => {
   const { raceId } = useParams<{ raceId: string }>();
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+  const { formatDisplayPoleTime } = useFormatters();
   
   const { 
     race, 
@@ -22,17 +24,22 @@ const RaceResultsAdmin = () => {
     processPoints
   } = useRaceResults(raceId);
 
-  const [poleTime, setPoleTime] = useState<string>(existingResult?.pole_time || "");
-  const [fastestLap, setFastestLap] = useState<string>(existingResult?.fastest_lap || "");
-  const [qualifyingResults, setQualifyingResults] = useState<string[]>(
-    existingResult?.qualifying_results || Array(20).fill("")
-  );
-  const [raceResults, setRaceResults] = useState<string[]>(
-    existingResult?.race_results || Array(20).fill("")
-  );
-  const [dnfDrivers, setDNFDrivers] = useState<string[]>(
-    existingResult?.dnf_drivers || []
-  );
+  const [poleTime, setPoleTime] = useState<string>("");
+  const [fastestLap, setFastestLap] = useState<string>("");
+  const [qualifyingResults, setQualifyingResults] = useState<string[]>(Array(20).fill(""));
+  const [raceResults, setRaceResults] = useState<string[]>(Array(20).fill(""));
+  const [dnfDrivers, setDNFDrivers] = useState<string[]>([]);
+
+  // Initialize state when existingResult changes
+  useEffect(() => {
+    if (existingResult) {
+      setPoleTime(existingResult.pole_time || "");
+      setFastestLap(existingResult.fastest_lap || "");
+      setQualifyingResults(existingResult.qualifying_results || Array(20).fill(""));
+      setRaceResults(existingResult.race_results || Array(20).fill(""));
+      setDNFDrivers(existingResult.dnf_drivers || []);
+    }
+  }, [existingResult]);
 
   const handleQualifyingDriverChange = (position: number, driverId: string) => {
     if (driverId === "placeholder") {
@@ -108,11 +115,14 @@ const RaceResultsAdmin = () => {
     setSaving(true);
     
     try {
+      // Format pole time for storage if needed
+      const formattedPoleTime = formatDisplayPoleTime(poleTime);
+      
       const result = {
         race_id: raceId,
         qualifying_results: qualifyingResults,
         race_results: raceResults,
-        pole_time: poleTime,
+        pole_time: formattedPoleTime,
         fastest_lap: fastestLap,
         dnf_drivers: dnfDrivers
       };
@@ -167,7 +177,7 @@ const RaceResultsAdmin = () => {
 
         <div className="grid grid-cols-1 gap-8">
           <QualifyingResultsForm 
-            poleTime={poleTime}
+            poleTime={formatDisplayPoleTime(poleTime)}
             onPoleTimeChange={setPoleTime}
             qualifyingResults={qualifyingResults}
             onQualifyingDriverChange={handleQualifyingDriverChange}

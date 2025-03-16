@@ -4,10 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import type { Race, Driver, Prediction, RaceResult } from "@/types/betting";
-import ComparisonTable from "@/components/race-results/ComparisonTable";
 import { useState } from "react";
 import { calculateAllPoints } from "@/utils/scoring-utils";
+import ComparisonTable from "@/components/race-results/ComparisonTable";
+import { isDeadlinePassed } from "@/utils/date-utils";
+import type { Race, Driver, Prediction, RaceResult } from "@/types/betting";
 
 const RaceResults = () => {
   const { raceId } = useParams();
@@ -73,6 +74,9 @@ const RaceResults = () => {
       return data as RaceResult;
     },
   });
+
+  // Check if deadline has passed
+  const deadlinePassed = race ? isDeadlinePassed(race.qualifying_date) : false;
 
   // Buscar todas as apostas para esta corrida
   const { data: predictions } = useQuery({
@@ -220,21 +224,28 @@ const RaceResults = () => {
           </div>
         </div>
 
-        {/* Apostas dos Usuários */}
-        <div>
-          <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {predictions.map((prediction) => (
-              <ComparisonTable
-                key={prediction.id}
-                prediction={prediction}
-                raceResult={raceResult}
-                drivers={drivers}
-                username={prediction.profiles.username}
-              />
-            ))}
+        {/* Apostas dos Usuários - Só mostrar se o prazo encerrou */}
+        {deadlinePassed ? (
+          <div>
+            <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
+            <div className="grid gap-6 md:grid-cols-2 overflow-x-auto">
+              {predictions.map((prediction) => (
+                <ComparisonTable
+                  key={prediction.id}
+                  prediction={prediction}
+                  raceResult={raceResult}
+                  drivers={drivers}
+                  username={prediction.profiles.username}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-racing-black border border-racing-silver/20 rounded-lg p-6 text-center">
+            <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
+            <p className="text-racing-silver">As apostas serão exibidas após o encerramento do prazo (classificação).</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { RacePredictionForm } from "./RacePredictionForm";
 import { DNFPredictionForm } from "./DNFPredictionForm";
 import { FastestLapSelector } from "./FastestLapSelector";
 import type { Driver } from "@/types/betting";
+import { useEffect, useRef } from "react";
 
 interface PredictionFormProps {
   drivers: (Driver & { team: { name: string; engine: string } })[];
@@ -42,43 +43,91 @@ export const PredictionForm = ({
   setFastestLap,
 }: PredictionFormProps) => {
   const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+  const poleTimeRef = useRef<HTMLInputElement>(null);
+  const qualifyingRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const raceRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const fastestLapRef = useRef<HTMLButtonElement>(null);
+
+  // Initialize refs arrays
+  useEffect(() => {
+    qualifyingRefs.current = qualifyingRefs.current.slice(0, qualifyingTop10.length);
+    raceRefs.current = raceRefs.current.slice(0, raceTop10.length);
+  }, [qualifyingTop10.length, raceTop10.length]);
+
+  const handleClearPredictions = () => {
+    if (isDeadlinePassed) return;
+    
+    if (window.confirm("Tem certeza que deseja limpar todas as suas apostas?")) {
+      setQualifyingTop10(Array(20).fill(""));
+      setRaceTop10(Array(20).fill(""));
+      setFastestLap("");
+      onDriverDNF(0);
+      toast({
+        title: "Apostas limpas",
+        description: "Todas as suas apostas foram limpas",
+      });
+    }
+  };
+
+  const handleCopyQualifyingToRace = () => {
+    if (isDeadlinePassed) return;
+    
+    if (window.confirm("Tem certeza que deseja usar o grid de largada como resultado da corrida?")) {
+      setRaceTop10([...qualifyingTop10]);
+      toast({
+        title: "Grid copiado",
+        description: "Grid de largada copiado para resultado da corrida",
+      });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check for empty pole time
     if (!poleTime) {
       toast({
         title: "Erro",
         description: "Por favor, insira o tempo da pole position",
         variant: "destructive",
       });
+      poleTimeRef.current?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
-    if (qualifyingTop10.some(driver => !driver)) {
+    // Check for empty qualifying positions
+    const emptyQualifyingIndex = qualifyingTop10.findIndex(driver => !driver);
+    if (emptyQualifyingIndex !== -1) {
       toast({
         title: "Erro",
-        description: "Por favor, selecione todos os pilotos para o grid de largada",
+        description: `Por favor, selecione o piloto para a posição ${emptyQualifyingIndex + 1} do grid de largada`,
         variant: "destructive",
       });
+      qualifyingRefs.current[emptyQualifyingIndex]?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
-    if (raceTop10.some(driver => !driver)) {
+    // Check for empty race positions
+    const emptyRaceIndex = raceTop10.findIndex(driver => !driver);
+    if (emptyRaceIndex !== -1) {
       toast({
         title: "Erro",
-        description: "Por favor, selecione todos os pilotos para o resultado da corrida",
+        description: `Por favor, selecione o piloto para a posição ${emptyRaceIndex + 1} do resultado da corrida`,
         variant: "destructive",
       });
+      raceRefs.current[emptyRaceIndex]?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
+    // Check for empty fastest lap
     if (!fastestLap) {
       toast({
         title: "Erro",
         description: "Por favor, selecione o piloto que fará a volta mais rápida",
         variant: "destructive",
       });
+      fastestLapRef.current?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
@@ -86,11 +135,12 @@ export const PredictionForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
       <PolePositionForm
         poleTime={poleTime}
         onPoleTimeChange={onPoleTimeChange}
         disabled={isDeadlinePassed}
+        inputRef={poleTimeRef}
       />
 
       <QualifyingPredictionForm
@@ -99,7 +149,19 @@ export const PredictionForm = ({
         setQualifyingTop10={setQualifyingTop10}
         getAvailableDrivers={getAvailableDrivers}
         disabled={isDeadlinePassed}
+        positionRefs={qualifyingRefs}
       />
+
+      <div className="flex flex-wrap gap-4 pt-2">
+        <Button
+          type="button"
+          onClick={handleCopyQualifyingToRace}
+          className="bg-racing-blue hover:bg-racing-blue/90"
+          disabled={isDeadlinePassed}
+        >
+          Usar Grid de Largada como Resultado
+        </Button>
+      </div>
 
       <RacePredictionForm
         raceTop10={raceTop10}
@@ -107,6 +169,7 @@ export const PredictionForm = ({
         getAvailableDrivers={getAvailableDrivers}
         allDrivers={drivers}
         disabled={isDeadlinePassed}
+        positionRefs={raceRefs}
       />
 
       <FastestLapSelector
@@ -114,6 +177,7 @@ export const PredictionForm = ({
         fastestLap={fastestLap}
         setFastestLap={setFastestLap}
         disabled={isDeadlinePassed}
+        buttonRef={fastestLapRef}
       />
 
       <DNFPredictionForm
@@ -122,13 +186,24 @@ export const PredictionForm = ({
         disabled={isDeadlinePassed}
       />
 
-      <Button 
-        type="submit"
-        className="w-full bg-racing-red hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-        disabled={isDeadlinePassed}
-      >
-        Salvar Palpites
-      </Button>
+      <div className="flex flex-wrap gap-4 justify-between">
+        <Button 
+          type="button"
+          onClick={handleClearPredictions}
+          className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white"
+          disabled={isDeadlinePassed}
+        >
+          Limpar Aposta
+        </Button>
+        
+        <Button 
+          type="submit"
+          className="bg-racing-red hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isDeadlinePassed}
+        >
+          Salvar Apostas
+        </Button>
+      </div>
     </form>
   );
 };
