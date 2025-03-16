@@ -106,7 +106,7 @@ export const RaceResultsForm = ({
 
           <div className="space-y-4">
             <label className="block text-sm font-medium text-racing-silver">
-              Pilotos que não terminaram a corrida (DNF)
+              Sobreviventes
             </label>
             <Select
               value={dnfDrivers.length.toString()}
@@ -123,7 +123,7 @@ export const RaceResultsForm = ({
               }}
             >
               <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
-                <SelectValue placeholder="Selecione quantos pilotos não terminaram" />
+                <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
               </SelectTrigger>
               <SelectContent className="bg-racing-black border-racing-silver/20">
                 {Array.from({ length: 21 }).map((_, index) => (

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { CalendarIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
@@ -18,6 +19,7 @@ interface RaceEditFormProps {
   raceTime: string;
   qualifyingTime: string;
   isSubmitting: boolean;
+  isValid: boolean;
   setRaceDate: (date: Date | undefined) => void;
   setQualifyingDate: (date: Date | undefined) => void;
   setRaceDateDialogOpen: (open: boolean) => void;
@@ -26,6 +28,7 @@ interface RaceEditFormProps {
   setQualifyingTime: (time: string) => void;
   handleSaveRace: () => Promise<void>;
   handleCancel: () => void;
+  handleValidChange: (isValid: boolean) => void;
 }
 
 export const RaceEditForm = ({
@@ -37,6 +40,7 @@ export const RaceEditForm = ({
   raceTime,
   qualifyingTime,
   isSubmitting,
+  isValid,
   setRaceDate,
   setQualifyingDate,
   setRaceDateDialogOpen,
@@ -44,7 +48,8 @@ export const RaceEditForm = ({
   setRaceTime,
   setQualifyingTime,
   handleSaveRace,
-  handleCancel
+  handleCancel,
+  handleValidChange
 }: RaceEditFormProps) => {
   return (
     <Card className="bg-racing-black border-racing-silver/20 text-racing-white mb-6">
@@ -129,6 +134,18 @@ export const RaceEditForm = ({
                 className="w-32 bg-transparent border-racing-silver text-racing-white"
               />
             </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="is-valid" 
+              checked={isValid} 
+              onCheckedChange={handleValidChange}
+              className="data-[state=checked]:bg-racing-red"
+            />
+            <Label htmlFor="is-valid" className="text-racing-white">
+              É válida para o campeonato?
+            </Label>
           </div>
         </div>
         

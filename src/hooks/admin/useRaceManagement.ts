@@ -15,6 +15,7 @@ export const useRaceManagement = () => {
   const [qualifyingDateDialogOpen, setQualifyingDateDialogOpen] = useState(false);
   const [raceTime, setRaceTime] = useState("00:00");
   const [qualifyingTime, setQualifyingTime] = useState("00:00");
+  const [isValid, setIsValid] = useState(true);
 
   const { data: races, isLoading, refetch } = useQuery({
     queryKey: ["admin-races"],
@@ -32,6 +33,7 @@ export const useRaceManagement = () => {
   const handleEditRace = (race: any) => {
     setSelectedRace(race);
     setIsEditing(true);
+    setIsValid(race.is_valid !== undefined ? race.is_valid : true);
     
     const raceDateTime = new Date(race.date);
     const qualifyingDateTime = new Date(race.qualifying_date);
@@ -68,7 +70,8 @@ export const useRaceManagement = () => {
       console.log('Saving race details:', {
         id: selectedRace.id,
         date: race_date_iso,
-        qualifying_date: qualifying_date_iso
+        qualifying_date: qualifying_date_iso,
+        is_valid: isValid
       });
 
       // Update race in Supabase
@@ -76,17 +79,16 @@ export const useRaceManagement = () => {
         .from("races")
         .update({
           date: race_date_iso,
-          qualifying_date: qualifying_date_iso
+          qualifying_date: qualifying_date_iso,
+          is_valid: isValid
         })
-        .eq("id", selectedRace.id)
-        .select();
+        .eq("id", selectedRace.id);
 
       if (error) {
         console.error("Database error:", error);
         throw error;
       }
 
-      console.log('Update response:', data);
       toast.success("Datas da corrida atualizadas com sucesso");
       setIsEditing(false);
       setSelectedRace(null);
@@ -104,6 +106,60 @@ export const useRaceManagement = () => {
     setSelectedRace(null);
   };
 
+  const handleValidChange = (isValid: boolean) => {
+    setIsValid(isValid);
+  };
+
+  const handleDeleteRace = async (raceId: string) => {
+    if (!confirm("Tem certeza que deseja excluir esta corrida? Esta ação não pode ser desfeita.")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("races")
+        .delete()
+        .eq("id", raceId);
+
+      if (error) throw error;
+      
+      toast.success("Corrida excluída com sucesso");
+      await refetch();
+    } catch (error) {
+      console.error("Erro ao excluir corrida:", error);
+      toast.error("Erro ao excluir corrida");
+    }
+  };
+
+  const handleAddRace = async () => {
+    try {
+      const newRace = {
+        name: "Nova Corrida",
+        country: "País",
+        circuit: "Circuito",
+        date: new Date().toISOString(),
+        qualifying_date: new Date().toISOString(),
+        is_valid: false
+      };
+      
+      const { data, error } = await supabase
+        .from("races")
+        .insert(newRace)
+        .select();
+
+      if (error) throw error;
+      
+      toast.success("Nova corrida adicionada com sucesso");
+      if (data && data.length > 0) {
+        handleEditRace(data[0]);
+      }
+      await refetch();
+    } catch (error) {
+      console.error("Erro ao adicionar corrida:", error);
+      toast.error("Erro ao adicionar corrida");
+    }
+  };
+
   return {
     races,
     isLoading,
@@ -116,6 +172,7 @@ export const useRaceManagement = () => {
     qualifyingDateDialogOpen,
     raceTime,
     qualifyingTime,
+    isValid,
     setRaceDate,
     setQualifyingDate,
     setRaceDateDialogOpen,
@@ -124,6 +181,9 @@ export const useRaceManagement = () => {
     setQualifyingTime,
     handleEditRace,
     handleSaveRace,
-    handleCancel
+    handleCancel,
+    handleValidChange,
+    handleDeleteRace,
+    handleAddRace
   };
 };

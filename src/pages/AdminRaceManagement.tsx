@@ -1,8 +1,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useRaceManagement } from "@/hooks/admin/useRaceManagement";
 import { RaceEditForm } from "@/components/admin/RaceEditForm";
 import { RacesTable } from "@/components/admin/RacesTable";
+import { PlusCircle } from "lucide-react";
 
 const AdminRaceManagement = () => {
   const {
@@ -17,6 +19,7 @@ const AdminRaceManagement = () => {
     qualifyingDateDialogOpen,
     raceTime,
     qualifyingTime,
+    isValid,
     setRaceDate,
     setQualifyingDate,
     setRaceDateDialogOpen,
@@ -25,7 +28,10 @@ const AdminRaceManagement = () => {
     setQualifyingTime,
     handleEditRace,
     handleSaveRace,
-    handleCancel
+    handleCancel,
+    handleValidChange,
+    handleDeleteRace,
+    handleAddRace
   } = useRaceManagement();
 
   if (isLoading) {
@@ -47,6 +53,7 @@ const AdminRaceManagement = () => {
             raceTime={raceTime}
             qualifyingTime={qualifyingTime}
             isSubmitting={isSubmitting}
+            isValid={isValid}
             setRaceDate={setRaceDate}
             setQualifyingDate={setQualifyingDate}
             setRaceDateDialogOpen={setRaceDateDialogOpen}
@@ -55,14 +62,26 @@ const AdminRaceManagement = () => {
             setQualifyingTime={setQualifyingTime}
             handleSaveRace={handleSaveRace}
             handleCancel={handleCancel}
+            handleValidChange={handleValidChange}
           />
         ) : (
           <Card className="bg-racing-black border-racing-silver/20 text-racing-white">
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Calendário de Corridas</CardTitle>
+              <Button 
+                onClick={handleAddRace}
+                className="bg-racing-red hover:bg-racing-red/80 text-racing-white"
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Adicionar Corrida
+              </Button>
             </CardHeader>
             <CardContent>
-              <RacesTable races={races || []} onEditRace={handleEditRace} />
+              <RacesTable 
+                races={races || []} 
+                onEditRace={handleEditRace} 
+                onDeleteRace={handleDeleteRace} 
+              />
             </CardContent>
           </Card>
         )}
