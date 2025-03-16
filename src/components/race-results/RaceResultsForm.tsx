@@ -103,9 +103,43 @@ export const RaceResultsForm = ({
               ))}
             </div>
           </div>
+
+          <div className="space-y-4">
+            <label className="block text-sm font-medium text-racing-silver">
+              Pilotos que não terminaram a corrida (DNF)
+            </label>
+            <Select
+              value={dnfDrivers.length.toString()}
+              onValueChange={(value) => {
+                const newCount = parseInt(value, 10);
+                // Clear current DNF list
+                dnfDrivers.forEach(driverId => onDNFChange(driverId, false));
+                
+                // If selecting a number > 0, we would need to manually select the DNF drivers
+                // For now, we'll just indicate the count - specific drivers would be selected elsewhere
+                if (newCount > 0) {
+                  // This approach would need to be expanded if tracking specific drivers
+                }
+              }}
+            >
+              <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
+                <SelectValue placeholder="Selecione quantos pilotos não terminaram" />
+              </SelectTrigger>
+              <SelectContent className="bg-racing-black border-racing-silver/20">
+                {Array.from({ length: 21 }).map((_, index) => (
+                  <SelectItem 
+                    key={index} 
+                    value={index.toString()}
+                    className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+                  >
+                    {index} piloto{index !== 1 ? 's' : ''}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 };
-

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -26,7 +25,6 @@ const AdminRaceManagement = () => {
   const [raceTime, setRaceTime] = useState("00:00");
   const [qualifyingTime, setQualifyingTime] = useState("00:00");
 
-  // Fetch all races
   const { data: races, isLoading, refetch } = useQuery({
     queryKey: ["admin-races"],
     queryFn: async () => {
@@ -80,21 +78,32 @@ const AdminRaceManagement = () => {
       const race_date_iso = raceDateTime.toISOString();
       const qualifying_date_iso = qualifyingDateTime.toISOString();
 
+      console.log('Saving race details:', {
+        id: selectedRace.id,
+        date: race_date_iso,
+        qualifying_date: qualifying_date_iso
+      });
+
       // Update race in Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("races")
         .update({
           date: race_date_iso,
           qualifying_date: qualifying_date_iso
         })
-        .eq("id", selectedRace.id);
+        .eq("id", selectedRace.id)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Database error:", error);
+        throw error;
+      }
 
+      console.log('Update response:', data);
       toast.success("Datas da corrida atualizadas com sucesso");
       setIsEditing(false);
       setSelectedRace(null);
-      refetch();
+      await refetch();
     } catch (error) {
       console.error("Erro ao atualizar corrida:", error);
       toast.error("Erro ao atualizar datas da corrida");
