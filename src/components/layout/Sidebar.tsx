@@ -41,7 +41,7 @@ const Sidebar = ({
   const [adminOpen, setAdminOpen] = useState(false);
 
   return (
-    <div className="overflow-y-auto py-4 px-3 flex flex-col h-full justify-between">
+    <div className="flex flex-col h-full justify-between overflow-y-auto py-4 px-3">
       <ul className="space-y-2">
         {/* Dashboard */}
         <NavLink

@@ -29,14 +29,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-racing-black flex">
-      <Sidebar 
-        isCollapsed={isCollapsed}
-        setIsCollapsed={setIsCollapsed}
-        username={username}
-        isAdmin={isAdmin}
-      />
-
-      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
+      <div className={`fixed inset-y-0 left-0 z-50 ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300 bg-racing-black border-r border-racing-silver/10`}>
+        <Sidebar 
+          isCollapsed={isCollapsed}
+          setIsCollapsed={setIsCollapsed}
+          username={username}
+          isAdmin={isAdmin}
+        />
+      </div>
+      
+      <div className={`transition-all duration-300 flex-1 ${isCollapsed ? 'ml-16' : 'ml-64'}`}>
         {children}
       </div>
     </div>
