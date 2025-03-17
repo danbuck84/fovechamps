@@ -174,12 +174,6 @@ const Sidebar = ({
             <p>Olá, {username}</p>
           </div>
         )}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors"
-        >
-          {isCollapsed ? "Expandir Menu" : "Recolher Menu"}
-        </button>
       </div>
     </div>
   );
