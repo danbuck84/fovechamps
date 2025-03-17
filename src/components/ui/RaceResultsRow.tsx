@@ -1,14 +1,15 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Trophy, LineChart } from "lucide-react";
+import { Trophy, LineChart, Edit } from "lucide-react";
 
 interface RaceResultsRowProps {
   raceId: string;
   hasResults: boolean;
+  raceName?: string;
 }
 
-export const RaceResultsRow = ({ raceId, hasResults }: RaceResultsRowProps) => {
+export const RaceResultsRow = ({ raceId, hasResults, raceName }: RaceResultsRowProps) => {
   const navigate = useNavigate();
 
   return (
@@ -30,6 +31,14 @@ export const RaceResultsRow = ({ raceId, hasResults }: RaceResultsRowProps) => {
       >
         <LineChart className="w-4 h-4 mr-2" />
         Ver Pontuação
+      </Button>
+      <Button
+        variant="outline"
+        className="border-racing-red text-racing-red hover:bg-racing-red/10"
+        onClick={() => navigate(`/race-predictions/${raceId}`)}
+      >
+        <Edit className="w-4 h-4 mr-2" />
+        {hasResults ? "Ver Aposta" : "Apostar"}
       </Button>
     </div>
   );

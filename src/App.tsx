@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
@@ -18,6 +19,7 @@ import Tables from "@/pages/Tables";
 import OfficialResults from "@/pages/OfficialResults";
 import RaceResultsView from "@/pages/RaceResultsView";
 import AdminRaceManagement from "@/pages/AdminRaceManagement";
+import PastPredictions from "@/pages/PastPredictions";
 
 function App() {
   return (
@@ -97,6 +99,17 @@ function App() {
             <PrivateRoute>
               <MainLayout>
                 <MyPredictions />
+              </MainLayout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/past-predictions"
+          element={
+            <PrivateRoute>
+              <MainLayout>
+                <PastPredictions />
               </MainLayout>
             </PrivateRoute>
           }
