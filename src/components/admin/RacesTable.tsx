@@ -30,7 +30,7 @@ export const RacesTable = ({ races, onEditRace, onDeleteRace }: RacesTableProps)
               <TableCell className="text-racing-silver">{formatDate(race.date)}</TableCell>
               <TableCell className="text-racing-silver">{formatDate(race.qualifying_date)}</TableCell>
               <TableCell className="text-racing-silver">
-                {race.is_valid !== false ? (
+                {race.is_valid ? (
                   <BadgeCheck className="h-5 w-5 text-green-500" />
                 ) : (
                   <BadgeX className="h-5 w-5 text-red-500" />

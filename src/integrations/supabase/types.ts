@@ -357,6 +357,7 @@ export type Database = {
           created_at: string
           date: string
           id: string
+          is_valid: boolean | null
           name: string
           qualifying_date: string
         }
@@ -366,6 +367,7 @@ export type Database = {
           created_at?: string
           date: string
           id?: string
+          is_valid?: boolean | null
           name: string
           qualifying_date: string
         }
@@ -375,6 +377,7 @@ export type Database = {
           created_at?: string
           date?: string
           id?: string
+          is_valid?: boolean | null
           name?: string
           qualifying_date?: string
         }
