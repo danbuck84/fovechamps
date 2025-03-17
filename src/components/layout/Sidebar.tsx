@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -11,11 +12,30 @@ import {
   CalendarCheck,
   Clock,
   ChevronDown,
+  Trophy,
 } from "lucide-react";
 import NavLink from "./NavLink";
 
-const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+interface SidebarProps {
+  isCollapsed?: boolean;
+  setIsCollapsed?: (value: boolean) => void;
+  username?: string;
+  isAdmin?: boolean;
+}
+
+const Sidebar = ({ 
+  isCollapsed: propIsCollapsed, 
+  setIsCollapsed: propSetIsCollapsed,
+  username,
+  isAdmin = true 
+}: SidebarProps = {}) => {
+  // Use props if provided, otherwise use local state
+  const [localIsCollapsed, setLocalIsCollapsed] = useState(false);
+  
+  // Use either the prop values or the local state
+  const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : localIsCollapsed;
+  const setIsCollapsed = propSetIsCollapsed || setLocalIsCollapsed;
+  
   const [resultsOpen, setResultsOpen] = useState(false);
   const [betsOpen, setBetsOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
@@ -110,43 +130,50 @@ const Sidebar = () => {
         </li>
 
         {/* Admin */}
-        <li>
-          <button
-            onClick={() => setAdminOpen(!adminOpen)}
-            className={`flex items-center justify-between w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors`}
-          >
-            <div className="flex items-center">
-              <ShieldCheck className="w-6 h-6" />
-              <span className={isCollapsed ? "hidden" : "ml-3"}>Admin</span>
-            </div>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform duration-200 ${
-                adminOpen ? "rotate-180" : ""
-              } ${isCollapsed ? "hidden" : ""}`}
-            />
-          </button>
-          <ul
-            className={`py-2 space-y-2 ${
-              adminOpen ? "block" : "hidden"
-            }`}
-          >
-            <NavLink
-              path="/users"
-              icon={Users}
-              label="Usuários"
-              isCollapsed={isCollapsed}
-            />
-            <NavLink
-              path="/admin/race-management"
-              icon={CalendarCheck}
-              label="Gerenciar Corridas"
-              isCollapsed={isCollapsed}
-            />
-          </ul>
-        </li>
+        {isAdmin && (
+          <li>
+            <button
+              onClick={() => setAdminOpen(!adminOpen)}
+              className={`flex items-center justify-between w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors`}
+            >
+              <div className="flex items-center">
+                <ShieldCheck className="w-6 h-6" />
+                <span className={isCollapsed ? "hidden" : "ml-3"}>Admin</span>
+              </div>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  adminOpen ? "rotate-180" : ""
+                } ${isCollapsed ? "hidden" : ""}`}
+              />
+            </button>
+            <ul
+              className={`py-2 space-y-2 ${
+                adminOpen ? "block" : "hidden"
+              }`}
+            >
+              <NavLink
+                path="/users"
+                icon={Users}
+                label="Usuários"
+                isCollapsed={isCollapsed}
+              />
+              <NavLink
+                path="/admin/race-management"
+                icon={CalendarCheck}
+                label="Gerenciar Corridas"
+                isCollapsed={isCollapsed}
+              />
+            </ul>
+          </li>
+        )}
       </ul>
 
       <div className="p-4">
+        {username && !isCollapsed && (
+          <div className="mb-4 text-racing-silver">
+            <p>Olá, {username}</p>
+          </div>
+        )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors"
