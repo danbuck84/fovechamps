@@ -15,9 +15,10 @@ import DriversAndTeams from "./pages/DriversAndTeams";
 import DriverDetail from "./pages/DriverDetail";
 import TeamDetail from "./pages/TeamDetail";
 
+// Use import.meta.env for Vite environment variables instead of process.env
 const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL as string,
-  process.env.REACT_APP_SUPABASE_ANON_KEY as string
+  import.meta.env.VITE_SUPABASE_URL as string,
+  import.meta.env.VITE_SUPABASE_ANON_KEY as string
 );
 
 const router = createBrowserRouter([
@@ -57,7 +58,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <SessionContextProvider supabaseClient={supabase} persistSession={true}>
+    <SessionContextProvider supabaseClient={supabase}>
       <RouterProvider router={router} />
     </SessionContextProvider>
   );
