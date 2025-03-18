@@ -15,10 +15,18 @@ import DriversAndTeams from "./pages/DriversAndTeams";
 import DriverDetail from "./pages/DriverDetail";
 import TeamDetail from "./pages/TeamDetail";
 
-// Use import.meta.env for Vite environment variables instead of process.env
+// Check if environment variables are defined
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Supabase environment variables are missing.');
+}
+
+// Use import.meta.env for Vite environment variables
 const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_ANON_KEY as string
+  supabaseUrl as string,
+  supabaseAnonKey as string
 );
 
 const router = createBrowserRouter([

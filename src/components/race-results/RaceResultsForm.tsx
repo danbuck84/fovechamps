@@ -129,7 +129,7 @@ export const RaceResultsForm = ({
               onValueChange={handleDNFCountChange}
             >
               <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
-                <SelectValue placeholder="Selecione quantos pilotos abandonaram" />
+                <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
               </SelectTrigger>
               <SelectContent className="bg-racing-black border-racing-silver/20">
                 {Array.from({ length: 21 }).map((_, index) => (

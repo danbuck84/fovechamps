@@ -213,10 +213,10 @@ const RaceResults = () => {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-racing-silver mb-2">DNFs</h3>
+                <h3 className="text-sm font-medium text-racing-silver mb-2">Sobreviventes</h3>
                 <div className="p-2 bg-racing-silver/10 rounded">
                   <span className="text-racing-white">
-                    {raceResult.dnf_drivers?.length || 0} DNFs
+                    {raceResult.dnf_drivers?.length || 0} sobreviventes
                   </span>
                 </div>
               </div>
