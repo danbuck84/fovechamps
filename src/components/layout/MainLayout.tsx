@@ -41,7 +41,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
       
       <div className={`transition-all duration-300 flex-1 ${isCollapsed ? 'ml-0' : 'ml-64'}`}>
-        <div className="fixed top-4 left-4 z-50">
+        <div className="fixed top-4 left-4 z-40">
           <Button
             variant="ghost"
             size="icon"
