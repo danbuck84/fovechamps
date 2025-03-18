@@ -34,6 +34,22 @@ export const RaceResultsForm = ({
     return [...drivers].sort((a, b) => a.name.localeCompare(b.name));
   };
 
+  const handleDNFCountChange = (value: string) => {
+    const count = parseInt(value, 10);
+    // Clear current DNF list
+    dnfDrivers.forEach(driverId => onDNFChange(driverId, false));
+    
+    // If selecting a number > 0, we automatically select the first n drivers 
+    // as DNF based on the count
+    if (count > 0 && allDrivers.length > 0) {
+      // Get the first 'count' drivers
+      const selectedDrivers = allDrivers.slice(0, count).map(d => d.id);
+      
+      // Mark them as DNF
+      selectedDrivers.forEach(driverId => onDNFChange(driverId, true));
+    }
+  };
+
   return (
     <Card className="bg-racing-black border-racing-silver/20">
       <CardHeader>
@@ -84,11 +100,11 @@ export const RaceResultsForm = ({
                     <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
                       <SelectValue placeholder="Selecione um piloto" />
                     </SelectTrigger>
-                    <SelectContent className="bg-racing-black border-racing-silver/20">
+                    <SelectContent className="bg-racing-black border-racing-silver/20 max-h-[300px]">
                       <SelectItem value="placeholder" className="text-racing-white">
                         Selecione um piloto
                       </SelectItem>
-                      {sortDrivers(availableDrivers(index)).map((driver) => (
+                      {allDrivers.map((driver) => (
                         <SelectItem 
                           key={driver.id} 
                           value={driver.id}
@@ -110,20 +126,10 @@ export const RaceResultsForm = ({
             </label>
             <Select
               value={dnfDrivers.length.toString()}
-              onValueChange={(value) => {
-                const newCount = parseInt(value, 10);
-                // Clear current DNF list
-                dnfDrivers.forEach(driverId => onDNFChange(driverId, false));
-                
-                // If selecting a number > 0, we would need to manually select the DNF drivers
-                // For now, we'll just indicate the count - specific drivers would be selected elsewhere
-                if (newCount > 0) {
-                  // This approach would need to be expanded if tracking specific drivers
-                }
-              }}
+              onValueChange={handleDNFCountChange}
             >
               <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
-                <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
+                <SelectValue placeholder="Selecione quantos pilotos abandonaram" />
               </SelectTrigger>
               <SelectContent className="bg-racing-black border-racing-silver/20">
                 {Array.from({ length: 21 }).map((_, index) => (

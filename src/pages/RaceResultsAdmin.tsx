@@ -10,9 +10,11 @@ import { useDriverPositions } from "@/hooks/race/useDriverPositions";
 import { useDNFDrivers } from "@/hooks/race/useDNFDrivers";
 import { useRaceResultsSave } from "@/hooks/race/useRaceResultsSave";
 import { useAvailableDrivers } from "@/hooks/race/useAvailableDrivers";
+import { Toaster } from "sonner";
 
 const RaceResultsAdmin = () => {
   const { raceId } = useParams<{ raceId: string }>();
+  const navigate = useNavigate();
   const { formatDisplayPoleTime } = useFormatters();
   
   const { 
@@ -58,13 +60,18 @@ const RaceResultsAdmin = () => {
   };
 
   const handleSaveResults = async () => {
-    await saveResults(
-      poleTime,
-      fastestLap,
-      qualifyingResults,
-      raceResults,
-      dnfDrivers
-    );
+    try {
+      await saveResults(
+        poleTime,
+        fastestLap,
+        qualifyingResults,
+        raceResults,
+        dnfDrivers
+      );
+      navigate(-1);
+    } catch (error) {
+      console.error("Error saving results:", error);
+    }
   };
 
   if (!race || !drivers) {
@@ -100,6 +107,7 @@ const RaceResultsAdmin = () => {
           />
         </div>
       </div>
+      <Toaster position="top-right" />
     </div>
   );
 };

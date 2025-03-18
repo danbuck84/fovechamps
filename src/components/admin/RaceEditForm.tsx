@@ -29,6 +29,14 @@ interface RaceEditFormProps {
   handleSaveRace: () => Promise<void>;
   handleCancel: () => void;
   handleValidChange: (isValid: boolean) => void;
+  setRaceNumber: (number: string) => void;
+  setRaceCountry: (country: string) => void;
+  setRaceName: (name: string) => void;
+  setRaceCircuit: (circuit: string) => void;
+  raceNumber: string;
+  raceCountry: string;
+  raceName: string;
+  raceCircuit: string;
 }
 
 export const RaceEditForm = ({
@@ -49,17 +57,69 @@ export const RaceEditForm = ({
   setQualifyingTime,
   handleSaveRace,
   handleCancel,
-  handleValidChange
+  handleValidChange,
+  setRaceNumber,
+  setRaceCountry,
+  setRaceName,
+  setRaceCircuit,
+  raceNumber,
+  raceCountry,
+  raceName,
+  raceCircuit
 }: RaceEditFormProps) => {
   return (
     <Card className="bg-racing-black border-racing-silver/20 text-racing-white mb-6">
       <CardHeader>
-        <CardTitle>Editar Datas: {selectedRace.name}</CardTitle>
+        <CardTitle>Editar Corrida: {selectedRace.name}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-6 mb-6">
           <div className="space-y-2">
-            <Label htmlFor="race-date" className="text-racing-white">Data da Corrida</Label>
+            <Label htmlFor="race-number" className="text-racing-white">Etapa</Label>
+            <Input 
+              id="race-number" 
+              value={raceNumber} 
+              onChange={(e) => setRaceNumber(e.target.value)}
+              placeholder="Número da etapa (ex: 01, 24)"
+              className="bg-transparent border-racing-silver text-racing-white"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="race-country" className="text-racing-white">País</Label>
+            <Input 
+              id="race-country" 
+              value={raceCountry} 
+              onChange={(e) => setRaceCountry(e.target.value)}
+              placeholder="País onde será sediada a etapa"
+              className="bg-transparent border-racing-silver text-racing-white"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="race-name" className="text-racing-white">Nome oficial do GP</Label>
+            <Input 
+              id="race-name" 
+              value={raceName} 
+              onChange={(e) => setRaceName(e.target.value)}
+              placeholder="Nome oficial da etapa"
+              className="bg-transparent border-racing-silver text-racing-white"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="race-circuit" className="text-racing-white">Circuito</Label>
+            <Input 
+              id="race-circuit" 
+              value={raceCircuit} 
+              onChange={(e) => setRaceCircuit(e.target.value)}
+              placeholder="Circuito onde acontecerá a corrida"
+              className="bg-transparent border-racing-silver text-racing-white"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="race-date" className="text-racing-white">Corrida</Label>
             <div className="flex items-center gap-2">
               <Dialog open={raceDateDialogOpen} onOpenChange={setRaceDateDialogOpen}>
                 <DialogTrigger asChild>
@@ -68,7 +128,7 @@ export const RaceEditForm = ({
                     className="bg-transparent border-racing-silver text-racing-silver hover:bg-racing-silver/10 w-full justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {raceDate ? format(raceDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecionar Data"}
+                    {raceDate ? format(raceDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar Data"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-racing-black border-racing-silver/20 text-racing-white">
@@ -87,6 +147,8 @@ export const RaceEditForm = ({
                 </DialogContent>
               </Dialog>
               
+              <span className="text-racing-silver">às</span>
+              
               <Input 
                 id="race-time" 
                 type="time"
@@ -98,7 +160,7 @@ export const RaceEditForm = ({
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="qualifying-date" className="text-racing-white">Data da Classificação (Prazo para apostas)</Label>
+            <Label htmlFor="qualifying-date" className="text-racing-white">Classificação (Prazo para apostas)</Label>
             <div className="flex items-center gap-2">
               <Dialog open={qualifyingDateDialogOpen} onOpenChange={setQualifyingDateDialogOpen}>
                 <DialogTrigger asChild>
@@ -107,7 +169,7 @@ export const RaceEditForm = ({
                     className="bg-transparent border-racing-silver text-racing-silver hover:bg-racing-silver/10 w-full justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {qualifyingDate ? format(qualifyingDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecionar Data"}
+                    {qualifyingDate ? format(qualifyingDate, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar Data"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-racing-black border-racing-silver/20 text-racing-white">
@@ -125,6 +187,8 @@ export const RaceEditForm = ({
                   />
                 </DialogContent>
               </Dialog>
+              
+              <span className="text-racing-silver">às</span>
               
               <Input 
                 id="qualifying-time" 

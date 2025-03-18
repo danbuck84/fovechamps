@@ -16,6 +16,10 @@ export const useRaceManagement = () => {
   const [raceTime, setRaceTime] = useState("00:00");
   const [qualifyingTime, setQualifyingTime] = useState("00:00");
   const [isValid, setIsValid] = useState(true);
+  const [raceNumber, setRaceNumber] = useState("");
+  const [raceCountry, setRaceCountry] = useState("");
+  const [raceName, setRaceName] = useState("");
+  const [raceCircuit, setRaceCircuit] = useState("");
 
   const { data: races, isLoading, refetch } = useQuery({
     queryKey: ["admin-races"],
@@ -43,6 +47,12 @@ export const useRaceManagement = () => {
     
     setRaceTime(format(raceDateTime, "HH:mm"));
     setQualifyingTime(format(qualifyingDateTime, "HH:mm"));
+
+    // Set the additional fields
+    setRaceNumber(race.number || "");
+    setRaceCountry(race.country || "");
+    setRaceName(race.name || "");
+    setRaceCircuit(race.circuit || "");
   };
 
   const handleSaveRace = async () => {
@@ -69,6 +79,10 @@ export const useRaceManagement = () => {
 
       console.log('Saving race details:', {
         id: selectedRace.id,
+        number: raceNumber,
+        name: raceName,
+        country: raceCountry,
+        circuit: raceCircuit,
         date: race_date_iso,
         qualifying_date: qualifying_date_iso,
         is_valid: isValid
@@ -78,9 +92,13 @@ export const useRaceManagement = () => {
       const { data, error } = await supabase
         .from("races")
         .update({
+          name: raceName,
+          country: raceCountry,
+          circuit: raceCircuit,
           date: race_date_iso,
           qualifying_date: qualifying_date_iso,
-          is_valid: isValid
+          is_valid: isValid,
+          number: raceNumber
         })
         .eq("id", selectedRace.id);
 
@@ -89,13 +107,13 @@ export const useRaceManagement = () => {
         throw error;
       }
 
-      toast.success("Datas da corrida atualizadas com sucesso");
+      toast.success("Corrida atualizada com sucesso");
       setIsEditing(false);
       setSelectedRace(null);
       await refetch();
     } catch (error) {
       console.error("Erro ao atualizar corrida:", error);
-      toast.error("Erro ao atualizar datas da corrida");
+      toast.error("Erro ao atualizar corrida");
     } finally {
       setIsSubmitting(false);
     }
@@ -139,7 +157,8 @@ export const useRaceManagement = () => {
         circuit: "Circuito",
         date: new Date().toISOString(),
         qualifying_date: new Date().toISOString(),
-        is_valid: false
+        is_valid: false,
+        number: ""
       };
       
       const { data, error } = await supabase
@@ -147,7 +166,10 @@ export const useRaceManagement = () => {
         .insert(newRace)
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao adicionar corrida:", error);
+        throw error;
+      }
       
       toast.success("Nova corrida adicionada com sucesso");
       if (data && data.length > 0) {
@@ -156,7 +178,7 @@ export const useRaceManagement = () => {
       await refetch();
     } catch (error) {
       console.error("Erro ao adicionar corrida:", error);
-      toast.error("Erro ao adicionar corrida");
+      toast.error("Erro ao adicionar corrida: " + (error as any).message);
     }
   };
 
@@ -173,12 +195,20 @@ export const useRaceManagement = () => {
     raceTime,
     qualifyingTime,
     isValid,
+    raceNumber,
+    raceCountry,
+    raceName,
+    raceCircuit,
     setRaceDate,
     setQualifyingDate,
     setRaceDateDialogOpen,
     setQualifyingDateDialogOpen,
     setRaceTime,
     setQualifyingTime,
+    setRaceNumber,
+    setRaceCountry,
+    setRaceName,
+    setRaceCircuit,
     handleEditRace,
     handleSaveRace,
     handleCancel,

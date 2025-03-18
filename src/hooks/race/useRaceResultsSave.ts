@@ -51,9 +51,12 @@ export const useRaceResultsSave = (
       // Calcular pontos automaticamente após salvar
       await processPoints();
       toast.success("Pontos calculados e salvos com sucesso!");
+
+      return true;
     } catch (error) {
       console.error("Erro ao salvar resultados:", error);
       toast.error("Erro ao salvar resultados");
+      throw error;
     } finally {
       setSaving(false);
     }

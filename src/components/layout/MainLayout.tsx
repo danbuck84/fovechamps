@@ -46,6 +46,16 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             variant="ghost"
             size="icon"
             onClick={() => setIsCollapsed(!isCollapsed)}
+            className={`bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full ${!isCollapsed && 'opacity-0 pointer-events-none'}`}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+        </div>
+        <div className={`fixed top-4 left-4 z-40 ${isCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsCollapsed(!isCollapsed)}
             className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
           >
             <Menu className="h-6 w-6" />

@@ -5,6 +5,7 @@ import { useRaceManagement } from "@/hooks/admin/useRaceManagement";
 import { RaceEditForm } from "@/components/admin/RaceEditForm";
 import { RacesTable } from "@/components/admin/RacesTable";
 import { PlusCircle } from "lucide-react";
+import { Toaster } from "sonner";
 
 const AdminRaceManagement = () => {
   const {
@@ -20,12 +21,20 @@ const AdminRaceManagement = () => {
     raceTime,
     qualifyingTime,
     isValid,
+    raceNumber,
+    raceCountry,
+    raceName,
+    raceCircuit,
     setRaceDate,
     setQualifyingDate,
     setRaceDateDialogOpen,
     setQualifyingDateDialogOpen,
     setRaceTime,
     setQualifyingTime,
+    setRaceNumber,
+    setRaceCountry,
+    setRaceName,
+    setRaceCircuit,
     handleEditRace,
     handleSaveRace,
     handleCancel,
@@ -54,12 +63,20 @@ const AdminRaceManagement = () => {
             qualifyingTime={qualifyingTime}
             isSubmitting={isSubmitting}
             isValid={isValid}
+            raceNumber={raceNumber}
+            raceCountry={raceCountry}
+            raceName={raceName}
+            raceCircuit={raceCircuit}
             setRaceDate={setRaceDate}
             setQualifyingDate={setQualifyingDate}
             setRaceDateDialogOpen={setRaceDateDialogOpen}
             setQualifyingDateDialogOpen={setQualifyingDateDialogOpen}
             setRaceTime={setRaceTime}
             setQualifyingTime={setQualifyingTime}
+            setRaceNumber={setRaceNumber}
+            setRaceCountry={setRaceCountry}
+            setRaceName={setRaceName}
+            setRaceCircuit={setRaceCircuit}
             handleSaveRace={handleSaveRace}
             handleCancel={handleCancel}
             handleValidChange={handleValidChange}
@@ -86,6 +103,7 @@ const AdminRaceManagement = () => {
           </Card>
         )}
       </div>
+      <Toaster position="top-right" />
     </div>
   );
 };

@@ -15,7 +15,10 @@ export const RacesTable = ({ races, onEditRace, onDeleteRace }: RacesTableProps)
     <Table>
       <TableHeader>
         <TableRow className="border-racing-silver/20">
+          <TableHead className="text-racing-silver">Etapa</TableHead>
           <TableHead className="text-racing-silver">Nome da Corrida</TableHead>
+          <TableHead className="text-racing-silver">País</TableHead>
+          <TableHead className="text-racing-silver">Circuito</TableHead>
           <TableHead className="text-racing-silver">Data da Corrida</TableHead>
           <TableHead className="text-racing-silver">Data da Classificação</TableHead>
           <TableHead className="text-racing-silver">Válida</TableHead>
@@ -26,7 +29,10 @@ export const RacesTable = ({ races, onEditRace, onDeleteRace }: RacesTableProps)
         {races && races.length > 0 ? (
           races.map((race) => (
             <TableRow key={race.id} className="border-racing-silver/20">
+              <TableCell className="text-racing-white font-medium">{race.number || "-"}</TableCell>
               <TableCell className="text-racing-white font-medium">{race.name}</TableCell>
+              <TableCell className="text-racing-silver">{race.country}</TableCell>
+              <TableCell className="text-racing-silver">{race.circuit}</TableCell>
               <TableCell className="text-racing-silver">{formatDate(race.date)}</TableCell>
               <TableCell className="text-racing-silver">{formatDate(race.qualifying_date)}</TableCell>
               <TableCell className="text-racing-silver">
@@ -60,7 +66,7 @@ export const RacesTable = ({ races, onEditRace, onDeleteRace }: RacesTableProps)
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan={5} className="text-center text-racing-silver">
+            <TableCell colSpan={8} className="text-center text-racing-silver">
               Nenhuma corrida encontrada
             </TableCell>
           </TableRow>
