@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -6,12 +7,8 @@ import {
 import { createClient } from '@supabase/supabase-js'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Account from "./pages/Account";
 import Tables from "./pages/Tables";
-import RacePrediction from "./pages/RacePrediction";
+import RaceResultsView from "./pages/RaceResultsView";
 import RaceResultsAdmin from "./pages/RaceResultsAdmin";
 import AdminRaceManagement from "./pages/AdminRaceManagement";
 import DriversAndTeams from "./pages/DriversAndTeams";
@@ -26,19 +23,7 @@ const supabase = createClient(
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/account",
-    element: <Account />,
+    element: <DriversAndTeams />,
   },
   {
     path: "/tables",
@@ -46,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/race/:raceId",
-    element: <RacePrediction />,
+    element: <RaceResultsView />,
   },
   {
     path: "/admin/race-results/:raceId",

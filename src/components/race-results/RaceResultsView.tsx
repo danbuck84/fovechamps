@@ -5,7 +5,7 @@ import type { Driver, RaceResult } from "@/types/betting";
 
 interface RaceResultsViewProps {
   result: RaceResult;
-  drivers: Driver[];
+  drivers: (Driver & { team?: { name: string; engine: string } })[];
   fastestLap: string | null;
   dnfDrivers: string[];
 }
