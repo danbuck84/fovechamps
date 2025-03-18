@@ -1,180 +1,120 @@
-
-import { useState } from "react";
 import {
-  LayoutDashboard,
-  BarChart,
-  Table2,
-  CircleCheck,
-  BadgeDollarSign,
-  UserCircle,
-  ShieldCheck,
-  Users,
-  CalendarCheck,
-  Clock,
-  ChevronDown,
-  Trophy,
+  Home,
+  Calendar,
+  Settings,
+  Users2,
+  LogOut,
 } from "lucide-react";
-import NavLink from "./NavLink";
+import { NavLink as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 
-interface SidebarProps {
-  isCollapsed?: boolean;
-  setIsCollapsed?: (value: boolean) => void;
-  username?: string;
-  isAdmin?: boolean;
+interface NavLinkProps {
+  to: string;
+  isActive: boolean;
+  icon: React.ReactNode;
+  label: string;
 }
 
-const Sidebar = ({ 
-  isCollapsed: propIsCollapsed, 
-  setIsCollapsed: propSetIsCollapsed,
+const NavLink: React.FC<NavLinkProps> = ({ to, isActive, icon, label }) => (
+  <Button
+    asChild
+    variant="ghost"
+    className={`w-full justify-start pl-9 ${
+      isActive
+        ? "bg-racing-red text-racing-white hover:bg-racing-red/80"
+        : "text-racing-silver hover:bg-racing-red/10"
+    }`}
+  >
+    <RouterLink to={to} className="flex items-center gap-2 w-full">
+      {icon}
+      <span>{label}</span>
+    </RouterLink>
+  </Button>
+);
+
+const Sidebar = ({
+  isCollapsed,
+  setIsCollapsed,
   username,
-  isAdmin = true 
-}: SidebarProps = {}) => {
-  // Use props if provided, otherwise use local state
-  const [localIsCollapsed, setLocalIsCollapsed] = useState(false);
-  
-  // Use either the prop values or the local state
-  const isCollapsed = propIsCollapsed !== undefined ? propIsCollapsed : localIsCollapsed;
-  const setIsCollapsed = propSetIsCollapsed || setLocalIsCollapsed;
-  
-  const [resultsOpen, setResultsOpen] = useState(false);
-  const [betsOpen, setBetsOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
+  isAdmin = false,
+}: {
+  isCollapsed: boolean;
+  setIsCollapsed: (collapsed: boolean) => void;
+  username: string;
+  isAdmin?: boolean;
+}) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    }
+  };
 
   return (
-    <div className="flex flex-col h-full justify-between overflow-y-auto py-4 px-3">
-      <ul className="space-y-2">
-        {/* Dashboard */}
-        <NavLink
-          path="/dashboard"
-          icon={LayoutDashboard}
-          label="Dashboard"
-          isCollapsed={isCollapsed}
-        />
-
-        {/* Results */}
-        <li>
-          <button
-            onClick={() => setResultsOpen(!resultsOpen)}
-            className={`flex items-center justify-between w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors`}
-          >
-            <div className="flex items-center">
-              <BarChart className="w-6 h-6" />
-              <span className={isCollapsed ? "hidden" : "ml-3"}>Resultados</span>
-            </div>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform duration-200 ${
-                resultsOpen ? "rotate-180" : ""
-              } ${isCollapsed ? "hidden" : ""}`}
-            />
-          </button>
-          <ul
-            className={`py-2 space-y-2 ${
-              resultsOpen ? "block" : "hidden"
-            }`}
-          >
-            <NavLink
-              path="/all-race-results"
-              icon={Trophy}
-              label="Todos Resultados"
-              isCollapsed={isCollapsed}
-            />
-            <NavLink
-              path="/tables"
-              icon={Table2}
-              label="Tabelas"
-              isCollapsed={isCollapsed}
-            />
-            <NavLink
-              path="/official-results"
-              icon={CircleCheck}
-              label="Resultados Oficiais"
-              isCollapsed={isCollapsed}
-            />
-          </ul>
-        </li>
-
-        {/* Bets */}
-        <li>
-          <button
-            onClick={() => setBetsOpen(!betsOpen)}
-            className={`flex items-center justify-between w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors`}
-          >
-            <div className="flex items-center">
-              <BadgeDollarSign className="w-6 h-6" />
-              <span className={isCollapsed ? "hidden" : "ml-3"}>Apostas</span>
-            </div>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform duration-200 ${
-                betsOpen ? "rotate-180" : ""
-              } ${isCollapsed ? "hidden" : ""}`}
-            />
-          </button>
-          <ul
-            className={`py-2 space-y-2 ${
-              betsOpen ? "block" : "hidden"
-            }`}
-          >
-            <NavLink
-              path="/my-predictions"
-              icon={UserCircle}
-              label="Minhas Apostas"
-              isCollapsed={isCollapsed}
-            />
-            <NavLink
-              path="/past-predictions"
-              icon={Clock}
-              label="Apostas Passadas"
-              isCollapsed={isCollapsed}
-            />
-          </ul>
-        </li>
-
-        {/* Admin */}
-        {isAdmin && (
-          <li>
-            <button
-              onClick={() => setAdminOpen(!adminOpen)}
-              className={`flex items-center justify-between w-full p-2 text-racing-silver hover:bg-racing-red/10 rounded-lg transition-colors`}
-            >
-              <div className="flex items-center">
-                <ShieldCheck className="w-6 h-6" />
-                <span className={isCollapsed ? "hidden" : "ml-3"}>Admin</span>
-              </div>
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  adminOpen ? "rotate-180" : ""
-                } ${isCollapsed ? "hidden" : ""}`}
-              />
-            </button>
-            <ul
-              className={`py-2 space-y-2 ${
-                adminOpen ? "block" : "hidden"
-              }`}
-            >
-              <NavLink
-                path="/users"
-                icon={Users}
-                label="Usuários"
-                isCollapsed={isCollapsed}
-              />
-              <NavLink
-                path="/admin/race-management"
-                icon={CalendarCheck}
-                label="Gerenciar Corridas"
-                isCollapsed={isCollapsed}
-              />
-            </ul>
-          </li>
-        )}
-      </ul>
-
-      <div className="p-4">
-        {username && !isCollapsed && (
-          <div className="mb-4 text-racing-silver">
-            <p>Olá, {username}</p>
-          </div>
-        )}
+    <div className="flex flex-col h-full">
+      <div className="px-4 py-6">
+        <h1 className="font-bold text-2xl text-racing-white">F1Bet</h1>
+        <p className="text-sm text-racing-silver">
+          Gerencie suas apostas e resultados
+        </p>
       </div>
+
+      <nav className="flex-1">
+        <NavLink
+          to="/"
+          isActive={location.pathname === "/"}
+          icon={<Home size={20} />}
+          label="Visão Geral"
+        />
+        <NavLink
+          to="/tables"
+          isActive={location.pathname === "/tables"}
+          icon={<Calendar size={20} />}
+          label="Tabelas"
+        />
+        {isAdmin && (
+          <NavLink
+            to="/admin/race-management"
+            isActive={location.pathname === "/admin/race-management"}
+            icon={<Settings size={20} />}
+            label="Gerenciar Corridas"
+          />
+        )}
+        <NavLink
+          to="/drivers-and-teams"
+          isActive={location.pathname === "/drivers-and-teams"}
+          icon={<Users2 size={20} />}
+          label="Pilotos e Equipes"
+        />
+      </nav>
+
+      {username && (
+        <div className="mt-auto p-4 border-t border-racing-silver/10">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-9 h-9 rounded-full bg-racing-red flex items-center justify-center text-racing-white font-bold">
+              {username[0]?.toUpperCase()}
+            </div>
+            <div>
+              <p className="text-racing-white text-sm font-medium">{username}</p>
+            </div>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full justify-start text-racing-silver border-racing-silver/20 hover:bg-racing-red hover:text-racing-white hover:border-transparent"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Sair
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

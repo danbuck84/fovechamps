@@ -89,7 +89,7 @@ export const useRaceManagement = () => {
       });
 
       // Update race in Supabase
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("races")
         .update({
           name: raceName,

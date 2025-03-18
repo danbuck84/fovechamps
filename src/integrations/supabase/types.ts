@@ -359,6 +359,7 @@ export type Database = {
           id: string
           is_valid: boolean | null
           name: string
+          number: string | null
           qualifying_date: string
         }
         Insert: {
@@ -369,6 +370,7 @@ export type Database = {
           id?: string
           is_valid?: boolean | null
           name: string
+          number?: string | null
           qualifying_date: string
         }
         Update: {
@@ -379,6 +381,7 @@ export type Database = {
           id?: string
           is_valid?: boolean | null
           name?: string
+          number?: string | null
           qualifying_date?: string
         }
         Relationships: []

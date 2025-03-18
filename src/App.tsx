@@ -1,211 +1,80 @@
+import React from 'react';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { createClient } from '@supabase/supabase-js'
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MainLayout from "@/components/layout/MainLayout";
-import PrivateRoute from "@/components/auth/PrivateRoute";
-import Auth from "@/pages/Auth";
-import Index from "@/pages/Index";
-import MyPredictions from "@/pages/MyPredictions";
-import RacePredictions from "@/pages/RacePredictions";
-import RaceResults from "@/pages/RaceResults";
-import RaceResultsAdmin from "@/pages/RaceResultsAdmin";
-import RacePoints from "@/pages/RacePoints";
-import Dashboard from "@/pages/Dashboard";
-import Profile from "@/pages/Profile";
-import Users from "@/pages/Users";
-import UserProfile from "@/pages/UserProfile";
-import NotFound from "@/pages/NotFound";
-import AllRaceResults from "@/pages/AllRaceResults";
-import Tables from "@/pages/Tables";
-import OfficialResults from "@/pages/OfficialResults";
-import RaceResultsView from "@/pages/RaceResultsView";
-import AdminRaceManagement from "@/pages/AdminRaceManagement";
-import PastPredictions from "@/pages/PastPredictions";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Account from "./pages/Account";
+import Tables from "./pages/Tables";
+import RacePrediction from "./pages/RacePrediction";
+import RaceResultsAdmin from "./pages/RaceResultsAdmin";
+import AdminRaceManagement from "./pages/AdminRaceManagement";
+import DriversAndTeams from "./pages/DriversAndTeams";
+import DriverDetail from "./pages/DriverDetail";
+import TeamDetail from "./pages/TeamDetail";
+
+const supabase = createClient(
+  process.env.REACT_APP_SUPABASE_URL as string,
+  process.env.REACT_APP_SUPABASE_ANON_KEY as string
+);
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/account",
+    element: <Account />,
+  },
+  {
+    path: "/tables",
+    element: <Tables />,
+  },
+  {
+    path: "/race/:raceId",
+    element: <RacePrediction />,
+  },
+  {
+    path: "/admin/race-results/:raceId",
+    element: <RaceResultsAdmin />,
+  },
+  {
+    path: "/admin/race-management",
+    element: <AdminRaceManagement />,
+  },
+  {
+    path: "/drivers-and-teams",
+    element: <DriversAndTeams />,
+  },
+  {
+    path: "/driver/:id",
+    element: <DriverDetail />,
+  },
+  {
+    path: "/team/:id",
+    element: <TeamDetail />,
+  },
+]);
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-        
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Index />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/all-race-results"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <AllRaceResults />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/tables"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Tables />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/official-results"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <OfficialResults />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/race-results-view/:raceId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <RaceResultsView />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/my-predictions"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <MyPredictions />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/past-predictions"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <PastPredictions />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/race-predictions/:raceId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <RacePredictions />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/race-results/:raceId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <RaceResults />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/race-points/:raceId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <RacePoints />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin/race-management"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <AdminRaceManagement />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin/race-results/:raceId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <RaceResultsAdmin />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Profile />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/users"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <Users />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/users/:userId"
-          element={
-            <PrivateRoute>
-              <MainLayout>
-                <UserProfile />
-              </MainLayout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <SessionContextProvider supabaseClient={supabase} persistSession={true}>
+      <RouterProvider router={router} />
+    </SessionContextProvider>
   );
 }
 

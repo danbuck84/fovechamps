@@ -29,6 +29,10 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     getProfile();
   }, []);
 
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <div className="min-h-screen bg-racing-black flex">
       <div className={`fixed inset-y-0 left-0 z-50 ${isCollapsed ? 'w-0 -translate-x-full' : 'w-64'} transition-all duration-300 bg-racing-black border-r border-racing-silver/10`}>
@@ -42,25 +46,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       
       <div className={`transition-all duration-300 flex-1 ${isCollapsed ? 'ml-0' : 'ml-64'}`}>
         <div className="fixed top-4 left-4 z-40">
-          {isCollapsed ? (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCollapsed(false)}
-              className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsCollapsed(true)}
-              className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
-            >
-              <X className="h-6 w-6" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
+          >
+            {isCollapsed ? <Menu className="h-6 w-6" /> : <X className="h-6 w-6" />}
+          </Button>
         </div>
         {children}
       </div>
