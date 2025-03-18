@@ -27,6 +27,9 @@ const Tables = () => {
           races={races}
           getName={(driver) => `${driver.name}`}
           getPoints={(driver, raceId) => driver.points[raceId] || 0}
+          isDrivers={true}
+          getNationality={(driver) => driver.nationality || "N/A"}
+          getTeam={(driver) => driver.team_name || ""}
         />
         
         {/* Tabela de Construtores */}

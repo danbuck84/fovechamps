@@ -19,6 +19,19 @@ export const useTableData = () => {
     },
   });
 
+  // Buscar todos os pilotos e suas equipes
+  const { data: allDrivers } = useQuery({
+    queryKey: ["all-drivers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("drivers")
+        .select("*, team:teams(name, engine)");
+      
+      if (error) throw error;
+      return data as (Driver & { team: { name: string; engine: string } })[];
+    },
+  });
+
   // Buscar pontos dos pilotos
   const { data: driverPoints } = useQuery({
     queryKey: ["driver-points"],
@@ -79,12 +92,15 @@ export const useTableData = () => {
 
   // Processar dados para o formato agrupado
   const processTableData = (): TotalPointsData | undefined => {
-    if (!races || !driverPoints || !constructorPoints) return undefined;
+    if (!races || !driverPoints || !constructorPoints || !allDrivers) return undefined;
 
     // Agrupar pontos dos pilotos
     const groupedDriverPoints = driverPoints.reduce((acc, point) => {
       if (!point.driver) return acc;
 
+      const driverInfo = allDrivers.find(d => d.id === point.driver_id);
+      const teamName = driverInfo?.team?.name || "";
+      
       const existingDriver = acc.find(d => d.id === point.driver_id);
       if (existingDriver) {
         existingDriver.points[point.race_id] = point.points;
@@ -94,6 +110,8 @@ export const useTableData = () => {
           name: point.driver.name,
           number: point.driver.number,
           team_id: point.driver.team_id,
+          team_name: teamName,
+          nationality: "N/A", // Placeholder - will be updated with real data
           points: { [point.race_id]: point.points } as Record<string, number>
         };
         acc.push(newDriver);

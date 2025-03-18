@@ -11,6 +11,9 @@ interface PointsTableProps {
   getName: (item: any) => string;
   getPoints: (item: any, raceId: string) => number;
   ascending?: boolean;
+  isDrivers?: boolean;
+  getTeam?: (item: any) => string;
+  getNationality?: (item: any) => string;
 }
 
 export const PointsTable = ({ 
@@ -19,7 +22,10 @@ export const PointsTable = ({
   races, 
   getName, 
   getPoints, 
-  ascending = false 
+  ascending = false,
+  isDrivers = false,
+  getTeam,
+  getNationality
 }: PointsTableProps) => {
   return (
     <Card className="bg-racing-black border-racing-silver/20 mb-8">
@@ -32,13 +38,17 @@ export const PointsTable = ({
             <table className="w-full">
               <thead>
                 <tr className="border-b border-racing-silver/20">
-                  <th className="px-4 py-2 text-left sticky left-0 bg-racing-black text-racing-white">Nome</th>
-                  {races.map((race) => (
-                    <th key={race.id} className="px-4 py-2 text-center whitespace-nowrap text-racing-white">
-                      {race.name}
-                    </th>
-                  ))}
-                  <th className="px-4 py-2 text-center sticky right-0 bg-racing-black text-racing-white">Total</th>
+                  <th className="px-4 py-2 text-left sticky left-0 bg-racing-black text-racing-white">POS</th>
+                  {isDrivers ? (
+                    <>
+                      <th className="px-4 py-2 text-left text-racing-white">Piloto</th>
+                      <th className="px-4 py-2 text-center text-racing-white">Nacionalidade</th>
+                      <th className="px-4 py-2 text-left text-racing-white">Equipe</th>
+                    </>
+                  ) : (
+                    <th className="px-4 py-2 text-left text-racing-white">Equipe</th>
+                  )}
+                  <th className="px-4 py-2 text-center text-racing-white">Pts</th>
                 </tr>
               </thead>
               <tbody>
@@ -48,17 +58,21 @@ export const PointsTable = ({
                     const totalB = races.reduce((sum, race) => sum + getPoints(b, race.id), 0);
                     return ascending ? totalA - totalB : totalB - totalA;
                   })
-                  .map((item) => {
+                  .map((item, index) => {
                     const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
                     return (
                       <tr key={item.id} className="border-b border-racing-silver/20">
-                        <td className="px-4 py-2 sticky left-0 bg-racing-black text-racing-white">{getName(item)}</td>
-                        {races.map((race) => (
-                          <td key={race.id} className="px-4 py-2 text-center text-racing-white">
-                            {getPoints(item, race.id) || "-"}
-                          </td>
-                        ))}
-                        <td className="px-4 py-2 text-center font-bold sticky right-0 bg-racing-black text-racing-white">
+                        <td className="px-4 py-2 sticky left-0 bg-racing-black text-racing-white">{index + 1}</td>
+                        {isDrivers ? (
+                          <>
+                            <td className="px-4 py-2 text-racing-white">{getName(item)}</td>
+                            <td className="px-4 py-2 text-center text-racing-white">{getNationality && getNationality(item)}</td>
+                            <td className="px-4 py-2 text-racing-white">{getTeam && getTeam(item)}</td>
+                          </>
+                        ) : (
+                          <td className="px-4 py-2 text-racing-white">{getName(item)}</td>
+                        )}
+                        <td className="px-4 py-2 text-center font-bold text-racing-white">
                           {total}
                         </td>
                       </tr>

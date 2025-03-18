@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "./Sidebar";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
@@ -42,24 +42,25 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       
       <div className={`transition-all duration-300 flex-1 ${isCollapsed ? 'ml-0' : 'ml-64'}`}>
         <div className="fixed top-4 left-4 z-40">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full ${!isCollapsed && 'opacity-0 pointer-events-none'}`}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
-        </div>
-        <div className={`fixed top-4 left-4 z-40 ${isCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+          {isCollapsed ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(false)}
+              className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(true)}
+              className="bg-racing-black/80 text-racing-silver hover:bg-racing-red/10 rounded-full"
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          )}
         </div>
         {children}
       </div>
