@@ -4,7 +4,6 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import { createClient } from '@supabase/supabase-js'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
 import Tables from "./pages/Tables";
@@ -14,6 +13,13 @@ import AdminRaceManagement from "./pages/AdminRaceManagement";
 import DriversAndTeams from "./pages/DriversAndTeams";
 import DriverDetail from "./pages/DriverDetail";
 import TeamDetail from "./pages/TeamDetail";
+import Dashboard from "./pages/Dashboard";
+import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
+import MyPredictions from "./pages/MyPredictions";
+import MainLayout from "./components/layout/MainLayout";
+import PrivateRoute from "./components/auth/PrivateRoute";
+import { supabase } from "@/lib/supabase";
 
 // Check if environment variables are defined
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -23,16 +29,44 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Supabase environment variables are missing.');
 }
 
-// Create Supabase client
-const supabase = createClient(
-  supabaseUrl || '',
-  supabaseAnonKey || ''
-);
-
 const router = createBrowserRouter([
   {
     path: "/",
     element: <DriversAndTeams />,
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <Dashboard />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
+  {
+    path: "/profile",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <Profile />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/my-predictions",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <MyPredictions />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/tables",
