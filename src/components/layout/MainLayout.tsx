@@ -35,7 +35,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-racing-black flex">
-      <div className={`fixed inset-y-0 left-0 z-50 ${isCollapsed ? 'w-0 -translate-x-full' : 'w-64'} transition-all duration-300 bg-racing-black border-r border-racing-silver/10`}>
+      <div className={`fixed inset-y-0 left-0 z-50 transition-all duration-300 bg-racing-black border-r border-racing-silver/10 ${isCollapsed ? '-translate-x-full' : 'translate-x-0'} w-64`}>
         <Sidebar 
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
@@ -44,7 +44,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         />
       </div>
       
-      <div className={`transition-all duration-300 flex-1 ${isCollapsed ? 'ml-0' : 'ml-64'}`}>
+      <div className="flex-1">
         <div className="fixed top-4 left-4 z-40">
           <Button
             variant="ghost"
@@ -55,7 +55,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             {isCollapsed ? <Menu className="h-6 w-6" /> : <X className="h-6 w-6" />}
           </Button>
         </div>
-        {children}
+        <main className="p-4">
+          {children}
+        </main>
       </div>
     </div>
   );

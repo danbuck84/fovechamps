@@ -1,3 +1,4 @@
+
 import {
   Home,
   Calendar,
@@ -59,7 +60,7 @@ const Sidebar = ({
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-6">
-        <h1 className="font-bold text-2xl text-racing-white">F1Bet</h1>
+        <h1 className="font-bold text-2xl text-racing-white">FoVeChamps</h1>
         <p className="text-sm text-racing-silver">
           Gerencie suas apostas e resultados
         </p>
@@ -67,8 +68,8 @@ const Sidebar = ({
 
       <nav className="flex-1">
         <NavLink
-          to="/"
-          isActive={location.pathname === "/"}
+          to="/dashboard"
+          isActive={location.pathname === "/dashboard"}
           icon={<Home size={20} />}
           label="Visão Geral"
         />
@@ -77,6 +78,12 @@ const Sidebar = ({
           isActive={location.pathname === "/tables"}
           icon={<Calendar size={20} />}
           label="Tabelas"
+        />
+        <NavLink
+          to="/my-predictions"
+          isActive={location.pathname === "/my-predictions"}
+          icon={<Calendar size={20} />}
+          label="Meus Palpites"
         />
         {isAdmin && (
           <NavLink
@@ -104,15 +111,26 @@ const Sidebar = ({
               <p className="text-racing-white text-sm font-medium">{username}</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full justify-start text-racing-silver border-racing-silver/20 hover:bg-racing-red hover:text-racing-white hover:border-transparent"
-            onClick={handleLogout}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-racing-silver border-racing-silver/20 hover:bg-racing-red/10 hover:text-racing-white"
+              onClick={() => navigate('/profile')}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Configurações
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full justify-start text-racing-silver border-racing-silver/20 hover:bg-racing-red hover:text-racing-white hover:border-transparent"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
+          </div>
         </div>
       )}
     </div>

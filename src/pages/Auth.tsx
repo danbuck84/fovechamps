@@ -62,7 +62,7 @@ const Auth = () => {
     <div className="min-h-screen bg-racing-black flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-racing-black border-racing-silver/20">
         <CardHeader className="text-center">
-          <CardTitle className="text-racing-white text-3xl font-bold">F1 Bolão</CardTitle>
+          <CardTitle className="text-racing-white text-3xl font-bold">FoVeChamps</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
