@@ -23,10 +23,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('Supabase environment variables are missing.');
 }
 
-// Use import.meta.env for Vite environment variables
+// Create Supabase client
 const supabase = createClient(
-  supabaseUrl as string,
-  supabaseAnonKey as string
+  supabaseUrl || '',
+  supabaseAnonKey || ''
 );
 
 const router = createBrowserRouter([
