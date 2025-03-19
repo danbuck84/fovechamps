@@ -9,6 +9,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import Tables from "./pages/Tables";
 import RaceResultsView from "./pages/RaceResultsView";
 import RaceResultsAdmin from "./pages/RaceResultsAdmin";
+import RacePredictions from "./pages/RacePredictions";
 import AdminRaceManagement from "./pages/AdminRaceManagement";
 import DriversAndTeams from "./pages/DriversAndTeams";
 import DriverDetail from "./pages/DriverDetail";
@@ -19,7 +20,9 @@ import Profile from "./pages/Profile";
 import MyPredictions from "./pages/MyPredictions";
 import MainLayout from "./components/layout/MainLayout";
 import PrivateRoute from "./components/auth/PrivateRoute";
+import NotFound from "./pages/NotFound";
 import { supabase } from "@/lib/supabase";
+import { Toaster } from "sonner";
 
 // Check if environment variables are defined
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -32,7 +35,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DriversAndTeams />,
+    element: <Auth />,
   },
   {
     path: "/dashboard",
@@ -70,31 +73,87 @@ const router = createBrowserRouter([
   },
   {
     path: "/tables",
-    element: <Tables />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <Tables />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/race/:raceId",
-    element: <RaceResultsView />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <RaceResultsView />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/race-prediction/:raceId",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <RacePredictions />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/admin/race-results/:raceId",
-    element: <RaceResultsAdmin />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <RaceResultsAdmin />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/admin/race-management",
-    element: <AdminRaceManagement />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <AdminRaceManagement />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/drivers-and-teams",
-    element: <DriversAndTeams />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <DriversAndTeams />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/driver/:id",
-    element: <DriverDetail />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <DriverDetail />
+        </MainLayout>
+      </PrivateRoute>
+    ),
   },
   {
     path: "/team/:id",
-    element: <TeamDetail />,
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <TeamDetail />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
@@ -102,6 +161,7 @@ function App() {
   return (
     <SessionContextProvider supabaseClient={supabase}>
       <RouterProvider router={router} />
+      <Toaster position="top-right" />
     </SessionContextProvider>
   );
 }

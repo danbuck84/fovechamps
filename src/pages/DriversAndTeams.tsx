@@ -67,13 +67,13 @@ const DriversAndTeams = () => {
             <TabsList className="w-full bg-racing-black border border-racing-silver/20 mb-6">
               <TabsTrigger 
                 value="drivers" 
-                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white"
+                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white data-[state=active]:rounded-md"
               >
                 Pilotos
               </TabsTrigger>
               <TabsTrigger 
                 value="teams" 
-                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white"
+                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white data-[state=active]:rounded-md"
               >
                 Equipes
               </TabsTrigger>
@@ -92,7 +92,20 @@ const DriversAndTeams = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-racing-silver">
-                        <p>Equipe: {driver.team?.name || "N/A"}</p>
+                        <p>
+                          Equipe: 
+                          <span 
+                            className="ml-1 hover:text-racing-red cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (driver.team?.id) {
+                                handleTeamClick(driver.team.id);
+                              }
+                            }}
+                          >
+                            {driver.team?.name || "N/A"}
+                          </span>
+                        </p>
                         <p>Número: {driver.number}</p>
                       </div>
                     </CardContent>
