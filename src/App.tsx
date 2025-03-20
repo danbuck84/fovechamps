@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   createBrowserRouter,
@@ -100,13 +101,22 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  // Fix for race-prediction path, adding both variants
   {
     path: "/race-prediction/:raceId",
     element: (
       <PrivateRoute>
         <MainLayout>
           <RacePredictions />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/race-points/:raceId",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <RaceResultsView />
         </MainLayout>
       </PrivateRoute>
     ),

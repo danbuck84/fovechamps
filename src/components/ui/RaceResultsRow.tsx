@@ -17,7 +17,7 @@ export const RaceResultsRow = ({ raceId, hasResults, raceName }: RaceResultsRowP
       <Button
         variant="outline"
         className="border-racing-silver/20 text-racing-silver hover:bg-racing-silver/10"
-        onClick={() => navigate(`/race-results/${raceId}`)}
+        onClick={() => navigate(`/race/${raceId}`)}
         disabled={!hasResults}
       >
         <Trophy className="w-4 h-4 mr-2" />
