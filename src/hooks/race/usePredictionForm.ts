@@ -77,7 +77,8 @@ export const usePredictionForm = (
       // If this is the current position's driver, include it
       if (driver.id === currentPositionDriver) return true;
       
-      // Otherwise, include it only if it's not used elsewhere (filter out blank/empty values)
+      // Otherwise, include it only if it's not used elsewhere
+      // Filter out blank/empty values before checking
       return !selectedDrivers.filter(Boolean).includes(driver.id);
     });
   };

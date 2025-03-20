@@ -44,7 +44,7 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
               {index + 1}º Lugar
             </label>
             <Select
-              value={driverId || ""}
+              value={driverId || undefined}
               onValueChange={(value) => {
                 const newTop10 = [...qualifyingTop10];
                 newTop10[index] = value;
@@ -58,7 +58,7 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
               <SelectContent className="bg-racing-white border-racing-silver/20">
-                <SelectItem value="" className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer">
+                <SelectItem value="placeholder" className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer">
                   Selecione um piloto
                 </SelectItem>
                 {getAvailableDrivers(index).map((driver) => (
