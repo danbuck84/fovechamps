@@ -34,6 +34,9 @@
     --ring: 0 0% 3.9%;
 
     --radius: 0.75rem;
+    
+    --sidebar-accent: 0 72% 51%;
+    --sidebar-accent-foreground: 0 0% 98%;
   }
 }
 
@@ -50,6 +53,23 @@
   #root {
     @apply m-0 p-0 max-w-none;
   }
+}
+
+/* Custom styles for Sidebar */
+[data-sidebar="sidebar"] {
+  @apply bg-racing-black border-racing-silver/10;
+}
+
+[data-sidebar="menu-button"] {
+  @apply text-racing-white hover:bg-racing-red/10 hover:text-racing-white;
+}
+
+[data-sidebar="menu-button"][data-active="true"] {
+  @apply bg-racing-red/10 text-racing-white;
+}
+
+[data-sidebar="group-label"] {
+  @apply text-racing-silver;
 }
 
 /* Custom scrollbar */

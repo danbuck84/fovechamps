@@ -30,7 +30,7 @@ export const RacePredictionForm = forwardRef<HTMLDivElement, RacePredictionFormP
       <div className="space-y-2">
         <h3 className="text-xl font-semibold text-racing-white">Palpites</h3>
         <p className="text-sm text-racing-silver">
-          Faça seus palpites para o resultado final da corrida, prevendo as 11 primeiras posições.
+          Faça seus palpites para o resultado final da corrida.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -73,13 +73,11 @@ export const PredictionForm = ({
   const handleCopyQualifyingToRace = () => {
     if (isDeadlinePassed) return;
     
-    if (window.confirm("Tem certeza que deseja usar o grid de largada como resultado da corrida?")) {
-      setRaceTop10([...qualifyingTop10]);
-      toast({
-        title: "Grid copiado",
-        description: "Grid de largada copiado para resultado da corrida",
-      });
-    }
+    setRaceTop10([...qualifyingTop10]);
+    toast({
+      title: "Grid copiado para Resultado da Corrida",
+      description: "Grid de largada copiado para resultado da corrida",
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,10 +154,10 @@ export const PredictionForm = ({
         <Button
           type="button"
           onClick={handleCopyQualifyingToRace}
-          className="bg-racing-blue hover:bg-racing-blue/90"
+          className="bg-racing-blue hover:bg-racing-blue/90 text-racing-white"
           disabled={isDeadlinePassed}
         >
-          Usar Grid de Largada como Resultado
+          Usar Grid de Largada como Resultado da Corrida
         </Button>
       </div>
 
@@ -198,7 +196,7 @@ export const PredictionForm = ({
         
         <Button 
           type="submit"
-          className="bg-racing-red hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-racing-red hover:bg-racing-red/90 text-racing-white disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isDeadlinePassed}
         >
           Salvar Apostas

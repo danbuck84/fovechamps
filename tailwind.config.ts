@@ -30,6 +30,7 @@ export default {
           red: "#DC0000",
           silver: "#E0E0E0",
           white: "#F8F8F8",
+          blue: "#005AE0",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -58,6 +59,12 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
         },
       },
       keyframes: {

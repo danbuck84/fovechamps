@@ -58,7 +58,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-racing-silver">Navegação</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -66,6 +66,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                   asChild
                   isActive={location.pathname === "/dashboard"}
                   tooltip="Visão Geral"
+                  className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
                   <RouterLink to="/dashboard">
                     <Home size={20} />
@@ -79,6 +80,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                   asChild
                   isActive={location.pathname === "/tables"}
                   tooltip="Tabelas"
+                  className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
                   <RouterLink to="/tables">
                     <BarChart3 size={20} />
@@ -92,6 +94,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                   asChild
                   isActive={location.pathname === "/my-predictions"}
                   tooltip="Meus Palpites"
+                  className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
                   <RouterLink to="/my-predictions">
                     <Calendar size={20} />
@@ -105,6 +108,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                   asChild
                   isActive={location.pathname === "/drivers-and-teams"}
                   tooltip="Pilotos e Equipes"
+                  className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
                   <RouterLink to="/drivers-and-teams">
                     <Users2 size={20} />
@@ -119,6 +123,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                     asChild
                     isActive={location.pathname === "/admin/race-management"}
                     tooltip="Gerenciar Corridas"
+                    className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                   >
                     <RouterLink to="/admin/race-management">
                       <Settings size={20} />
