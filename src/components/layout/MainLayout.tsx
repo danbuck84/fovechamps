@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const [username, setUsername] = useState<string>("");
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false); // Changed to false to keep sidebar expanded
   const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <TooltipProvider>
-      <SidebarProvider defaultOpen={false}>
+      <SidebarProvider defaultOpen={true}>
         <div className="min-h-screen bg-racing-black flex w-full">
           <Sidebar 
             isCollapsed={isCollapsed}
