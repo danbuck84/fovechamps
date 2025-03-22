@@ -24,10 +24,9 @@ import {
   SidebarGroupContent,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/ui/sidebar/context";
 
 interface SidebarProps {
-  isCollapsed: boolean;
-  setIsCollapsed: (collapsed: boolean) => void;
   username: string;
   isAdmin?: boolean;
 }
@@ -35,6 +34,7 @@ interface SidebarProps {
 const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setOpenMobile } = useSidebar();
 
   const handleLogout = async () => {
     try {
@@ -43,6 +43,11 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
     } catch (error) {
       console.error('Error during sign out:', error);
     }
+  };
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setOpenMobile(false); // Close mobile sidebar after navigation
   };
 
   return (
@@ -63,72 +68,62 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
+                  onClick={() => handleNavigation("/dashboard")}
                   isActive={location.pathname === "/dashboard"}
                   tooltip="Visão Geral"
                   className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
-                  <RouterLink to="/dashboard">
-                    <Home size={20} />
-                    <span>Visão Geral</span>
-                  </RouterLink>
+                  <Home size={20} />
+                  <span>Visão Geral</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
+                  onClick={() => handleNavigation("/tables")}
                   isActive={location.pathname === "/tables"}
                   tooltip="Tabelas"
                   className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
-                  <RouterLink to="/tables">
-                    <BarChart3 size={20} />
-                    <span>Tabelas</span>
-                  </RouterLink>
+                  <BarChart3 size={20} />
+                  <span>Tabelas</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
+                  onClick={() => handleNavigation("/my-predictions")}
                   isActive={location.pathname === "/my-predictions"}
                   tooltip="Meus Palpites"
                   className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
-                  <RouterLink to="/my-predictions">
-                    <Calendar size={20} />
-                    <span>Meus Palpites</span>
-                  </RouterLink>
+                  <Calendar size={20} />
+                  <span>Meus Palpites</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  asChild
+                  onClick={() => handleNavigation("/drivers-and-teams")}
                   isActive={location.pathname === "/drivers-and-teams"}
                   tooltip="Pilotos e Equipes"
                   className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                 >
-                  <RouterLink to="/drivers-and-teams">
-                    <Users2 size={20} />
-                    <span>Pilotos e Equipes</span>
-                  </RouterLink>
+                  <Users2 size={20} />
+                  <span>Pilotos e Equipes</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               
               {isAdmin && (
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    asChild
+                    onClick={() => handleNavigation("/admin/race-management")}
                     isActive={location.pathname === "/admin/race-management"}
                     tooltip="Gerenciar Corridas"
                     className="text-racing-white hover:bg-racing-red/10 data-[active=true]:bg-racing-red/10 data-[active=true]:text-racing-white"
                   >
-                    <RouterLink to="/admin/race-management">
-                      <Settings size={20} />
-                      <span>Gerenciar Corridas</span>
-                    </RouterLink>
+                    <Settings size={20} />
+                    <span>Gerenciar Corridas</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
@@ -153,7 +148,7 @@ const Sidebar = ({ username, isAdmin = false }: SidebarProps) => {
                 variant="outline" 
                 size="sm" 
                 className="w-full justify-start text-racing-silver border-racing-silver/20 hover:bg-racing-red/10 hover:text-racing-white"
-                onClick={() => navigate('/profile')}
+                onClick={() => handleNavigation('/profile')}
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Configurações
