@@ -1,2 +1,7 @@
 
+# Redirect all requests to index.html for SPA routing
 /* /index.html 200
+
+# Avoid redirect loops
+http://fovechamps.org/* https://fovechamps.org/:splat 301!
+http://www.fovechamps.org/* https://fovechamps.org/:splat 301!
