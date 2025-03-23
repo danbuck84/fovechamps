@@ -21,8 +21,10 @@ const queryClient = new QueryClient({
       retry: 1,
       refetchOnWindowFocus: false,
       staleTime: 10 * 1000, // 10 seconds
-      onError: (error) => {
-        console.error("React Query error:", error);
+      onSettled: (data, error) => {
+        if (error) {
+          console.error("React Query error:", error);
+        }
       }
     },
   },
