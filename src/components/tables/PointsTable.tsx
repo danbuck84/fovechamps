@@ -1,6 +1,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
 import type { Race } from "@/types/betting";
 import type { GroupedPoints } from "@/types/tables";
 
@@ -28,30 +36,30 @@ export const PointsTable = ({
   getNationality
 }: PointsTableProps) => {
   return (
-    <Card className="bg-racing-black border-racing-silver/20 mb-8">
-      <CardHeader>
+    <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full">
+      <CardHeader className="px-6">
         <CardTitle className="text-xl text-racing-white">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-6">
         <ScrollArea className="w-full">
           <div className="min-w-max">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-racing-silver/20">
-                  <th className="px-4 py-2 text-left sticky left-0 bg-racing-black text-racing-white">POS</th>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-racing-silver/20">
+                  <TableHead className="w-16 text-left bg-racing-black text-racing-white font-semibold">POS</TableHead>
                   {isDrivers ? (
                     <>
-                      <th className="px-4 py-2 text-left text-racing-white">Piloto</th>
-                      <th className="px-4 py-2 text-center text-racing-white">Nacionalidade</th>
-                      <th className="px-4 py-2 text-left text-racing-white">Equipe</th>
+                      <TableHead className="text-left text-racing-white font-semibold">Piloto</TableHead>
+                      <TableHead className="text-center text-racing-white font-semibold">Nacionalidade</TableHead>
+                      <TableHead className="text-left text-racing-white font-semibold">Equipe</TableHead>
                     </>
                   ) : (
-                    <th className="px-4 py-2 text-left text-racing-white">Equipe</th>
+                    <TableHead className="text-left text-racing-white font-semibold">Equipe</TableHead>
                   )}
-                  <th className="px-4 py-2 text-center text-racing-white">Pts</th>
-                </tr>
-              </thead>
-              <tbody>
+                  <TableHead className="text-center text-racing-white font-semibold">Pts</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {[...data]
                   .sort((a, b) => {
                     const totalA = races.reduce((sum, race) => sum + getPoints(a, race.id), 0);
@@ -61,25 +69,25 @@ export const PointsTable = ({
                   .map((item, index) => {
                     const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
                     return (
-                      <tr key={item.id} className="border-b border-racing-silver/20">
-                        <td className="px-4 py-2 sticky left-0 bg-racing-black text-racing-white">{index + 1}</td>
+                      <TableRow key={item.id} className="border-b border-racing-silver/20">
+                        <TableCell className="bg-racing-black text-racing-white font-medium">{index + 1}</TableCell>
                         {isDrivers ? (
                           <>
-                            <td className="px-4 py-2 text-racing-white">{getName(item)}</td>
-                            <td className="px-4 py-2 text-center text-racing-white">{getNationality && getNationality(item)}</td>
-                            <td className="px-4 py-2 text-racing-white">{getTeam && getTeam(item)}</td>
+                            <TableCell className="text-racing-white">{getName(item)}</TableCell>
+                            <TableCell className="text-center text-racing-white">{getNationality && getNationality(item)}</TableCell>
+                            <TableCell className="text-racing-white">{getTeam && getTeam(item)}</TableCell>
                           </>
                         ) : (
-                          <td className="px-4 py-2 text-racing-white">{getName(item)}</td>
+                          <TableCell className="text-racing-white">{getName(item)}</TableCell>
                         )}
-                        <td className="px-4 py-2 text-center font-bold text-racing-white">
+                        <TableCell className="text-center font-bold text-racing-white">
                           {total}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </ScrollArea>
       </CardContent>

@@ -29,12 +29,12 @@ export const RaceResultsForm = ({
   duplicates = [],
 }: RaceResultsFormProps) => {
   return (
-    <Card className="bg-racing-black border-racing-silver/20">
-      <CardHeader>
-        <CardTitle>Resultados da Corrida</CardTitle>
+    <Card className="bg-racing-black border-racing-silver/20 w-full">
+      <CardHeader className="px-6">
+        <CardTitle className="text-xl text-racing-white">Resultados da Corrida</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 gap-4">
+      <CardContent className="px-6">
+        <div className="grid grid-cols-1 gap-6">
           <FastestLapSelector 
             fastestLap={fastestLap}
             onFastestLapChange={onFastestLapChange}
