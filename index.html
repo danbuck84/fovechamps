@@ -12,36 +12,46 @@
     <script>
       // Block tracking scripts and console errors before React loads
       (function() {
-        // Common patterns to block
-        var blockPatterns = ['facebook', 'tr?id=', 'pixel', 'firebase', 'firestore'];
+        // Block patterns
+        var blockPatterns = [
+          'facebook', 'facebook.com', 'tr?id=', 'pixel', 'PageView', 'noscript', 
+          'firebase', 'firestore', 'googleapis.com', 
+          'unrecognized feature', 'feature', 'vr', 'ambient-light-sensor', 'battery',
+          'preloaded', 'was preloaded', 'link preload', 'resource',
+          'sentry', 'tracking', 'analytics', 'hotjar', 'meta', 'tr?', '9151671744940732'
+        ];
         
-        // Override console methods early
+        // Override console
         var originalConsoleError = console.error;
         var originalConsoleWarn = console.warn;
+        var originalConsoleLog = console.log;
+        
+        function shouldBlock(args) {
+          return args.some(function(arg) {
+            if (!arg) return false;
+            var str = String(arg).toLowerCase();
+            return blockPatterns.some(function(pattern) {
+              return str.indexOf(pattern.toLowerCase()) !== -1;
+            });
+          });
+        }
+        
         console.error = function() {
-          var args = Array.prototype.slice.call(arguments);
-          var shouldBlock = args.some(function(arg) {
-            if (!arg) return false;
-            var str = String(arg).toLowerCase();
-            return blockPatterns.some(function(pattern) {
-              return str.indexOf(pattern.toLowerCase()) !== -1;
-            });
-          });
-          if (!shouldBlock) originalConsoleError.apply(console, args);
-        };
-        console.warn = function() {
-          var args = Array.prototype.slice.call(arguments);
-          var shouldBlock = args.some(function(arg) {
-            if (!arg) return false;
-            var str = String(arg).toLowerCase();
-            return blockPatterns.some(function(pattern) {
-              return str.indexOf(pattern.toLowerCase()) !== -1;
-            });
-          });
-          if (!shouldBlock) originalConsoleWarn.apply(console, args);
+          if (!shouldBlock(Array.prototype.slice.call(arguments))) 
+            originalConsoleError.apply(console, arguments);
         };
         
-        // Early onerror handler
+        console.warn = function() {
+          if (!shouldBlock(Array.prototype.slice.call(arguments))) 
+            originalConsoleWarn.apply(console, arguments);
+        };
+        
+        console.log = function() {
+          if (!shouldBlock(Array.prototype.slice.call(arguments))) 
+            originalConsoleLog.apply(console, arguments);
+        };
+        
+        // Block onerror
         window.onerror = function(msg, url) {
           if (msg && blockPatterns.some(function(pattern) {
             return String(msg).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
@@ -54,17 +64,81 @@
           return false;
         };
         
-        // Block preload requests
+        // Block unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason && blockPatterns.some(function(pattern) {
+            return String(event.reason).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+          })) {
+            event.preventDefault();
+            return true;
+          }
+        }, true);
+        
+        // Block XHR requests before they happen
+        var originalXHROpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url) {
+          if (url && blockPatterns.some(function(pattern) {
+            return String(url).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+          })) {
+            arguments[1] = 'about:blank'; // Redirect to empty URL
+          }
+          return originalXHROpen.apply(this, arguments);
+        };
+        
+        // Block fetch requests
+        if (window.fetch) {
+          var originalFetch = window.fetch;
+          window.fetch = function(resource) {
+            var url = resource;
+            if (resource && typeof resource === 'object' && resource.url) url = resource.url;
+            
+            if (url && blockPatterns.some(function(pattern) {
+              return String(url).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+            })) {
+              return Promise.resolve(new Response('{}', {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+              }));
+            }
+            
+            return originalFetch.apply(window, arguments);
+          };
+        }
+        
+        // Remove problematic elements
+        function removeProblematicElements() {
+          document.querySelectorAll('script, link, iframe').forEach(function(el) {
+            var src = el.getAttribute('src') || '';
+            var href = el.getAttribute('href') || '';
+            
+            if (blockPatterns.some(function(pattern) {
+              return src.toLowerCase().indexOf(pattern.toLowerCase()) !== -1 || 
+                     href.toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+            })) {
+              if (el.parentNode) el.parentNode.removeChild(el);
+            }
+          });
+        }
+        
+        // Set up observer
         var observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
             if (mutation.addedNodes) {
               Array.prototype.forEach.call(mutation.addedNodes, function(node) {
-                if (node.tagName === 'LINK' && node.rel === 'preload') {
-                  var href = node.getAttribute('href');
-                  if (href && blockPatterns.some(function(pattern) {
-                    return href.toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
-                  })) {
-                    node.parentNode.removeChild(node);
+                if (node.nodeType === 1) { // Element node
+                  var el = node;
+                  var tagName = el.tagName && el.tagName.toLowerCase();
+                  
+                  if (tagName === 'script' || tagName === 'link' || tagName === 'iframe') {
+                    var src = el.getAttribute('src') || '';
+                    var href = el.getAttribute('href') || '';
+                    
+                    if (blockPatterns.some(function(pattern) {
+                      return src.toLowerCase().indexOf(pattern.toLowerCase()) !== -1 || 
+                             href.toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+                    })) {
+                      if (el.parentNode) el.parentNode.removeChild(el);
+                    }
                   }
                 }
               });
@@ -72,10 +146,23 @@
           });
         });
         
+        // Start observing as early as possible
         observer.observe(document.documentElement, {
           childList: true,
-          subtree: true
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['src', 'href']
         });
+        
+        // Run removal on any existing elements
+        if (document.readyState !== 'loading') {
+          removeProblematicElements();
+        } else {
+          document.addEventListener('DOMContentLoaded', removeProblematicElements);
+        }
+        
+        // Also run removal when page loads
+        window.addEventListener('load', removeProblematicElements);
       })();
     </script>
   </head>

@@ -1,5 +1,5 @@
 
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense } from 'react';
 import { RouterProvider } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { Toaster } from "sonner";

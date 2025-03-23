@@ -32,27 +32,7 @@ const Dashboard = () => {
     checkAuth();
   }, []);
 
-  // This useEffect is already in your code, but I'm ensuring it's properly implemented
-  useEffect(() => {
-    const originalErrorHandler = window.onerror;
-    window.onerror = function(message, source, lineno, colno, error) {
-      if (source && (
-        source.includes('firebase') || 
-        source.includes('firestore') || 
-        message?.toString().includes('firebase') || 
-        message?.toString().includes('firestore')
-      )) {
-        console.warn('Suppressed Firebase-related error:', message);
-        return true;
-      }
-      
-      return originalErrorHandler ? originalErrorHandler(message, source, lineno, colno, error) : false;
-    };
-    
-    return () => {
-      window.onerror = originalErrorHandler;
-    };
-  }, []);
+  // Removed the Firebase error suppression useEffect since it's now handled globally
 
   console.log("Dashboard: Rendering", {
     isLoading,
