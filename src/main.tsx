@@ -18,7 +18,12 @@ const suppressPatterns = [
   'facebook',
   'pixel',
   'preloaded',
-  'tr?'
+  'tr?',
+  'vr',
+  'ambient-light-sensor',
+  'battery',
+  'resource',
+  'was preloaded'
 ];
 
 // Globally capture and filter errors before they hit the console
@@ -53,8 +58,14 @@ const observer = new MutationObserver((mutations) => {
   for (const mutation of mutations) {
     if (mutation.type === 'childList') {
       for (const node of mutation.addedNodes) {
-        if (node.nodeName === 'LINK' && node.getAttribute('href')?.includes('facebook.com')) {
-          node.remove();
+        // Make sure node is an Element before accessing element-specific properties
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as Element;
+          if (
+            (element.nodeName === 'LINK' && element.getAttribute('href')?.includes('facebook.com'))
+          ) {
+            element.remove();
+          }
         }
       }
     }

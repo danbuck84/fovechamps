@@ -46,7 +46,10 @@ const errorFilters = [
   'preloaded',
   'tr?',
   'resource',
-  'was preloaded'
+  'was preloaded',
+  'vr',
+  'ambient-light-sensor',
+  'battery'
 ];
 
 function App() {
@@ -142,11 +145,15 @@ function App() {
       for (const mutation of mutations) {
         if (mutation.type === 'childList') {
           for (const node of mutation.addedNodes) {
-            if (
-              (node.nodeName === 'SCRIPT' && node.getAttribute('src')?.includes('facebook')) ||
-              (node.nodeName === 'LINK' && node.getAttribute('href')?.includes('facebook'))
-            ) {
-              node.remove();
+            // Check if node is an Element before accessing element-specific properties
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const element = node as Element;
+              if (
+                (element.nodeName === 'SCRIPT' && element.getAttribute('src')?.includes('facebook')) ||
+                (element.nodeName === 'LINK' && element.getAttribute('href')?.includes('facebook'))
+              ) {
+                element.remove();
+              }
             }
           }
         }
