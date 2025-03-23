@@ -6,16 +6,36 @@
   text-align: left;
 }
 
-/* Configurações responsivas */
+/* Responsive settings */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
   }
+  
+  /* Ensure proper spacing on mobile */
+  .p-6 {
+    padding: 1rem !important;
+  }
+  
+  /* Adjust grid layouts for mobile */
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
 }
 
-/* Estilos para dispositivos móveis */
+/* Mobile device styles */
 @media (max-width: 640px) {
   body {
     overflow-x: hidden;
+  }
+  
+  /* Ensure buttons don't overflow on small screens */
+  .flex.flex-wrap.gap-2 {
+    width: 100%;
+  }
+  
+  /* Smaller text on mobile */
+  h1.text-3xl {
+    font-size: 1.75rem !important;
   }
 }

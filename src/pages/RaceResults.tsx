@@ -9,13 +9,16 @@ import { calculateAllPoints } from "@/utils/scoring-utils";
 import ComparisonTable from "@/components/race-results/ComparisonTable";
 import { isDeadlinePassed } from "@/utils/date-utils";
 import type { Race, Driver, Prediction, RaceResult } from "@/types/betting";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RaceResultsView } from "@/components/race-results/RaceResultsView";
+import { ArrowLeft, Calculator } from "lucide-react";
 
 const RaceResults = () => {
   const { raceId } = useParams();
   const navigate = useNavigate();
   const [calculatingPoints, setCalculatingPoints] = useState(false);
 
-  // Buscar dados da corrida
+  // Fetch race data
   const { data: race } = useQuery({
     queryKey: ["race", raceId],
     queryFn: async () => {
@@ -31,7 +34,7 @@ const RaceResults = () => {
     },
   });
 
-  // Buscar lista de pilotos com todos os campos necessários
+  // Fetch drivers data
   const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
@@ -53,12 +56,11 @@ const RaceResults = () => {
         throw error;
       }
 
-      console.log("Drivers loaded successfully:", driversData);
       return driversData as (Driver & { team: { name: string } })[];
     },
   });
 
-  // Buscar resultados oficiais
+  // Fetch official race results
   const { data: raceResult, refetch: refetchResults } = useQuery({
     queryKey: ["raceResult", raceId],
     queryFn: async () => {
@@ -70,7 +72,6 @@ const RaceResults = () => {
         .single();
       
       if (error) throw error;
-      console.log("Race results loaded:", data);
       return data as RaceResult;
     },
   });
@@ -78,7 +79,7 @@ const RaceResults = () => {
   // Check if deadline has passed
   const deadlinePassed = race ? isDeadlinePassed(race.qualifying_date) : false;
 
-  // Buscar todas as apostas para esta corrida
+  // Fetch all predictions for this race
   const { data: predictions } = useQuery({
     queryKey: ["predictions", raceId],
     queryFn: async () => {
@@ -126,109 +127,50 @@ const RaceResults = () => {
     );
   }
 
-  const getDriverName = (driverId: string) => {
-    if (!driverId) return "Piloto não selecionado";
-    const driver = drivers.find(d => d.id === driverId);
-    if (!driver) {
-      console.error(`Driver not found for ID: ${driverId}`);
-      return "Piloto não encontrado";
-    }
-    return `${driver.name} (${driver.team.name})`;
-  };
+  const dnfDrivers = raceResult.dnf_drivers || [];
 
   return (
-    <div className="min-h-screen bg-racing-black text-racing-white">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Resultados: {race?.name}</h1>
-          <div className="flex space-x-2">
+    <div className="bg-racing-black text-racing-white">
+      <div className="container p-4 md:p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
             <Button 
-              variant="outline"
-              onClick={() => navigate("/all-race-results")}
-              className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-silver/20"
+              variant="ghost"
+              onClick={() => navigate(-1)}
+              className="mr-2"
             >
+              <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
             </Button>
-            <Button 
-              variant="default"
-              onClick={processPoints}
-              disabled={calculatingPoints}
-              className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none transition-colors duration-200 font-medium px-6 py-2 rounded-md shadow-lg hover:shadow-racing-red/20"
-            >
-              {calculatingPoints ? "Calculando..." : "Calcular Pontos"}
-            </Button>
+            <h1 className="text-2xl font-bold">{race.name} - Resultados</h1>
           </div>
+          <Button 
+            variant="default"
+            onClick={processPoints}
+            disabled={calculatingPoints}
+            className="bg-racing-red hover:bg-racing-red/80"
+          >
+            <Calculator className="h-4 w-4 mr-2" />
+            {calculatingPoints ? "Calculando..." : "Calcular Pontos"}
+          </Button>
         </div>
 
         {/* Resultados Oficiais */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-racing-white">Resultados Oficiais</h2>
-          <div className="bg-racing-black border border-racing-silver/20 rounded-lg p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium text-racing-silver mb-2">Pole Position</h3>
-                <div className="p-2 bg-racing-silver/10 rounded">
-                  <span className="text-racing-white">{getDriverName(raceResult.qualifying_results[0])}</span>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-racing-silver mb-2">Tempo da Pole</h3>
-                <div className="p-2 bg-racing-silver/10 rounded">
-                  <span className="text-racing-white">{raceResult.pole_time}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Classificação</h3>
-              <div className="space-y-2">
-                {raceResult.qualifying_results.slice(0, 10).map((driverId, index) => (
-                  <div key={`qual-${driverId}`} className="p-2 bg-racing-silver/10 rounded">
-                    <span className="text-racing-white">
-                      {index + 1}. {getDriverName(driverId)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-medium text-racing-silver mb-2">TOP 10 - Corrida</h3>
-              <div className="space-y-2">
-                {raceResult.race_results.slice(0, 10).map((driverId, index) => (
-                  <div key={`race-${driverId}`} className="p-2 bg-racing-silver/10 rounded">
-                    <span className="text-racing-white">
-                      {index + 1}. {getDriverName(driverId)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium text-racing-silver mb-2">Volta Mais Rápida</h3>
-                <div className="p-2 bg-racing-silver/10 rounded">
-                  <span className="text-racing-white">{getDriverName(raceResult.fastest_lap)}</span>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-racing-silver mb-2">Sobreviventes</h3>
-                <div className="p-2 bg-racing-silver/10 rounded">
-                  <span className="text-racing-white">
-                    {raceResult.dnf_drivers?.length || 0} sobreviventes
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h2 className="text-xl font-bold mb-4">Resultados Oficiais</h2>
+          <RaceResultsView 
+            result={raceResult}
+            drivers={drivers}
+            fastestLap={raceResult.fastest_lap}
+            dnfDrivers={dnfDrivers}
+          />
         </div>
 
         {/* Apostas dos Usuários - Só mostrar se o prazo encerrou */}
         {deadlinePassed ? (
           <div>
-            <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
-            <div className="grid gap-6 md:grid-cols-2 overflow-x-auto">
+            <h2 className="text-xl font-bold mb-4">Apostas dos Participantes</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {predictions.map((prediction) => (
                 <ComparisonTable
                   key={prediction.id}
@@ -241,10 +183,14 @@ const RaceResults = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-racing-black border border-racing-silver/20 rounded-lg p-6 text-center">
-            <h2 className="text-xl font-bold mb-4 text-racing-white">Apostas dos Participantes</h2>
-            <p className="text-racing-silver">As apostas serão exibidas após o encerramento do prazo (classificação).</p>
-          </div>
+          <Card className="bg-racing-black border-racing-silver/20">
+            <CardHeader>
+              <CardTitle>Apostas dos Participantes</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-racing-silver">As apostas serão exibidas após o encerramento do prazo (classificação).</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

@@ -10,13 +10,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-racing-red text-racing-white hover:bg-racing-red/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-transparent text-racing-white hover:bg-racing-red/10 hover:text-racing-white hover:border-racing-red",
-        secondary: "bg-racing-silver/20 text-racing-white hover:bg-racing-silver/30",
-        ghost: "text-racing-white hover:bg-racing-red/10",
+        default: "bg-racing-red text-racing-white hover:bg-racing-red/90 shadow-sm",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+        outline: "border border-racing-silver/30 bg-transparent text-racing-white hover:bg-racing-red/10 hover:text-racing-white hover:border-racing-red shadow-sm",
+        secondary: "bg-racing-silver/20 text-racing-white hover:bg-racing-silver/30 shadow-sm",
+        ghost: "text-racing-white hover:bg-racing-red/10 hover:text-racing-white",
         link: "text-racing-white underline-offset-4 hover:underline",
-        blue: "bg-racing-blue text-racing-white hover:bg-racing-blue/90",
+        blue: "bg-racing-blue text-racing-white hover:bg-racing-blue/90 shadow-sm",
+        tab: "rounded-full bg-transparent text-racing-silver data-[state=active]:bg-racing-red data-[state=active]:text-racing-white hover:text-racing-white hover:bg-racing-red/20",
       },
       size: {
         default: "h-10 px-4 py-2",

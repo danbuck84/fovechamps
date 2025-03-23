@@ -8,6 +8,7 @@ import { SessionContextProvider } from '@supabase/auth-helpers-react'
 
 import Tables from "./pages/Tables";
 import RaceResultsView from "./pages/RaceResultsView";
+import RaceResults from "./pages/RaceResults";
 import RaceResultsAdmin from "./pages/RaceResultsAdmin";
 import RacePredictions from "./pages/RacePredictions";
 import AdminRaceManagement from "./pages/AdminRaceManagement";
@@ -92,6 +93,16 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/race-results/:raceId",
+    element: (
+      <PrivateRoute>
+        <MainLayout>
+          <RaceResults />
+        </MainLayout>
+      </PrivateRoute>
+    ),
+  },
+  {
     path: "/race-predictions/:raceId",
     element: (
       <PrivateRoute>
@@ -116,7 +127,7 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <MainLayout>
-          <RaceResultsView />
+          <RaceResults />
         </MainLayout>
       </PrivateRoute>
     ),

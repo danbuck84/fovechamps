@@ -1,7 +1,7 @@
 
-# Redirect all requests to index.html for SPA routing
-/* /index.html 200
-
-# Avoid redirect loops
+# Redirect domain variants to primary domain
 http://fovechamps.org/* https://fovechamps.org/:splat 301!
 http://www.fovechamps.org/* https://fovechamps.org/:splat 301!
+
+# Handle SPA routing - this should be the last rule
+/* /index.html 200

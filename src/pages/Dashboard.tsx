@@ -3,10 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Eye, BarChart2, List, Trophy } from "lucide-react";
+import { Eye, BarChart2, List, Trophy, Calendar, ArrowRight } from "lucide-react";
 import { formatDate } from "@/utils/date-utils";
 import { RaceResultsRow } from "@/components/ui/RaceResultsRow";
 import type { Race, Prediction } from "@/types/betting";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -89,28 +90,32 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6 px-6">
-      <h1 className="text-3xl font-bold text-racing-white">Dashboard</h1>
+    <div className="p-6">
+      <h1 className="text-3xl font-bold text-racing-white mb-6">Visão Geral</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle className="text-xl text-racing-white">
+        <Card className="bg-racing-black border-racing-silver/20 overflow-hidden">
+          <CardHeader className="bg-racing-black/60 backdrop-blur border-b border-racing-silver/10 pb-3">
+            <CardTitle className="text-xl text-racing-white flex items-center">
+              <Calendar className="h-5 w-5 mr-2 text-racing-red" />
               Próximas Corridas
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {nextRaces && nextRaces.length > 0 ? (
-              <div className="space-y-4">
+              <div className="divide-y divide-racing-silver/10">
                 {nextRaces.map((race) => (
                   <div 
                     key={race.id}
-                    className="p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg"
+                    className="p-4 hover:bg-racing-red/5 transition-colors"
                   >
-                    <h3 className="font-semibold text-racing-white">{race.name}</h3>
-                    <p className="text-sm text-racing-silver mb-2">
-                      {formatDate(race.date)} - {race.circuit}
-                    </p>
+                    <h3 className="font-semibold text-racing-white text-lg mb-1">{race.name}</h3>
+                    <div className="flex items-center text-sm text-racing-silver mb-3">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {formatDate(race.date)}
+                      <span className="mx-2">•</span>
+                      {race.circuit}
+                    </div>
                     <RaceResultsRow 
                       raceId={race.id} 
                       hasResults={hasResults(race.id)}
@@ -120,29 +125,33 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-racing-silver">Nenhuma corrida programada.</p>
+              <p className="p-4 text-racing-silver">Nenhuma corrida programada.</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle className="text-xl text-racing-white">
+        <Card className="bg-racing-black border-racing-silver/20 overflow-hidden">
+          <CardHeader className="bg-racing-black/60 backdrop-blur border-b border-racing-silver/10 pb-3">
+            <CardTitle className="text-xl text-racing-white flex items-center">
+              <Trophy className="h-5 w-5 mr-2 text-racing-red" />
               Últimas Corridas
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {pastRaces && pastRaces.length > 0 ? (
-              <div className="space-y-4">
+              <div className="divide-y divide-racing-silver/10">
                 {pastRaces.map((race) => (
                   <div 
                     key={race.id}
-                    className="p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg"
+                    className="p-4 hover:bg-racing-red/5 transition-colors"
                   >
-                    <h3 className="font-semibold text-racing-white">{race.name}</h3>
-                    <p className="text-sm text-racing-silver mb-2">
-                      {formatDate(race.date)} - {race.circuit}
-                    </p>
+                    <h3 className="font-semibold text-racing-white text-lg mb-1">{race.name}</h3>
+                    <div className="flex items-center text-sm text-racing-silver mb-3">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {formatDate(race.date)}
+                      <span className="mx-2">•</span>
+                      {race.circuit}
+                    </div>
                     <RaceResultsRow 
                       raceId={race.id} 
                       hasResults={hasResults(race.id)} 
@@ -150,38 +159,41 @@ const Dashboard = () => {
                     />
                   </div>
                 ))}
-                <div className="flex justify-center mt-4">
-                  <Link 
-                    to="/past-predictions" 
-                    className="text-racing-red hover:text-racing-red/80 flex items-center gap-2"
+                <div className="p-4 text-center">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => navigate("/past-predictions")}
+                    className="text-racing-red hover:text-racing-red/80 hover:bg-racing-red/10"
                   >
-                    <Trophy className="h-4 w-4" />
+                    <Trophy className="h-4 w-4 mr-1" />
                     Ver todas corridas passadas
-                  </Link>
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
                 </div>
               </div>
             ) : (
-              <p className="text-racing-silver">Nenhuma corrida finalizada ainda.</p>
+              <p className="p-4 text-racing-silver">Nenhuma corrida finalizada ainda.</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle className="text-xl text-racing-white">
+        <Card className="bg-racing-black border-racing-silver/20 overflow-hidden">
+          <CardHeader className="bg-racing-black/60 backdrop-blur border-b border-racing-silver/10 pb-3">
+            <CardTitle className="text-xl text-racing-white flex items-center">
+              <List className="h-5 w-5 mr-2 text-racing-red" />
               Seus Últimos Palpites
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {recentPredictions?.length > 0 ? (
-              <div className="space-y-4">
+              <div className="divide-y divide-racing-silver/10">
                 {recentPredictions.map((prediction) => (
                   <div 
                     key={prediction.id}
                     onClick={() => navigate(`/race-predictions/${prediction.race_id}`)}
-                    className="p-4 border-b border-racing-silver/20 last:border-0 hover:bg-racing-red/10 transition-colors rounded-lg cursor-pointer"
+                    className="p-4 hover:bg-racing-red/5 transition-colors cursor-pointer"
                   >
-                    <h3 className="font-semibold text-racing-white">
+                    <h3 className="font-semibold text-racing-white text-lg mb-1">
                       {prediction.race.name}
                     </h3>
                     <p className="text-sm text-racing-silver">
@@ -189,41 +201,45 @@ const Dashboard = () => {
                     </p>
                   </div>
                 ))}
-                <div className="flex justify-center mt-4">
-                  <Link 
-                    to="/my-predictions" 
-                    className="text-racing-red hover:text-racing-red/80 flex items-center gap-2"
+                <div className="p-4 text-center">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => navigate("/my-predictions")}
+                    className="text-racing-red hover:text-racing-red/80 hover:bg-racing-red/10"
                   >
-                    <List className="h-4 w-4" />
+                    <List className="h-4 w-4 mr-1" />
                     Ver todos seus palpites
-                  </Link>
+                    <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
                 </div>
               </div>
             ) : (
-              <p className="text-racing-silver">Você ainda não fez nenhuma aposta.</p>
+              <p className="p-4 text-racing-silver">Você ainda não fez nenhuma aposta.</p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="bg-racing-black border-racing-silver/20">
-          <CardHeader>
-            <CardTitle className="text-xl text-racing-white">
+        <Card className="bg-racing-black border-racing-silver/20 overflow-hidden">
+          <CardHeader className="bg-racing-black/60 backdrop-blur border-b border-racing-silver/10 pb-3">
+            <CardTitle className="text-xl text-racing-white flex items-center">
+              <BarChart2 className="h-5 w-5 mr-2 text-racing-red" />
               Estatísticas
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             <div className="flex flex-col items-center justify-center py-6">
               <BarChart2 className="h-16 w-16 text-racing-red mb-4" />
               <div className="text-center">
                 <p className="text-racing-silver mb-4">
                   Acesse estatísticas detalhadas das corridas e rankings de usuários
                 </p>
-                <Link 
-                  to="/tables" 
-                  className="inline-block px-4 py-2 bg-racing-red hover:bg-racing-red/90 text-white rounded-lg"
+                <Button 
+                  variant="default"
+                  onClick={() => navigate("/tables")}
+                  className="bg-racing-red hover:bg-racing-red/90 text-white"
                 >
                   Ver Estatísticas
-                </Link>
+                </Button>
               </div>
             </div>
           </CardContent>
