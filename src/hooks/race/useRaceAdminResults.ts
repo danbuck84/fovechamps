@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useRaceResults } from "@/hooks/useRaceResults";
 import { useDriverPositions } from "@/hooks/race/useDriverPositions";
 import { useDNFDrivers } from "@/hooks/race/useDNFDrivers";
@@ -9,17 +9,17 @@ import { useFormatters } from "@/hooks/race/useFormatters";
 
 export const useRaceAdminResults = () => {
   const navigate = useNavigate();
+  const { raceId } = useParams();
   const { formatDisplayPoleTime } = useFormatters();
   
   const { 
     race, 
     drivers, 
-    existingResult, 
+    existingResult,
     refetch,
     loading,
-    processPoints,
-    raceId
-  } = useRaceResults();
+    processPoints
+  } = useRaceResults(raceId);
 
   const [poleTime, setPoleTime] = useState<string>("");
   const [fastestLap, setFastestLap] = useState<string>("");

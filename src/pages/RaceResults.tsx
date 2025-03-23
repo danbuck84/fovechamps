@@ -1,5 +1,5 @@
 
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { isDeadlinePassed } from "@/utils/date-utils";
 import { RaceResultsView } from "@/components/race-results/RaceResultsView";
 import { RaceHeader } from "@/components/race-results/RaceHeader";
@@ -7,6 +7,7 @@ import { PredictionsSection } from "@/components/race-results/PredictionsSection
 import { useRaceResults } from "@/hooks/useRaceResults";
 
 const RaceResults = () => {
+  const { raceId } = useParams();
   const navigate = useNavigate();
   const { 
     race, 
@@ -15,13 +16,14 @@ const RaceResults = () => {
     predictions, 
     isLoadingDrivers, 
     calculatingPoints, 
-    processPoints 
-  } = useRaceResults();
+    processPoints,
+    isLoading
+  } = useRaceResults(raceId);
 
   // Check if deadline has passed
   const deadlinePassed = race ? isDeadlinePassed(race.qualifying_date) : false;
 
-  if (!race || !drivers || !raceResult || !predictions || isLoadingDrivers) {
+  if (isLoading || isLoadingDrivers || !race || !drivers || !raceResult || !predictions) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
         <p className="text-racing-silver">Carregando resultados...</p>
