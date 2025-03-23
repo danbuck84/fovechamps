@@ -13,6 +13,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
       
       if (!user) {
         navigate("/auth");
+        return;
       }
       setLoading(false);
     };
