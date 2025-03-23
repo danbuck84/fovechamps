@@ -8,7 +8,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -29,6 +29,10 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
       if (profile) {
         setUsername(profile.username);
       }
+      
+      // Check if user is admin
+      const { data: isUserAdmin } = await supabase.rpc('is_admin', { user_id: user.id });
+      setIsAdmin(!!isUserAdmin);
       
       setLoading(false);
     };

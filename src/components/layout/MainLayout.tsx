@@ -8,29 +8,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const [username, setUsername] = useState<string>("");
-  const [isAdmin, setIsAdmin] = useState(true);
+interface MainLayoutProps {
+  children: React.ReactNode;
+  username?: string;
+  isAdmin?: boolean;
+}
+
+const MainLayout = ({ children, username = "", isAdmin = false }: MainLayoutProps) => {
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    const getProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", user.id)
-          .single();
-        
-        if (profile) {
-          setUsername(profile.username);
-        }
-      }
-    };
-
-    getProfile();
-  }, []);
 
   return (
     <TooltipProvider>
