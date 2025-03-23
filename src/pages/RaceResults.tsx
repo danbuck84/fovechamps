@@ -34,7 +34,7 @@ const RaceResults = () => {
     },
   });
 
-  // Fetch drivers data
+  // Fetch drivers data - Updated to include team.engine property
   const { data: drivers, isLoading: isLoadingDrivers } = useQuery({
     queryKey: ["drivers"],
     queryFn: async () => {
@@ -47,7 +47,8 @@ const RaceResults = () => {
           team_id,
           team:teams (
             id,
-            name
+            name,
+            engine
           )
         `);
       
@@ -56,7 +57,7 @@ const RaceResults = () => {
         throw error;
       }
 
-      return driversData as (Driver & { team: { name: string } })[];
+      return driversData as (Driver & { team: { name: string; engine: string } })[];
     },
   });
 
