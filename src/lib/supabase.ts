@@ -6,6 +6,7 @@ import type { Database } from '../integrations/supabase/types';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://qrhuynyipwcgrdligbhq.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyaHV5bnlpcHdjZ3JkbGlnYmhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzMDIyOTYsImV4cCI6MjA1NDg3ODI5Nn0.N973A98oFmZkC4t2oULlVj9bv7hUuIjR6O7zN_ojgZM';
 
+// Create Supabase client
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
     persistSession: true,
@@ -13,3 +14,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     storage: window.localStorage
   }
 });
+
+// Add debug utility 
+export const debugSupabase = () => {
+  console.log("Supabase URL:", supabaseUrl);
+  console.log("Auth Session:", localStorage.getItem('sb-' + supabaseUrl.split('//')[1].split('.')[0] + '-auth-token'));
+  return !!localStorage.getItem('sb-' + supabaseUrl.split('//')[1].split('.')[0] + '-auth-token');
+};

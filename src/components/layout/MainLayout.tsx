@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { useSidebar } from "@/components/ui/sidebar/context";
 import Sidebar from "./Sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -36,7 +35,7 @@ const MainLayout = ({ children, username = "", isAdmin = false }: MainLayoutProp
                 </SidebarTrigger>
               </div>
             )}
-            <div className="p-4 pt-16 md:pt-4">
+            <div className="p-4 pt-16 md:pt-4 w-full">
               {children}
             </div>
           </SidebarInset>
