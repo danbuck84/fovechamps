@@ -6,17 +6,23 @@ import './index.css';
 
 console.log("Main: Application initializing");
 
-// Add global error handler for various errors
+// Comprehensive list of all error patterns to suppress
+const suppressPatterns = [
+  'firebase', 
+  'firestore', 
+  'facebook.com', 
+  'unrecognized feature',
+  'feature',
+  'sentry',
+  'tr?id=',
+  'facebook',
+  'pixel',
+  'preloaded',
+  'tr?'
+];
+
+// Globally capture and filter errors before they hit the console
 window.addEventListener('error', (event) => {
-  // List of error sources/messages to suppress
-  const suppressPatterns = [
-    'firebase', 
-    'firestore', 
-    'facebook.com', 
-    'unrecognized feature',
-    'sentry.io'
-  ];
-  
   const eventMessage = (event.message || '').toLowerCase();
   const eventFilename = (event.filename || '').toLowerCase();
   
@@ -24,8 +30,7 @@ window.addEventListener('error', (event) => {
     eventMessage.includes(pattern) || 
     eventFilename.includes(pattern)
   )) {
-    console.warn('Suppressed error in window.addEventListener:', 
-      eventMessage.substring(0, 100) + (eventMessage.length > 100 ? '...' : ''));
+    // Suppress the error completely
     event.preventDefault();
     return true;
   }
@@ -36,18 +41,28 @@ window.addEventListener('unhandledrejection', (event) => {
   const errorMsg = event.reason?.message || String(event.reason) || 'Unknown promise rejection';
   const errorStr = errorMsg.toLowerCase();
   
-  if (
-    errorStr.includes('firebase') || 
-    errorStr.includes('firestore') ||
-    errorStr.includes('facebook') ||
-    errorStr.includes('feature')
-  ) {
-    console.warn('Suppressed unhandled promise rejection:', 
-      errorStr.substring(0, 100) + (errorStr.length > 100 ? '...' : ''));
+  if (suppressPatterns.some(pattern => errorStr.includes(pattern))) {
+    // Suppress the rejection completely
     event.preventDefault();
     return;
   }
 });
+
+// Add a handler for the beforeload event to stop resource loading
+const observer = new MutationObserver((mutations) => {
+  for (const mutation of mutations) {
+    if (mutation.type === 'childList') {
+      for (const node of mutation.addedNodes) {
+        if (node.nodeName === 'LINK' && node.getAttribute('href')?.includes('facebook.com')) {
+          node.remove();
+        }
+      }
+    }
+  }
+});
+
+// Start observing the document
+observer.observe(document, { childList: true, subtree: true });
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
