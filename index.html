@@ -8,6 +8,76 @@
     <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
     <meta property="og:image" content="/og-image.png" />
+    <!-- Early error suppression script -->
+    <script>
+      // Block tracking scripts and console errors before React loads
+      (function() {
+        // Common patterns to block
+        var blockPatterns = ['facebook', 'tr?id=', 'pixel', 'firebase', 'firestore'];
+        
+        // Override console methods early
+        var originalConsoleError = console.error;
+        var originalConsoleWarn = console.warn;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var shouldBlock = args.some(function(arg) {
+            if (!arg) return false;
+            var str = String(arg).toLowerCase();
+            return blockPatterns.some(function(pattern) {
+              return str.indexOf(pattern.toLowerCase()) !== -1;
+            });
+          });
+          if (!shouldBlock) originalConsoleError.apply(console, args);
+        };
+        console.warn = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var shouldBlock = args.some(function(arg) {
+            if (!arg) return false;
+            var str = String(arg).toLowerCase();
+            return blockPatterns.some(function(pattern) {
+              return str.indexOf(pattern.toLowerCase()) !== -1;
+            });
+          });
+          if (!shouldBlock) originalConsoleWarn.apply(console, args);
+        };
+        
+        // Early onerror handler
+        window.onerror = function(msg, url) {
+          if (msg && blockPatterns.some(function(pattern) {
+            return String(msg).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+          })) return true;
+          
+          if (url && blockPatterns.some(function(pattern) {
+            return String(url).toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+          })) return true;
+          
+          return false;
+        };
+        
+        // Block preload requests
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.addedNodes) {
+              Array.prototype.forEach.call(mutation.addedNodes, function(node) {
+                if (node.tagName === 'LINK' && node.rel === 'preload') {
+                  var href = node.getAttribute('href');
+                  if (href && blockPatterns.some(function(pattern) {
+                    return href.toLowerCase().indexOf(pattern.toLowerCase()) !== -1;
+                  })) {
+                    node.parentNode.removeChild(node);
+                  }
+                }
+              });
+            }
+          });
+        });
+        
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true
+        });
+      })();
+    </script>
   </head>
 
   <body>
