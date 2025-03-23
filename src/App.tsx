@@ -13,16 +13,25 @@ import { validateEnvVariables } from "@/utils/env-utils";
 validateEnvVariables();
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionContextProvider supabaseClient={supabase}>
-        <RouterProvider router={routes} />
-        <Toaster position="top-right" />
-      </SessionContextProvider>
-    </QueryClientProvider>
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <SessionContextProvider supabaseClient={supabase}>
+          <RouterProvider router={routes} />
+          <Toaster position="top-right" />
+        </SessionContextProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
   );
 }
 
