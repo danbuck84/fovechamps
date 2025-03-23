@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { UpcomingRacesCard } from "@/components/dashboard/UpcomingRacesCard";
@@ -31,6 +32,7 @@ const Dashboard = () => {
     checkAuth();
   }, []);
 
+  // This useEffect is already in your code, but I'm ensuring it's properly implemented
   useEffect(() => {
     const originalErrorHandler = window.onerror;
     window.onerror = function(message, source, lineno, colno, error) {
