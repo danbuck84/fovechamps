@@ -32,6 +32,7 @@ export const DNFSelector = ({
           // Convert survivors to DNF count and pass to handler
           const survivorCount = parseInt(value);
           const dnfCount = 20 - survivorCount;
+          console.log(`Selected ${survivorCount} survivors, which means ${dnfCount} DNFs`);
           handleDNFCountChange(dnfCount.toString());
         }}
       >

@@ -36,6 +36,12 @@ const RaceResultsAdmin = () => {
     return getAvailableDrivers(position, qualifyingResults, raceResults, drivers || []);
   };
 
+  const handleDNFCountChange = (value: string) => {
+    const count = parseInt(value, 10);
+    console.log("Changing DNF count to:", count);
+    handleDNFCount(count);
+  };
+
   if (!race || !drivers) {
     return <div className="p-6 text-center text-racing-silver">Carregando...</div>;
   }
@@ -67,7 +73,7 @@ const RaceResultsAdmin = () => {
               onRaceDriverChange={handleRaceDriverChange}
               dnfDrivers={dnfDrivers}
               onDNFChange={handleDNFChange}
-              handleDNFCountChange={(value) => handleDNFCount(parseInt(value, 10))}
+              handleDNFCountChange={handleDNFCountChange}
               allDrivers={drivers}
               duplicates={raceDuplicates}
             />

@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
   const [dnfDrivers, setDNFDrivers] = useState<string[]>(initialDNFDrivers);
+
+  // Update internal state when initialDNFDrivers changes (like when loading from API)
+  useEffect(() => {
+    if (initialDNFDrivers && initialDNFDrivers.length > 0) {
+      setDNFDrivers(initialDNFDrivers);
+    }
+  }, [initialDNFDrivers]);
 
   const handleDNFChange = (driverId: string, checked: boolean) => {
     if (checked) {
@@ -12,23 +19,18 @@ export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
   };
 
   const handleDNFCount = (count: number) => {
+    console.log("Handling DNF count:", count);
     // Update DNF drivers count
-    // This implementation just maintains the count without specifying which drivers
-    // The UI would need to provide a way to select specific drivers
-    
-    // Create a new array with the desired length
     if (count === 0) {
       setDNFDrivers([]);
-    } else {
-      // If we already have drivers marked as DNF, keep as many as needed
-      const newDNFDrivers = [...dnfDrivers];
-      
+    } else if (dnfDrivers.length > count) {
       // If we need to reduce the number, slice the array
-      if (newDNFDrivers.length > count) {
-        setDNFDrivers(newDNFDrivers.slice(0, count));
-      }
-      // Otherwise, we would need a UI to select specific additional drivers
-      // This simple implementation just maintains the count
+      setDNFDrivers(prev => prev.slice(0, count));
+    } else if (dnfDrivers.length < count) {
+      // If we need more DNF drivers, we'll keep the current ones
+      // Note: In a real implementation, you'd need a UI to select which specific drivers 
+      // should be added to reach the desired count
+      console.log(`Need UI to select ${count - dnfDrivers.length} more DNF drivers`);
     }
   };
 
