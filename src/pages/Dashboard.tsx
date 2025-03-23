@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { UpcomingRacesCard } from "@/components/dashboard/UpcomingRacesCard";
@@ -6,9 +5,10 @@ import { PastRacesCard } from "@/components/dashboard/PastRacesCard";
 import { RecentPredictionsCard } from "@/components/dashboard/RecentPredictionsCard";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const Dashboard = () => {
-  const { nextRaces, pastRaces, recentPredictions, hasResults, isLoading } = useDashboardData();
+  const { nextRaces, pastRaces, recentPredictions, hasResults, isLoading, error } = useDashboardData();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
 
@@ -22,12 +22,34 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Dashboard: Auth check error:", error);
         setIsAuthenticated(false);
+        toast.error("Erro ao verificar autenticação");
       } finally {
         setAuthChecked(true);
       }
     };
 
     checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const originalErrorHandler = window.onerror;
+    window.onerror = function(message, source, lineno, colno, error) {
+      if (source && (
+        source.includes('firebase') || 
+        source.includes('firestore') || 
+        message?.toString().includes('firebase') || 
+        message?.toString().includes('firestore')
+      )) {
+        console.warn('Suppressed Firebase-related error:', message);
+        return true;
+      }
+      
+      return originalErrorHandler ? originalErrorHandler(message, source, lineno, colno, error) : false;
+    };
+    
+    return () => {
+      window.onerror = originalErrorHandler;
+    };
   }, []);
 
   console.log("Dashboard: Rendering", {
@@ -59,6 +81,14 @@ const Dashboard = () => {
     return (
       <div className="p-6 text-racing-silver">
         Carregando dashboard...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-racing-red">
+        Erro ao carregar dados: {error.message || "Erro desconhecido"}
       </div>
     );
   }
