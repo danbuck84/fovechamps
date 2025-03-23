@@ -37,7 +37,6 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
       } catch (error) {
         console.error("Error checking authentication:", error);
         navigate("/auth");
-        return;
       } finally {
         setLoading(false);
       }

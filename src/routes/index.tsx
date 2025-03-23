@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createBrowserRouter } from "react-router-dom";
 
@@ -16,7 +15,6 @@ import DriversAndTeams from "@/pages/DriversAndTeams";
 import DriverDetail from "@/pages/DriverDetail";
 import TeamDetail from "@/pages/TeamDetail";
 import NotFound from "@/pages/NotFound";
-import MainLayout from "@/components/layout/MainLayout";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 
 const routes = createBrowserRouter([

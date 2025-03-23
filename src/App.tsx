@@ -24,14 +24,12 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <SessionContextProvider supabaseClient={supabase}>
-          <RouterProvider router={routes} />
-          <Toaster position="top-right" />
-        </SessionContextProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <SessionContextProvider supabaseClient={supabase}>
+        <RouterProvider router={routes} />
+        <Toaster position="top-right" />
+      </SessionContextProvider>
+    </QueryClientProvider>
   );
 }
 
