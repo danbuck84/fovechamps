@@ -18,6 +18,9 @@ export const DNFPredictionForm = ({
   onDriverDNF,
   disabled = false,
 }: DNFPredictionFormProps) => {
+  // Calculate survivors count (20 - DNF count)
+  const survivorsCount = 20 - dnfPredictions.length;
+  
   return (
     <div className="space-y-4 w-full max-w-md mx-auto">
       <div className="space-y-2">
@@ -28,8 +31,13 @@ export const DNFPredictionForm = ({
       </div>
       
       <Select
-        value={dnfPredictions.length.toString()}
-        onValueChange={(value) => onDriverDNF(parseInt(value))}
+        value={survivorsCount.toString()}
+        onValueChange={(value) => {
+          // Convert survivors to DNF count
+          const survivorCount = parseInt(value);
+          const dnfCount = 20 - survivorCount;
+          onDriverDNF(dnfCount);
+        }}
         disabled={disabled}
       >
         <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20 w-full">

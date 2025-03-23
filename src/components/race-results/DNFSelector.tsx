@@ -15,16 +15,25 @@ interface DNFSelectorProps {
 
 export const DNFSelector = ({
   dnfDrivers,
+  onDNFChange,
   handleDNFCountChange,
 }: DNFSelectorProps) => {
+  // Calculate survivors count (20 - DNF count)
+  const survivorsCount = 20 - dnfDrivers.length;
+  
   return (
     <div className="space-y-4">
       <label className="block text-sm font-medium text-racing-silver">
         Sobreviventes
       </label>
       <Select
-        value={dnfDrivers.length.toString()}
-        onValueChange={handleDNFCountChange}
+        value={survivorsCount.toString()}
+        onValueChange={(value) => {
+          // Convert survivors to DNF count and pass to handler
+          const survivorCount = parseInt(value);
+          const dnfCount = 20 - survivorCount;
+          handleDNFCountChange(dnfCount.toString());
+        }}
       >
         <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
           <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
