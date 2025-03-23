@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { supabase, debugSupabase } from "@/lib/supabase";
 import MainLayout from "@/components/layout/MainLayout";
 import { toast } from "sonner";
 
@@ -15,46 +15,65 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   useEffect(() => {
     const checkUser = async () => {
       try {
+        console.log("PrivateRoute: Checking authentication...");
+        setLoading(true);
+        
+        // Run debug utility to check Supabase connection
+        const hasSession = debugSupabase();
+        
+        if (!hasSession) {
+          console.log("PrivateRoute: No session found in localStorage");
+        }
+        
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         
+        console.log("PrivateRoute: Auth check result:", user ? "User found" : "No user", userError ? `Error: ${userError.message}` : "No error");
+        
         if (userError) {
-          console.error("Auth error:", userError);
+          console.error("PrivateRoute: Auth error:", userError);
           throw userError;
         }
         
         if (!user) {
-          console.log("No user found, redirecting to auth");
-          navigate("/auth");
+          console.log("PrivateRoute: No user found, redirecting to auth");
+          navigate("/auth", { replace: true });
           return;
         }
+
+        console.log("PrivateRoute: User authenticated", user.id);
 
         // Fetch profile data
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("username")
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
         
         if (profileError) {
-          console.error("Profile error:", profileError);
+          console.error("PrivateRoute: Profile error:", profileError);
         }
         
         if (profile) {
+          console.log("PrivateRoute: Profile found", profile.username);
           setUsername(profile.username);
+        } else {
+          console.log("PrivateRoute: No profile found for user", user.id);
         }
         
         // Check if user is admin
         const { data: isUserAdmin, error: adminError } = await supabase.rpc('is_admin', { user_id: user.id });
         
         if (adminError) {
-          console.error("Admin check error:", adminError);
+          console.error("PrivateRoute: Admin check error:", adminError);
         }
         
         setIsAdmin(!!isUserAdmin);
+        console.log("PrivateRoute: Admin status:", !!isUserAdmin);
+        
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        console.error("PrivateRoute: Error checking authentication:", error);
         toast.error("Erro ao verificar autenticação");
-        navigate("/auth");
+        navigate("/auth", { replace: true });
       } finally {
         setLoading(false);
       }
@@ -71,6 +90,7 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
+  console.log("PrivateRoute: Rendering protected content");
   return (
     <MainLayout username={username} isAdmin={isAdmin}>
       {children}
