@@ -49,7 +49,7 @@ const DriversAndTeams = () => {
     return (
       <MainLayout>
         <div className="min-h-screen bg-racing-black p-6">
-          <div className="max-w-7xl mx-auto text-center">
+          <div className="max-w-5xl mx-auto text-center">
             <p className="text-racing-silver">Carregando...</p>
           </div>
         </div>
@@ -59,9 +59,9 @@ const DriversAndTeams = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-racing-black p-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-racing-white mb-6">Pilotos e Equipes</h1>
+      <div className="min-h-screen bg-racing-black p-4 md:p-6">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold text-racing-white mb-6 text-center">Pilotos e Equipes</h1>
           
           <Tabs defaultValue="drivers" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full bg-racing-black border border-racing-silver/20 mb-6">

@@ -19,7 +19,7 @@ export const DNFPredictionForm = ({
   disabled = false,
 }: DNFPredictionFormProps) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full max-w-md mx-auto">
       <div className="space-y-2">
         <h3 className="text-xl font-semibold text-racing-white">Sobreviventes</h3>
         <p className="text-sm text-racing-silver">
@@ -32,7 +32,7 @@ export const DNFPredictionForm = ({
         onValueChange={(value) => onDriverDNF(parseInt(value))}
         disabled={disabled}
       >
-        <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20">
+        <SelectTrigger className="bg-racing-white text-racing-black border-racing-silver/20 w-full">
           <SelectValue placeholder="Selecione um número" />
         </SelectTrigger>
         <SelectContent className="bg-racing-white border-racing-silver/20">

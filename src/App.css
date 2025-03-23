@@ -18,14 +18,15 @@ body, html {
 
 .container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 /* Responsive settings */
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 0 1rem;
   }
   
   /* Ensure proper spacing on mobile */
@@ -54,4 +55,13 @@ body, html {
   h1.text-3xl {
     font-size: 1.75rem !important;
   }
+}
+
+/* Center tables and cards consistently */
+.card, 
+.table-container,
+.form-container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }

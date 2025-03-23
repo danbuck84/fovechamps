@@ -35,8 +35,10 @@ const MainLayout = ({ children, username = "", isAdmin = false }: MainLayoutProp
                 </SidebarTrigger>
               </div>
             )}
-            <div className="p-4 pt-16 md:pt-4 w-full flex-1">
-              {children}
+            <div className="p-4 pt-16 md:pt-4 w-full flex-1 flex flex-col items-center">
+              <div className="w-full max-w-7xl">
+                {children}
+              </div>
             </div>
           </SidebarInset>
         </div>

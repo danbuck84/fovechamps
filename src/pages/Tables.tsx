@@ -20,9 +20,9 @@ const Tables = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-racing-black text-racing-white p-6">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Tabelas de Classificação</h1>
+      <div className="min-h-screen bg-racing-black text-racing-white p-4 md:p-6">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-3xl font-bold mb-8 text-center">Tabelas de Classificação</h1>
           
           {/* Tabela de Pilotos */}
           <PointsTable 

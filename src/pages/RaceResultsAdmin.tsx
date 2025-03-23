@@ -42,8 +42,8 @@ const RaceResultsAdmin = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-racing-black p-6">
-        <div className="max-w-7xl mx-auto">
+      <div className="min-h-screen bg-racing-black p-4 md:p-6">
+        <div className="max-w-5xl mx-auto">
           <AdminHeader 
             raceName={race.name}
             onSave={handleSaveResults}

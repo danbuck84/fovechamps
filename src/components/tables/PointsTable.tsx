@@ -36,7 +36,7 @@ export const PointsTable = ({
   getNationality
 }: PointsTableProps) => {
   return (
-    <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full">
+    <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full mx-auto">
       <CardHeader className="px-6">
         <CardTitle className="text-xl text-racing-white">{title}</CardTitle>
       </CardHeader>
@@ -46,7 +46,7 @@ export const PointsTable = ({
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-racing-silver/20">
-                  <TableHead className="w-16 text-left bg-racing-black text-racing-white font-semibold">POS</TableHead>
+                  <TableHead className="w-16 text-center bg-racing-black text-racing-white font-semibold">POS</TableHead>
                   {isDrivers ? (
                     <>
                       <TableHead className="text-left text-racing-white font-semibold">Piloto</TableHead>
@@ -70,7 +70,7 @@ export const PointsTable = ({
                     const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
                     return (
                       <TableRow key={item.id} className="border-b border-racing-silver/20">
-                        <TableCell className="bg-racing-black text-racing-white font-medium">{index + 1}</TableCell>
+                        <TableCell className="bg-racing-black text-racing-white font-medium text-center">{index + 1}</TableCell>
                         {isDrivers ? (
                           <>
                             <TableCell className="text-racing-white">{getName(item)}</TableCell>

@@ -29,7 +29,7 @@ export const RaceResultsForm = ({
   duplicates = [],
 }: RaceResultsFormProps) => {
   return (
-    <Card className="bg-racing-black border-racing-silver/20 w-full">
+    <Card className="bg-racing-black border-racing-silver/20 w-full mx-auto">
       <CardHeader className="px-6">
         <CardTitle className="text-xl text-racing-white">Resultados da Corrida</CardTitle>
       </CardHeader>

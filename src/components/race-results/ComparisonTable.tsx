@@ -22,7 +22,6 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
   };
 
   const isPredictionOffByOne = (predictedDriverId: string, resultIndex: number): boolean => {
-    // Verifica se o piloto está uma posição acima ou abaixo da prevista
     return (
       raceResult.race_results[resultIndex - 1] === predictedDriverId ||
       raceResult.race_results[resultIndex + 1] === predictedDriverId
@@ -34,7 +33,6 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
   };
 
   const isQualifyingPredictionOffByOne = (predictedDriverId: string, resultIndex: number): boolean => {
-    // Verifica se o piloto está uma posição acima ou abaixo da prevista
     return (
       raceResult.qualifying_results[resultIndex - 1] === predictedDriverId ||
       raceResult.qualifying_results[resultIndex + 1] === predictedDriverId
@@ -47,13 +45,13 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
   };
 
   return (
-    <Card className="bg-racing-black border-racing-silver/20">
+    <Card className="bg-racing-black border-racing-silver/20 w-full">
       <CardHeader>
         <CardTitle className="text-lg text-racing-white">Apostas de {username}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <h3 className="text-sm font-medium text-racing-silver mb-2">Pole Position</h3>
               <div className="flex justify-between items-center p-2 bg-racing-silver/10 rounded">
@@ -140,7 +138,7 @@ const ComparisonTable = ({ prediction, raceResult, drivers, username }: Comparis
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <h3 className="text-sm font-medium text-racing-silver mb-2">Volta Mais Rápida</h3>
               <div className="flex justify-between items-center p-2 bg-racing-silver/10 rounded">

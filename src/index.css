@@ -118,7 +118,7 @@
 }
 
 .page-container {
-  @apply flex-1 w-full;
+  @apply flex-1 w-full max-w-7xl mx-auto;
 }
 
 /* Fix for sidebar and content alignment */
@@ -130,7 +130,40 @@
   @apply flex-1 flex flex-col;
 }
 
-/* Debug outlines - remove in production */
-.debug * {
-  outline: 1px solid rgba(255, 0, 0, 0.1);
+/* Common UI components centering */
+.card,
+.form-container,
+.table-container {
+  @apply mx-auto w-full;
+}
+
+/* Center tables and their content */
+th, td {
+  @apply text-center;
+}
+
+/* Center card headers and content */
+.card-header,
+.card-content {
+  @apply text-center;
+}
+
+/* Override text-left where needed */
+.text-left-override {
+  @apply text-left !important;
+}
+
+/* Center form elements */
+form {
+  @apply mx-auto w-full max-w-4xl;
+}
+
+/* Center inputs and selects */
+select, input, .select-trigger {
+  @apply mx-auto;
+}
+
+/* Tables page specific styling */
+.tables-container {
+  @apply w-full max-w-5xl mx-auto;
 }
