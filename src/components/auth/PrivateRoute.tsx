@@ -2,10 +2,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import MainLayout from "@/components/layout/MainLayout";
 
 export default function PrivateRoute({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState("");
+  const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -15,6 +18,18 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
         navigate("/auth");
         return;
       }
+
+      // Fetch profile data
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
+      
+      if (profile) {
+        setUsername(profile.username);
+      }
+      
       setLoading(false);
     };
 
@@ -27,5 +42,9 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     </div>;
   }
 
-  return <>{children}</>;
+  return (
+    <MainLayout username={username} isAdmin={isAdmin}>
+      {children}
+    </MainLayout>
+  );
 };

@@ -25,26 +25,22 @@ const routes = createBrowserRouter([
     element: <Auth />,
   },
   {
+    path: "/auth",
+    element: <Auth />,
+  },
+  {
     path: "/dashboard",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <Dashboard />
-        </MainLayout>
+        <Dashboard />
       </PrivateRoute>
     ),
-  },
-  {
-    path: "/auth",
-    element: <Auth />,
   },
   {
     path: "/profile",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <Profile />
-        </MainLayout>
+        <Profile />
       </PrivateRoute>
     ),
   },
@@ -52,9 +48,7 @@ const routes = createBrowserRouter([
     path: "/my-predictions",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <MyPredictions />
-        </MainLayout>
+        <MyPredictions />
       </PrivateRoute>
     ),
   },
@@ -62,9 +56,7 @@ const routes = createBrowserRouter([
     path: "/tables",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <Tables />
-        </MainLayout>
+        <Tables />
       </PrivateRoute>
     ),
   },
@@ -72,9 +64,7 @@ const routes = createBrowserRouter([
     path: "/race/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RaceResultsView />
-        </MainLayout>
+        <RaceResultsView />
       </PrivateRoute>
     ),
   },
@@ -82,9 +72,7 @@ const routes = createBrowserRouter([
     path: "/race-results/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RaceResults />
-        </MainLayout>
+        <RaceResults />
       </PrivateRoute>
     ),
   },
@@ -92,9 +80,7 @@ const routes = createBrowserRouter([
     path: "/race-predictions/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RacePredictions />
-        </MainLayout>
+        <RacePredictions />
       </PrivateRoute>
     ),
   },
@@ -102,9 +88,7 @@ const routes = createBrowserRouter([
     path: "/race-prediction/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RacePredictions />
-        </MainLayout>
+        <RacePredictions />
       </PrivateRoute>
     ),
   },
@@ -112,9 +96,7 @@ const routes = createBrowserRouter([
     path: "/race-points/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RaceResults />
-        </MainLayout>
+        <RaceResults />
       </PrivateRoute>
     ),
   },
@@ -122,9 +104,7 @@ const routes = createBrowserRouter([
     path: "/admin/race-results/:raceId",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <RaceResultsAdmin />
-        </MainLayout>
+        <RaceResultsAdmin />
       </PrivateRoute>
     ),
   },
@@ -132,9 +112,7 @@ const routes = createBrowserRouter([
     path: "/admin/race-management",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <AdminRaceManagement />
-        </MainLayout>
+        <AdminRaceManagement />
       </PrivateRoute>
     ),
   },
@@ -142,9 +120,7 @@ const routes = createBrowserRouter([
     path: "/drivers-and-teams",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <DriversAndTeams />
-        </MainLayout>
+        <DriversAndTeams />
       </PrivateRoute>
     ),
   },
@@ -152,9 +128,7 @@ const routes = createBrowserRouter([
     path: "/driver/:id",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <DriverDetail />
-        </MainLayout>
+        <DriverDetail />
       </PrivateRoute>
     ),
   },
@@ -162,9 +136,7 @@ const routes = createBrowserRouter([
     path: "/team/:id",
     element: (
       <PrivateRoute>
-        <MainLayout>
-          <TeamDetail />
-        </MainLayout>
+        <TeamDetail />
       </PrivateRoute>
     ),
   },
