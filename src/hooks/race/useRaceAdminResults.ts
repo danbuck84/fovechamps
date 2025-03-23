@@ -6,6 +6,7 @@ import { useDriverPositions } from "@/hooks/race/useDriverPositions";
 import { useDNFDrivers } from "@/hooks/race/useDNFDrivers";
 import { useRaceResultsSave } from "@/hooks/race/useRaceResultsSave";
 import { useFormatters } from "@/hooks/race/useFormatters";
+import { toast } from "sonner";
 import type { RaceResult } from "@/types/betting";
 
 export const useRaceAdminResults = () => {
@@ -25,11 +26,21 @@ export const useRaceAdminResults = () => {
   const [poleTime, setPoleTime] = useState<string>("");
   const [fastestLap, setFastestLap] = useState<string>("");
   
-  const { results: qualifyingResults, handleDriverChange: handleQualifyingDriverChange } = 
-    useDriverPositions(existingResult?.qualifying_results || Array(20).fill(""));
+  const { 
+    results: qualifyingResults, 
+    handleDriverChange: handleQualifyingDriverChange,
+    duplicates: qualifyingDuplicates,
+    hasDuplicates: hasQualifyingDuplicates,
+    getDuplicatedDrivers: getQualifyingDuplicatedDrivers 
+  } = useDriverPositions(existingResult?.qualifying_results || Array(20).fill(""));
   
-  const { results: raceResults, handleDriverChange: handleRaceDriverChange } = 
-    useDriverPositions(existingResult?.race_results || Array(20).fill(""));
+  const { 
+    results: raceResults, 
+    handleDriverChange: handleRaceDriverChange,
+    duplicates: raceDuplicates,
+    hasDuplicates: hasRaceDuplicates,
+    getDuplicatedDrivers: getRaceDuplicatedDrivers
+  } = useDriverPositions(existingResult?.race_results || Array(20).fill(""));
   
   const { dnfDrivers, handleDNFChange, handleDNFCount } = 
     useDNFDrivers(existingResult?.dnf_drivers || []);
@@ -50,6 +61,29 @@ export const useRaceAdminResults = () => {
   }, [existingResult]);
 
   const handleSaveResults = async () => {
+    // Check for duplicates in both qualifying and race results
+    if (hasQualifyingDuplicates) {
+      const duplicatedDrivers = getQualifyingDuplicatedDrivers();
+      const driverNames = duplicatedDrivers.map(driverId => {
+        const driver = drivers?.find(d => d.id === driverId);
+        return driver ? driver.name : 'Driver';
+      }).join(', ');
+      
+      toast.error(`Duplicates in qualifying: ${driverNames}. Please fix before saving.`);
+      return;
+    }
+
+    if (hasRaceDuplicates) {
+      const duplicatedDrivers = getRaceDuplicatedDrivers();
+      const driverNames = duplicatedDrivers.map(driverId => {
+        const driver = drivers?.find(d => d.id === driverId);
+        return driver ? driver.name : 'Driver';
+      }).join(', ');
+      
+      toast.error(`Duplicates in race results: ${driverNames}. Please fix before saving.`);
+      return;
+    }
+
     try {
       await saveResults(
         poleTime,
@@ -74,8 +108,10 @@ export const useRaceAdminResults = () => {
     setFastestLap,
     qualifyingResults,
     handleQualifyingDriverChange,
+    qualifyingDuplicates,
     raceResults,
     handleRaceDriverChange,
+    raceDuplicates,
     dnfDrivers,
     handleDNFChange,
     handleDNFCount,

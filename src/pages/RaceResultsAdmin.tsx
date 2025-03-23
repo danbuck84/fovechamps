@@ -5,6 +5,7 @@ import { AdminHeader } from "@/components/race-results/AdminHeader";
 import { useRaceAdminResults } from "@/hooks/race/useRaceAdminResults";
 import { useAvailableDrivers } from "@/hooks/race/useAvailableDrivers";
 import { Toaster } from "sonner";
+import MainLayout from "@/components/layout/MainLayout";
 
 const RaceResultsAdmin = () => {
   const {
@@ -17,8 +18,10 @@ const RaceResultsAdmin = () => {
     setFastestLap,
     qualifyingResults,
     handleQualifyingDriverChange,
+    qualifyingDuplicates,
     raceResults,
     handleRaceDriverChange,
+    raceDuplicates,
     dnfDrivers,
     handleDNFChange,
     handleDNFCount,
@@ -38,37 +41,41 @@ const RaceResultsAdmin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-racing-black p-6">
-      <div className="max-w-7xl mx-auto">
-        <AdminHeader 
-          raceName={race.name}
-          onSave={handleSaveResults}
-          isLoading={saving || loading}
-        />
-
-        <div className="grid grid-cols-1 gap-8">
-          <QualifyingResultsForm 
-            poleTime={formatDisplayPoleTime(poleTime)}
-            onPoleTimeChange={setPoleTime}
-            qualifyingResults={qualifyingResults}
-            onQualifyingDriverChange={handleQualifyingDriverChange}
-            availableDrivers={getDriversByPosition}
+    <MainLayout>
+      <div className="min-h-screen bg-racing-black p-6">
+        <div className="max-w-7xl mx-auto">
+          <AdminHeader 
+            raceName={race.name}
+            onSave={handleSaveResults}
+            isLoading={saving || loading}
           />
 
-          <RaceResultsForm 
-            fastestLap={fastestLap}
-            onFastestLapChange={setFastestLap}
-            raceResults={raceResults}
-            onRaceDriverChange={handleRaceDriverChange}
-            dnfDrivers={dnfDrivers}
-            onDNFChange={handleDNFChange}
-            handleDNFCountChange={(value) => handleDNFCount(parseInt(value, 10))}
-            allDrivers={drivers}
-          />
+          <div className="grid grid-cols-1 gap-8">
+            <QualifyingResultsForm 
+              poleTime={formatDisplayPoleTime(poleTime)}
+              onPoleTimeChange={setPoleTime}
+              qualifyingResults={qualifyingResults}
+              onQualifyingDriverChange={handleQualifyingDriverChange}
+              availableDrivers={getDriversByPosition}
+              duplicates={qualifyingDuplicates}
+            />
+
+            <RaceResultsForm 
+              fastestLap={fastestLap}
+              onFastestLapChange={setFastestLap}
+              raceResults={raceResults}
+              onRaceDriverChange={handleRaceDriverChange}
+              dnfDrivers={dnfDrivers}
+              onDNFChange={handleDNFChange}
+              handleDNFCountChange={(value) => handleDNFCount(parseInt(value, 10))}
+              allDrivers={drivers}
+              duplicates={raceDuplicates}
+            />
+          </div>
         </div>
+        <Toaster position="top-right" />
       </div>
-      <Toaster position="top-right" />
-    </div>
+    </MainLayout>
   );
 };
 

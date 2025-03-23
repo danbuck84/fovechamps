@@ -12,12 +12,14 @@ interface RacePositionsSelectorProps {
   raceResults: string[];
   onRaceDriverChange: (position: number, driverId: string) => void;
   allDrivers: (Driver & { team: { name: string; engine: string } })[];
+  duplicates?: number[];
 }
 
 export const RacePositionsSelector = ({
   raceResults,
   onRaceDriverChange,
   allDrivers,
+  duplicates = [],
 }: RacePositionsSelectorProps) => {
   return (
     <div className="space-y-4">
@@ -32,7 +34,11 @@ export const RacePositionsSelector = ({
               value={raceResults[index] || "placeholder"}
               onValueChange={(value) => onRaceDriverChange(index, value)}
             >
-              <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
+              <SelectTrigger 
+                className={`w-full bg-racing-black text-racing-white border-racing-silver/20 ${
+                  duplicates.includes(index) ? "border-racing-red border-2" : ""
+                }`}
+              >
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
               <SelectContent className="bg-racing-black border-racing-silver/20 max-h-[300px]">

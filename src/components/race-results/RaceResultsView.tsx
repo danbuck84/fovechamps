@@ -29,6 +29,9 @@ export const RaceResultsView = ({
     return driver && driver.team ? driver.team.name : "Desconhecido";
   };
 
+  // Get the list of surviving drivers (the first N drivers based on dnfDrivers.length)
+  const survivingDriverIds = result.race_results.slice(0, dnfDrivers.length);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card className="border-racing-silver/20 bg-racing-black text-racing-white overflow-hidden">
@@ -97,7 +100,7 @@ export const RaceResultsView = ({
                 Pilotos que sobreviveram ao GP
               </h3>
               <div className="flex flex-wrap gap-2">
-                {dnfDrivers.map((driverId) => (
+                {survivingDriverIds.map((driverId) => (
                   <span
                     key={driverId}
                     className="inline-block bg-racing-silver/10 px-3 py-1.5 rounded-full text-sm"
@@ -105,7 +108,7 @@ export const RaceResultsView = ({
                     {getDriverName(driverId)}
                   </span>
                 ))}
-                {dnfDrivers.length === 0 && (
+                {survivingDriverIds.length === 0 && (
                   <span className="text-racing-silver italic">Nenhum piloto sobrevivente registrado</span>
                 )}
               </div>

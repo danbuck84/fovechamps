@@ -10,15 +10,8 @@ export const useAvailableDrivers = () => {
   ) => {
     if (!drivers) return [];
     
-    // Filtrar pilotos que já estão em resultados
-    const currentResults = position < 10 ? qualifyingResults : raceResults;
-    const selectedDriverId = currentResults[position];
-    
-    // Retorna todos os pilotos que não estão em outras posições ou está na posição atual
-    return drivers.filter(driver => 
-      !currentResults.includes(driver.id) || 
-      driver.id === selectedDriverId
-    );
+    // Return all drivers, allowing any driver in any position
+    return drivers;
   };
 
   return { getAvailableDrivers };

@@ -15,6 +15,7 @@ interface QualifyingResultsFormProps {
   qualifyingResults: string[];
   onQualifyingDriverChange: (position: number, driverId: string) => void;
   availableDrivers: (position: number) => (Driver & { team: { name: string; engine: string } })[];
+  duplicates?: number[];
 }
 
 export const QualifyingResultsForm = ({
@@ -23,11 +24,8 @@ export const QualifyingResultsForm = ({
   qualifyingResults,
   onQualifyingDriverChange,
   availableDrivers,
+  duplicates = [],
 }: QualifyingResultsFormProps) => {
-  const sortDrivers = (drivers: (Driver & { team: { name: string; engine: string } })[]) => {
-    return [...drivers].sort((a, b) => a.name.localeCompare(b.name));
-  };
-
   return (
     <Card className="bg-racing-black border-racing-silver/20">
       <CardHeader>
@@ -60,14 +58,18 @@ export const QualifyingResultsForm = ({
                     value={qualifyingResults[index] || "placeholder"}
                     onValueChange={(value) => onQualifyingDriverChange(index, value)}
                   >
-                    <SelectTrigger className="w-full bg-racing-white text-racing-black border-racing-silver/20">
+                    <SelectTrigger 
+                      className={`w-full bg-racing-white text-racing-black border-racing-silver/20 ${
+                        duplicates.includes(index) ? "border-racing-red border-2" : ""
+                      }`}
+                    >
                       <SelectValue placeholder="Selecione um piloto" />
                     </SelectTrigger>
                     <SelectContent className="bg-racing-white border-racing-silver/20">
                       <SelectItem value="placeholder" className="text-racing-black">
                         Selecione um piloto
                       </SelectItem>
-                      {sortDrivers(availableDrivers(index)).map((driver) => (
+                      {availableDrivers(index).map((driver) => (
                         <SelectItem 
                           key={driver.id} 
                           value={driver.id}
@@ -87,4 +89,3 @@ export const QualifyingResultsForm = ({
     </Card>
   );
 };
-

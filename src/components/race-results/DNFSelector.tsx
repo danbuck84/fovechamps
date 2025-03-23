@@ -29,7 +29,7 @@ export const DNFSelector = ({
         <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">
           <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
         </SelectTrigger>
-        <SelectContent className="bg-racing-black border-racing-silver/20">
+        <SelectContent className="bg-racing-black border-racing-silver/20 max-h-[300px]">
           {Array.from({ length: 21 }).map((_, index) => (
             <SelectItem 
               key={index} 

@@ -14,6 +14,7 @@ interface RaceResultsFormProps {
   onDNFChange: (driverId: string, checked: boolean) => void;
   handleDNFCountChange: (value: string) => void;
   allDrivers: (Driver & { team: { name: string; engine: string } })[];
+  duplicates?: number[];
 }
 
 export const RaceResultsForm = ({
@@ -25,6 +26,7 @@ export const RaceResultsForm = ({
   onDNFChange,
   handleDNFCountChange,
   allDrivers,
+  duplicates = [],
 }: RaceResultsFormProps) => {
   return (
     <Card className="bg-racing-black border-racing-silver/20">
@@ -43,6 +45,7 @@ export const RaceResultsForm = ({
             raceResults={raceResults}
             onRaceDriverChange={onRaceDriverChange}
             allDrivers={allDrivers}
+            duplicates={duplicates}
           />
 
           <DNFSelector 
