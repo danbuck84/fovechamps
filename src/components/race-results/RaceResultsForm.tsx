@@ -12,7 +12,7 @@ interface RaceResultsFormProps {
   onRaceDriverChange: (position: number, driverId: string) => void;
   dnfDrivers: string[];
   onDNFChange: (driverId: string, checked: boolean) => void;
-  availableDrivers: (position: number) => (Driver & { team: { name: string; engine: string } })[];
+  handleDNFCountChange: (value: string) => void;
   allDrivers: (Driver & { team: { name: string; engine: string } })[];
 }
 
@@ -23,24 +23,9 @@ export const RaceResultsForm = ({
   onRaceDriverChange,
   dnfDrivers,
   onDNFChange,
+  handleDNFCountChange,
   allDrivers,
 }: RaceResultsFormProps) => {
-  const handleDNFCountChange = (value: string) => {
-    const count = parseInt(value, 10);
-    // Clear current DNF list
-    dnfDrivers.forEach(driverId => onDNFChange(driverId, false));
-    
-    // If selecting a number > 0, we automatically select the first n drivers 
-    // as DNF based on the count
-    if (count > 0 && allDrivers.length > 0) {
-      // Get the first 'count' drivers
-      const selectedDrivers = allDrivers.slice(0, count).map(d => d.id);
-      
-      // Mark them as DNF
-      selectedDrivers.forEach(driverId => onDNFChange(driverId, true));
-    }
-  };
-
   return (
     <Card className="bg-racing-black border-racing-silver/20">
       <CardHeader>

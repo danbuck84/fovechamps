@@ -62,7 +62,7 @@ const RaceResultsAdmin = () => {
             onRaceDriverChange={handleRaceDriverChange}
             dnfDrivers={dnfDrivers}
             onDNFChange={handleDNFChange}
-            handleDNFCountChange={handleDNFCount}
+            handleDNFCountChange={(value) => handleDNFCount(parseInt(value, 10))}
             allDrivers={drivers}
           />
         </div>
