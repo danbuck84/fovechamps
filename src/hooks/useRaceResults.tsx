@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useDriversData } from "./race/useDriversData";
-import type { Race, RaceResult } from "@/types/betting";
+import type { Race, RaceResult, Prediction } from "@/types/betting";
 
+// Make sure this interface aligns with RaceResult type
 interface RaceResultsResponse {
   id: string;
   race_id: string;
@@ -13,7 +14,7 @@ interface RaceResultsResponse {
   dnf_drivers: string[] | null;
   qualifying_results: string[];
   race_results: string[];
-  pole_time?: string;
+  pole_time: string; // Changed from optional to required to match RaceResult
 }
 
 export function useRaceResults(raceId?: string) {
@@ -50,17 +51,23 @@ export function useRaceResults(raceId?: string) {
         throw resultsError;
       }
       
-      // Get predictions
+      // Get predictions with profiles data for usernames
       const { data: predictions, error: predictionsError } = await supabase
         .from("predictions")
-        .select("*")
+        .select("*, profiles(username)")
         .eq("race_id", raceId);
         
       if (predictionsError) throw predictionsError;
+
+      // Fix the race result type if it exists
+      const typedResult = results ? {
+        ...results,
+        pole_time: results.pole_time || '', // Default to empty string if null/undefined
+      } as RaceResultsResponse : null;
       
       return {
         race: race as Race,
-        results: results as RaceResultsResponse | null,
+        results: typedResult,
         predictions: predictions || []
       };
     },
@@ -82,18 +89,30 @@ export function useRaceResults(raceId?: string) {
     }
   };
 
+  // Format predictions to have the correct type
+  const formattedPredictions = query.data?.predictions?.map(prediction => {
+    // Ensure the prediction has the profiles property with username
+    return {
+      ...prediction,
+      profiles: {
+        username: prediction.profiles?.username || 'Unknown User'
+      }
+    } as Prediction & { profiles: { username: string } };
+  }) || [];
+
   // Maintain backward compatibility with the old interface
   return {
     ...query,
     race: query.data?.race,
     drivers: drivers,
-    raceResult: query.data?.results,
-    existingResult: query.data?.results,
-    predictions: query.data?.predictions,
+    raceResult: query.data?.results as unknown as RaceResult, // Type assertion to match expected type
+    existingResult: query.data?.results as unknown as RaceResult, // Type assertion to match expected type
+    predictions: formattedPredictions,
     isLoadingDrivers,
     calculatingPoints,
     processPoints,
     loading: query.isLoading,
+    refetch: query.refetch,
     raceId
   };
 }
