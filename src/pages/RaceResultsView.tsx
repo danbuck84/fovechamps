@@ -50,8 +50,15 @@ const RaceResultsView = () => {
         .eq("race_id", raceId)
         .single();
       
-      if (error) throw error;
-      return data as RaceResult;
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      // Ensure required fields exist
+      return data ? {
+        ...data,
+        pole_time: data.pole_time || '',
+        fastest_lap: data.fastest_lap || null,
+        dnf_drivers: data.dnf_drivers || []
+      } as RaceResult : null;
     },
   });
 
@@ -104,7 +111,7 @@ const RaceResultsView = () => {
                   {raceResult.pole_time || "Não disponível"}
                 </p>
                 {raceResult.qualifying_results.map((driverId, index) => (
-                  <div key={`qual-${driverId}`} className="flex items-center gap-2">
+                  <div key={`qual-${driverId || index}`} className="flex items-center gap-2">
                     <span className="w-8 text-racing-red font-semibold">{index + 1}.</span>
                     <span className="text-racing-white">{getDriverName(driverId)}</span>
                   </div>
@@ -122,10 +129,10 @@ const RaceResultsView = () => {
               <div className="space-y-2">
                 <p className="text-racing-silver mb-4">
                   <span className="text-racing-white">Volta mais rápida:</span>{" "}
-                  {getDriverName(raceResult.fastest_lap || "")}
+                  {raceResult.fastest_lap ? getDriverName(raceResult.fastest_lap) : "Não disponível"}
                 </p>
                 {raceResult.race_results.map((driverId, index) => (
-                  <div key={`race-${driverId}`} className="flex items-center gap-2">
+                  <div key={`race-${driverId || index}`} className="flex items-center gap-2">
                     <span className="w-8 text-racing-red font-semibold">{index + 1}.</span>
                     <span className="text-racing-white">{getDriverName(driverId)}</span>
                   </div>
@@ -134,16 +141,16 @@ const RaceResultsView = () => {
             </CardContent>
           </Card>
 
-          {/* Sobreviventes */}
+          {/* DNF Drivers */}
           {raceResult.dnf_drivers && raceResult.dnf_drivers.length > 0 && (
             <Card className="bg-racing-black border-racing-silver/20">
               <CardHeader>
-                <CardTitle className="text-racing-red">Pilotos que sobreviveram ao GP</CardTitle>
+                <CardTitle className="text-racing-red">Pilotos que não terminaram o GP</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {raceResult.dnf_drivers.map((driverId) => (
-                    <div key={`dnf-${driverId}`} className="text-racing-white">
+                  {raceResult.dnf_drivers.map((driverId, index) => (
+                    <div key={`dnf-${driverId || index}`} className="text-racing-white">
                       {getDriverName(driverId)}
                     </div>
                   ))}

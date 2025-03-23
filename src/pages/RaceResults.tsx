@@ -5,6 +5,7 @@ import { RaceResultsView } from "@/components/race-results/RaceResultsView";
 import { RaceHeader } from "@/components/race-results/RaceHeader";
 import { PredictionsSection } from "@/components/race-results/PredictionsSection";
 import { useRaceResults } from "@/hooks/useRaceResults";
+import type { RaceResult } from "@/types/betting";
 
 const RaceResults = () => {
   const { raceId } = useParams();
@@ -17,13 +18,13 @@ const RaceResults = () => {
     isLoadingDrivers, 
     calculatingPoints, 
     processPoints,
-    isLoading
+    loading: isLoading
   } = useRaceResults(raceId);
 
   // Check if deadline has passed
   const deadlinePassed = race ? isDeadlinePassed(race.qualifying_date) : false;
 
-  if (isLoading || isLoadingDrivers || !race || !drivers || !raceResult || !predictions) {
+  if (isLoading || isLoadingDrivers || !race || !drivers || !raceResult) {
     return (
       <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
         <p className="text-racing-silver">Carregando resultados...</p>
@@ -31,7 +32,9 @@ const RaceResults = () => {
     );
   }
 
-  const dnfDrivers = raceResult.dnf_drivers || [];
+  // Safely cast to RaceResult type and provide defaults for any missing properties
+  const typedRaceResult = raceResult as RaceResult;
+  const dnfDrivers = typedRaceResult.dnf_drivers || [];
 
   return (
     <div className="bg-racing-black text-racing-white">
@@ -47,9 +50,9 @@ const RaceResults = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Resultados Oficiais</h2>
           <RaceResultsView 
-            result={raceResult}
+            result={typedRaceResult}
             drivers={drivers}
-            fastestLap={raceResult.fastest_lap}
+            fastestLap={typedRaceResult.fastest_lap}
             dnfDrivers={dnfDrivers}
           />
         </div>
@@ -57,7 +60,7 @@ const RaceResults = () => {
         {/* Apostas dos Usuários - Só mostrar se o prazo encerrou */}
         <PredictionsSection 
           predictions={predictions}
-          raceResult={raceResult}
+          raceResult={typedRaceResult}
           drivers={drivers}
           isDeadlinePassed={deadlinePassed}
         />

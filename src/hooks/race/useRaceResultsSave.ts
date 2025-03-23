@@ -33,8 +33,8 @@ export const useRaceResultsSave = (
         race_id: raceId,
         qualifying_results: qualifyingResults,
         race_results: raceResults,
-        pole_time: formattedPoleTime,
-        fastest_lap: fastestLap,
+        pole_time: formattedPoleTime || '', // Ensure it's never undefined
+        fastest_lap: fastestLap || null,
         dnf_drivers: dnfDrivers
       };
 

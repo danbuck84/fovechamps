@@ -6,6 +6,7 @@ import { useDriverPositions } from "@/hooks/race/useDriverPositions";
 import { useDNFDrivers } from "@/hooks/race/useDNFDrivers";
 import { useRaceResultsSave } from "@/hooks/race/useRaceResultsSave";
 import { useFormatters } from "@/hooks/race/useFormatters";
+import type { RaceResult } from "@/types/betting";
 
 export const useRaceAdminResults = () => {
   const navigate = useNavigate();

@@ -5,7 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useDriversData } from "./race/useDriversData";
 import type { Race, RaceResult, Prediction } from "@/types/betting";
 
-// Make sure this interface aligns with RaceResult type
+// Make this interface fully align with RaceResult type for consistency
 interface RaceResultsResponse {
   id: string;
   race_id: string;
@@ -14,7 +14,7 @@ interface RaceResultsResponse {
   dnf_drivers: string[] | null;
   qualifying_results: string[];
   race_results: string[];
-  pole_time: string; // Changed from optional to required to match RaceResult
+  pole_time: string; // Required to match RaceResult
 }
 
 export function useRaceResults(raceId?: string) {
@@ -59,10 +59,12 @@ export function useRaceResults(raceId?: string) {
         
       if (predictionsError) throw predictionsError;
 
-      // Fix the race result type if it exists
+      // Ensure race result has required fields with defaults if needed
       const typedResult = results ? {
         ...results,
         pole_time: results.pole_time || '', // Default to empty string if null/undefined
+        fastest_lap: results.fastest_lap || null,
+        dnf_drivers: results.dnf_drivers || []
       } as RaceResultsResponse : null;
       
       return {
