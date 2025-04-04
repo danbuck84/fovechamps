@@ -24,26 +24,28 @@ const Tables = () => {
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold mb-8 text-center">Tabelas de Classificação</h1>
           
-          {/* Tabela de Pilotos */}
-          <PointsTable 
-            title="Campeonato de Pilotos"
-            data={tableData.drivers || []}
-            races={races}
-            getName={(driver) => `${driver.name}`}
-            getPoints={(driver, raceId) => driver.points[raceId] || 0}
-            isDrivers={true}
-            getNationality={(driver) => driver.nationality || "N/A"}
-            getTeam={(driver) => driver.team_name || ""}
-          />
-          
-          {/* Tabela de Construtores */}
-          <PointsTable 
-            title="Campeonato de Construtores"
-            data={tableData.teams || []}
-            races={races}
-            getName={(team) => `${team.name}`}
-            getPoints={(team, raceId) => team.points[raceId] || 0}
-          />
+          <div className="tables-container mx-auto">
+            {/* Tabela de Pilotos */}
+            <PointsTable 
+              title="Campeonato de Pilotos"
+              data={tableData.drivers || []}
+              races={races}
+              getName={(driver) => `${driver.name}`}
+              getPoints={(driver, raceId) => driver.points[raceId] || 0}
+              isDrivers={true}
+              getNationality={(driver) => driver.nationality || "N/A"}
+              getTeam={(driver) => driver.team_name || ""}
+            />
+            
+            {/* Tabela de Construtores */}
+            <PointsTable 
+              title="Campeonato de Construtores"
+              data={tableData.teams || []}
+              races={races}
+              getName={(team) => `${team.name}`}
+              getPoints={(team, raceId) => team.points[raceId] || 0}
+            />
+          </div>
         </div>
       </div>
     </MainLayout>

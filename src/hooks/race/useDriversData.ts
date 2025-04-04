@@ -21,24 +21,49 @@ export const useDriversData = () => {
 
       if (error) throw error;
       
-      // Os pilotos já são ordenados por equipe (team_id)
-      // Agora vamos garantir que dentro de cada equipe, eles estejam ordenados por sobrenome
-      const sortedDrivers = [...(data as (Driver & { team: { name: string; engine: string } })[])];
+      // Manually adjust team assignments for Tsunoda and Lawson
+      const modifiedData = data.map((driver: any) => {
+        if (driver.name === "Yuki Tsunoda" && driver.team) {
+          // Move Tsunoda to Red Bull
+          return {
+            ...driver,
+            team: {
+              ...driver.team,
+              name: "Red Bull Racing",
+              engine: "Honda RBPT"
+            },
+            team_name: "Red Bull Racing"
+          };
+        } else if (driver.name === "Liam Lawson" && driver.team) {
+          // Move Lawson to RB (formerly AlphaTauri)
+          return {
+            ...driver,
+            team: {
+              ...driver.team,
+              name: "RB",
+              engine: "Honda RBPT"
+            },
+            team_name: "RB"
+          };
+        }
+        return driver;
+      });
       
-      sortedDrivers.sort((a, b) => {
-        // Primeiro, ordenar por nome da equipe
+      // Sort drivers by team name first, then by surname
+      modifiedData.sort((a: any, b: any) => {
+        // First, sort by team name
         if (a.team.name !== b.team.name) {
           return a.team.name.localeCompare(b.team.name);
         }
         
-        // Se forem da mesma equipe, ordenar por sobrenome
+        // If same team, sort by surname
         const aSurname = a.name.split(' ').slice(1).join(' ');
         const bSurname = b.name.split(' ').slice(1).join(' ');
         
         return aSurname.localeCompare(bSurname);
       });
       
-      return sortedDrivers;
+      return modifiedData;
     },
   });
 

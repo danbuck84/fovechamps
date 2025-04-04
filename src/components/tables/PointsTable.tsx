@@ -68,6 +68,11 @@ export const PointsTable = ({
                   })
                   .map((item, index) => {
                     const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
+                    
+                    // Apply special styling for swapped drivers
+                    const isSwappedDriver = item.name === "Yuki Tsunoda" || item.name === "Liam Lawson";
+                    const displayTeam = (getTeam && getTeam(item)) || "";
+                    
                     return (
                       <TableRow key={item.id} className="border-b border-racing-silver/20">
                         <TableCell className="bg-racing-black text-racing-white font-medium text-center">{index + 1}</TableCell>
@@ -75,7 +80,9 @@ export const PointsTable = ({
                           <>
                             <TableCell className="text-racing-white">{getName(item)}</TableCell>
                             <TableCell className="text-center text-racing-white">{getNationality && getNationality(item)}</TableCell>
-                            <TableCell className="text-racing-white">{getTeam && getTeam(item)}</TableCell>
+                            <TableCell className={`text-racing-white ${isSwappedDriver ? "font-medium" : ""}`}>
+                              {displayTeam}
+                            </TableCell>
                           </>
                         ) : (
                           <TableCell className="text-racing-white">{getName(item)}</TableCell>

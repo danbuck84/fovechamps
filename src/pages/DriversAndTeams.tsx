@@ -20,7 +20,34 @@ const DriversAndTeams = () => {
         .order("name");
         
       if (error) throw error;
-      return data;
+
+      // Manually adjust team assignments for Tsunoda and Lawson
+      const modifiedData = data.map(driver => {
+        if (driver.name === "Yuki Tsunoda" && driver.team) {
+          // Move Tsunoda to Red Bull
+          return {
+            ...driver,
+            team: {
+              ...driver.team,
+              name: "Red Bull Racing",
+              engine: "Honda RBPT"
+            }
+          };
+        } else if (driver.name === "Liam Lawson" && driver.team) {
+          // Move Lawson to RB (formerly AlphaTauri)
+          return {
+            ...driver,
+            team: {
+              ...driver.team,
+              name: "RB",
+              engine: "Honda RBPT"
+            }
+          };
+        }
+        return driver;
+      });
+      
+      return modifiedData;
     },
   });
   
@@ -33,8 +60,37 @@ const DriversAndTeams = () => {
         .order("name");
         
       if (error) throw error;
-      return data;
+
+      // Modify drivers in each team based on our swap
+      const modifiedTeams = data.map(team => {
+        // For Red Bull Racing
+        if (team.name === "Red Bull Racing") {
+          return {
+            ...team,
+            drivers: team.drivers ? [
+              ...team.drivers.filter(d => d.name !== "Liam Lawson"),
+              // Add Tsunoda to Red Bull
+              ...(drivers?.filter(d => d.name === "Yuki Tsunoda") || [])
+            ] : []
+          };
+        }
+        // For RB (formerly AlphaTauri)
+        else if (team.name === "RB") {
+          return {
+            ...team,
+            drivers: team.drivers ? [
+              ...team.drivers.filter(d => d.name !== "Yuki Tsunoda"),
+              // Add Lawson to RB
+              ...(drivers?.filter(d => d.name === "Liam Lawson") || [])
+            ] : []
+          };
+        }
+        return team;
+      });
+      
+      return modifiedTeams;
     },
+    enabled: !!drivers,
   });
   
   const handleDriverClick = (driverId: string) => {
@@ -63,21 +119,23 @@ const DriversAndTeams = () => {
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold text-racing-white mb-6 text-center">Pilotos e Equipes</h1>
           
-          <Tabs defaultValue="drivers" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="w-full bg-racing-black border border-racing-silver/20 mb-6">
-              <TabsTrigger 
-                value="drivers" 
-                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white"
-              >
-                Pilotos
-              </TabsTrigger>
-              <TabsTrigger 
-                value="teams" 
-                className="flex-1 py-3 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white"
-              >
-                Equipes
-              </TabsTrigger>
-            </TabsList>
+          <Tabs defaultValue="drivers" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="flex justify-center mb-6">
+              <TabsList className="bg-racing-black border border-racing-silver/20 h-auto">
+                <TabsTrigger 
+                  value="drivers" 
+                  className="px-8 py-2.5 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver"
+                >
+                  Pilotos
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="teams" 
+                  className="px-8 py-2.5 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver"
+                >
+                  Equipes
+                </TabsTrigger>
+              </TabsList>
+            </div>
             
             <TabsContent value="drivers" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
