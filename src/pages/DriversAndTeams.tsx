@@ -65,24 +65,40 @@ const DriversAndTeams = () => {
       const modifiedTeams = data.map(team => {
         // For Red Bull Racing
         if (team.name === "Red Bull Racing") {
+          const updatedDrivers = team.drivers 
+            ? team.drivers.filter(d => d.name !== "Liam Lawson") 
+            : [];
+            
+          // Add Tsunoda to Red Bull if we have the drivers data
+          if (drivers) {
+            const tsunoda = drivers.find(d => d.name === "Yuki Tsunoda");
+            if (tsunoda) {
+              updatedDrivers.push(tsunoda);
+            }
+          }
+          
           return {
             ...team,
-            drivers: team.drivers ? [
-              ...team.drivers.filter(d => d.name !== "Liam Lawson"),
-              // Add Tsunoda to Red Bull
-              ...(drivers?.filter(d => d.name === "Yuki Tsunoda") || [])
-            ] : []
+            drivers: updatedDrivers
           };
         }
         // For RB (formerly AlphaTauri)
         else if (team.name === "RB") {
+          const updatedDrivers = team.drivers 
+            ? team.drivers.filter(d => d.name !== "Yuki Tsunoda") 
+            : [];
+            
+          // Add Lawson to RB if we have the drivers data
+          if (drivers) {
+            const lawson = drivers.find(d => d.name === "Liam Lawson");
+            if (lawson) {
+              updatedDrivers.push(lawson);
+            }
+          }
+          
           return {
             ...team,
-            drivers: team.drivers ? [
-              ...team.drivers.filter(d => d.name !== "Yuki Tsunoda"),
-              // Add Lawson to RB
-              ...(drivers?.filter(d => d.name === "Liam Lawson") || [])
-            ] : []
+            drivers: updatedDrivers
           };
         }
         return team;

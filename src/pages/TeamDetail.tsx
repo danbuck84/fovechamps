@@ -34,11 +34,14 @@ const TeamDetail = () => {
           .single();
           
         if (!tsunodaQuery.error && tsunodaQuery.data) {
+          // Create a new array with all drivers except Lawson, then add Tsunoda
+          const updatedDrivers = data.drivers
+            .filter(d => d.name !== "Liam Lawson")
+            .concat([tsunodaQuery.data]);
+          
           return {
             ...data,
-            drivers: data.drivers.filter(d => d.name !== "Liam Lawson").concat([
-              {...tsunodaQuery.data, team: data}
-            ])
+            drivers: updatedDrivers
           };
         }
       } else if (data.name === "RB") {
@@ -50,11 +53,14 @@ const TeamDetail = () => {
           .single();
           
         if (!lawsonQuery.error && lawsonQuery.data) {
+          // Create a new array with all drivers except Tsunoda, then add Lawson
+          const updatedDrivers = data.drivers
+            .filter(d => d.name !== "Yuki Tsunoda")
+            .concat([lawsonQuery.data]);
+          
           return {
             ...data,
-            drivers: data.drivers.filter(d => d.name !== "Yuki Tsunoda").concat([
-              {...lawsonQuery.data, team: data}
-            ])
+            drivers: updatedDrivers
           };
         }
       }
