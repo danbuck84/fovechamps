@@ -24,7 +24,7 @@ const Tables = () => {
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold mb-8 text-center">Tabelas de Classificação</h1>
           
-          <div className="tables-container mx-auto">
+          <div className="mx-auto">
             {/* Tabela de Pilotos */}
             <PointsTable 
               title="Campeonato de Pilotos"

@@ -124,13 +124,13 @@ const DriversAndTeams = () => {
               <TabsList className="bg-racing-black border border-racing-silver/20 h-auto">
                 <TabsTrigger 
                   value="drivers" 
-                  className="px-8 py-2.5 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver"
+                  className="data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver px-8 py-2.5"
                 >
                   Pilotos
                 </TabsTrigger>
                 <TabsTrigger 
                   value="teams" 
-                  className="px-8 py-2.5 data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver"
+                  className="data-[state=active]:bg-racing-red data-[state=active]:text-racing-white text-racing-silver px-8 py-2.5"
                 >
                   Equipes
                 </TabsTrigger>
@@ -146,7 +146,10 @@ const DriversAndTeams = () => {
                     onClick={() => handleDriverClick(driver.id)}
                   >
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-racing-white">{driver.name}</CardTitle>
+                      <CardTitle className="text-racing-white flex items-center">
+                        <span className="mr-2 bg-racing-red text-white text-sm px-2 py-1 rounded">{driver.number}</span>
+                        {driver.name}
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-racing-silver">
