@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase, debugSupabase } from "@/lib/supabase";
-import MainLayout from "@/components/layout/MainLayout";
 import { toast } from "sonner";
 
 export default function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -90,10 +89,6 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  console.log("PrivateRoute: Rendering protected content");
-  return (
-    <MainLayout username={username} isAdmin={isAdmin}>
-      {children}
-    </MainLayout>
-  );
+  // Passamos username e isAdmin como props para o componente filho através de clonagem
+  return React.cloneElement(children as React.ReactElement, { username, isAdmin });
 }

@@ -21,15 +21,30 @@ import PrivateRoute from "@/components/auth/PrivateRoute";
 import MainLayout from "@/components/layout/MainLayout";
 
 // Componente que envolve rotas privadas com o SidebarProvider
-const PrivateRouteWithSidebar = ({ children }: { children: React.ReactNode }) => (
-  <PrivateRoute>
+const PrivateRouteWithSidebar = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <PrivateRoute>
+      <WrappedLayout>
+        {children}
+      </WrappedLayout>
+    </PrivateRoute>
+  );
+};
+
+// Componente que envolve MainLayout com SidebarProvider
+const WrappedLayout = ({ children, username = "", isAdmin = false }: { 
+  children: React.ReactNode;
+  username?: string;
+  isAdmin?: boolean;
+}) => {
+  return (
     <SidebarProvider defaultOpen={true}>
-      <MainLayout>
+      <MainLayout username={username} isAdmin={isAdmin}>
         {children}
       </MainLayout>
     </SidebarProvider>
-  </PrivateRoute>
-);
+  );
+};
 
 const routes = createBrowserRouter([
   {
