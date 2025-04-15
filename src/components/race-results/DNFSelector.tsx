@@ -29,11 +29,9 @@ export const DNFSelector = ({
       <Select
         value={survivorsCount.toString()}
         onValueChange={(value) => {
-          // Convert survivors to DNF count and pass to handler
-          const survivorCount = parseInt(value);
-          const dnfCount = 20 - survivorCount;
-          console.log(`Selected ${survivorCount} survivors, which means ${dnfCount} DNFs`);
-          handleDNFCountChange(dnfCount.toString());
+          // Pass the survivors count directly to the handler
+          console.log(`Selected ${value} survivors`);
+          handleDNFCountChange(value);
         }}
       >
         <SelectTrigger className="w-full bg-racing-black text-racing-white border-racing-silver/20">

@@ -2,6 +2,7 @@
 import { useTableData } from "@/hooks/useTableData";
 import { PointsTable } from "@/components/tables/PointsTable";
 import MainLayout from "@/components/layout/MainLayout";
+import { useEffect } from "react";
 
 const Tables = () => {
   const { races, processTableData } = useTableData();

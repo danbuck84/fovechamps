@@ -49,6 +49,9 @@ export const useTableData = () => {
       if (error) throw error;
       return data as DriverPoints[];
     },
+    // Desabilitamos o cache para garantir dados atualizados
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   // Buscar pontos dos construtores
@@ -68,6 +71,9 @@ export const useTableData = () => {
       if (error) throw error;
       return data as ConstructorPoints[];
     },
+    // Desabilitamos o cache para garantir dados atualizados
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   // Buscar pontos dos jogos
@@ -88,6 +94,9 @@ export const useTableData = () => {
       if (error) throw error;
       return data as GamePoints[];
     },
+    // Desabilitamos o cache para garantir dados atualizados
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   // Processar dados para o formato agrupado

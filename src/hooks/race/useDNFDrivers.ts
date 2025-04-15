@@ -19,20 +19,26 @@ export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
     }
   };
 
-  const handleDNFCount = (count: number) => {
-    console.log("Handling DNF count:", count);
-    // Reset DNF drivers array when count changes
+  // Esta função recebe o número de sobreviventes, não de DNFs
+  const handleDNFCount = (survivorCount: number) => {
+    console.log("Handling survivor count:", survivorCount);
+    // Calculamos quantos DNFs temos com base no número total de pilotos (20) 
+    // menos o número de sobreviventes
+    const dnfCount = 20 - survivorCount;
+    
+    // Resetamos a lista de DNFs quando a contagem muda
     setDNFDrivers(prev => {
-      if (count === 0) {
+      if (dnfCount === 0) {
+        // Se não houver DNFs, retornamos uma lista vazia
         return [];
-      } else if (prev.length > count) {
-        // If we need to reduce the number, slice the array
-        return prev.slice(0, count);
-      } else if (prev.length < count) {
-        // Se precisamos de mais pilotos DNF, mantemos o estado atual
+      } else if (prev.length > dnfCount) {
+        // Se precisamos reduzir o número de DNFs, cortamos a array
+        return prev.slice(0, dnfCount);
+      } else if (prev.length < dnfCount) {
+        // Se precisamos mais pilotos DNF, mantemos o estado atual
         // Na implementação real, você precisaria de uma UI para selecionar quais pilotos
         // específicos devem ser adicionados para atingir a contagem desejada
-        console.log(`Need UI to select ${count - prev.length} more DNF drivers`);
+        console.log(`Precisamos selecionar mais ${dnfCount - prev.length} pilotos DNF`);
       }
       return prev;
     });

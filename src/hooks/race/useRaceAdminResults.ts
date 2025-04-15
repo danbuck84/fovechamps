@@ -60,6 +60,12 @@ export const useRaceAdminResults = () => {
     }
   }, [existingResult]);
 
+  const handleDNFCountChange = (value: string) => {
+    const count = parseInt(value, 10);
+    console.log("Changing survivors count to:", count);
+    handleDNFCount(count);
+  };
+
   const handleSaveResults = async () => {
     // Check for duplicates in both qualifying and race results
     if (hasQualifyingDuplicates) {
