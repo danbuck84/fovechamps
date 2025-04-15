@@ -52,7 +52,7 @@ export const PastRacesCard = ({ races, hasResults }: PastRacesCardProps) => {
                 className="text-racing-red hover:text-racing-red/80 hover:bg-racing-red/10"
               >
                 <Trophy className="h-4 w-4 mr-1" />
-                Ver todas corridas passadas
+                Ver todas as corridas passadas
                 <ArrowRight className="h-4 w-4 ml-1" />
               </Button>
             </div>

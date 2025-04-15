@@ -35,15 +35,15 @@ export const useDriversData = () => {
             team_name: "Red Bull Racing"
           };
         } else if (driver.name === "Liam Lawson" && driver.team) {
-          // Move Lawson to RB (formerly AlphaTauri)
+          // Move Lawson to RB Visa Cash App
           return {
             ...driver,
             team: {
               ...driver.team,
-              name: "RB",
+              name: "RB Visa Cash App",
               engine: "Honda RBPT"
             },
-            team_name: "RB"
+            team_name: "RB Visa Cash App"
           };
         }
         return driver;

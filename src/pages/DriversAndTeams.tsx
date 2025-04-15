@@ -34,12 +34,12 @@ const DriversAndTeams = () => {
             }
           };
         } else if (driver.name === "Liam Lawson" && driver.team) {
-          // Move Lawson to RB (formerly AlphaTauri)
+          // Move Lawson to RB Visa Cash App
           return {
             ...driver,
             team: {
               ...driver.team,
-              name: "RB",
+              name: "RB Visa Cash App",
               engine: "Honda RBPT"
             }
           };
@@ -98,6 +98,7 @@ const DriversAndTeams = () => {
           
           return {
             ...team,
+            name: "RB Visa Cash App",
             drivers: updatedDrivers
           };
         }

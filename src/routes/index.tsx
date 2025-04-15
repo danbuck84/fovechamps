@@ -17,6 +17,7 @@ import DriversAndTeams from "@/pages/DriversAndTeams";
 import DriverDetail from "@/pages/DriverDetail";
 import TeamDetail from "@/pages/TeamDetail";
 import NotFound from "@/pages/NotFound";
+import PastPredictions from "@/pages/PastPredictions";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 import MainLayout from "@/components/layout/MainLayout";
 
@@ -76,6 +77,14 @@ const routes = createBrowserRouter([
     element: (
       <PrivateRouteWithSidebar>
         <MyPredictions />
+      </PrivateRouteWithSidebar>
+    ),
+  },
+  {
+    path: "/past-predictions",
+    element: (
+      <PrivateRouteWithSidebar>
+        <PastPredictions />
       </PrivateRouteWithSidebar>
     ),
   },

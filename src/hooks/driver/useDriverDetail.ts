@@ -35,10 +35,10 @@ export const useDriverDetail = () => {
           ...data,
           team: {
             ...data.team,
-            name: "RB",
+            name: "RB Visa Cash App",
             engine: "Honda RBPT"
           },
-          team_name: "RB"
+          team_name: "RB Visa Cash App"
         };
       }
       

@@ -39,7 +39,13 @@ export const useTeamDetail = () => {
             drivers: updatedDrivers
           };
         }
-      } else if (data.name === "RB") {
+      } else if (data.name === "RB" || data.name === "RB Visa Cash App") {
+        // Rename team if needed
+        const updatedData = {
+          ...data,
+          name: "RB Visa Cash App"
+        };
+        
         // Add Lawson to RB
         const lawsonQuery = await supabase
           .from("drivers")
@@ -49,15 +55,17 @@ export const useTeamDetail = () => {
           
         if (!lawsonQuery.error && lawsonQuery.data) {
           // Create a new array with all drivers except Tsunoda, then add Lawson
-          const updatedDrivers = data.drivers
+          const updatedDrivers = updatedData.drivers
             .filter(d => d.name !== "Yuki Tsunoda")
             .concat([lawsonQuery.data]);
           
           return {
-            ...data,
+            ...updatedData,
             drivers: updatedDrivers
           };
         }
+        
+        return updatedData;
       }
       
       return data;
