@@ -27,7 +27,7 @@ export const RaceResultsCard = ({
         </CardTitle>
         <Button
           variant="outline"
-          onClick={() => navigate(`/race-results-view/${raceId}`)}
+          onClick={() => navigate(`/race-results/${raceId}`)}
           className="bg-racing-black text-racing-white border-racing-red hover:bg-racing-red/10"
         >
           <Trophy className="w-4 h-4 mr-2" />
