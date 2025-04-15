@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { createBrowserRouter } from "react-router-dom";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 import Auth from "@/pages/Auth";
 import Dashboard from "@/pages/Dashboard";
@@ -16,6 +18,18 @@ import DriverDetail from "@/pages/DriverDetail";
 import TeamDetail from "@/pages/TeamDetail";
 import NotFound from "@/pages/NotFound";
 import PrivateRoute from "@/components/auth/PrivateRoute";
+import MainLayout from "@/components/layout/MainLayout";
+
+// Componente que envolve rotas privadas com o SidebarProvider
+const PrivateRouteWithSidebar = ({ children }: { children: React.ReactNode }) => (
+  <PrivateRoute>
+    <SidebarProvider defaultOpen={true}>
+      <MainLayout>
+        {children}
+      </MainLayout>
+    </SidebarProvider>
+  </PrivateRoute>
+);
 
 const routes = createBrowserRouter([
   {
@@ -29,113 +43,113 @@ const routes = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <Dashboard />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/profile",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <Profile />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/my-predictions",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <MyPredictions />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/tables",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <Tables />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/race/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RaceResultsView />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/race-results/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RaceResults />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/race-predictions/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RacePredictions />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/race-prediction/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RacePredictions />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/race-points/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RaceResults />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/admin/race-results/:raceId",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <RaceResultsAdmin />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/admin/race-management",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <AdminRaceManagement />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/drivers-and-teams",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <DriversAndTeams />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/driver/:id",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <DriverDetail />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
     path: "/team/:id",
     element: (
-      <PrivateRoute>
+      <PrivateRouteWithSidebar>
         <TeamDetail />
-      </PrivateRoute>
+      </PrivateRouteWithSidebar>
     ),
   },
   {
