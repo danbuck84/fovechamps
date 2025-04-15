@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +62,9 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-racing-black flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-racing-black border-racing-silver/20">
+      <Card className={`w-full ${isMobile ? 'max-w-[95%]' : 'max-w-md'} bg-racing-black border-racing-silver/20`}>
         <CardHeader className="text-center">
-          <CardTitle className="text-racing-white text-3xl font-bold">FoVeChamps</CardTitle>
+          <CardTitle className={`text-racing-white ${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>FoVeChamps</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
