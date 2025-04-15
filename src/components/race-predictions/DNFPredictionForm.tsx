@@ -48,7 +48,7 @@ export const DNFPredictionForm = ({
             <SelectItem 
               key={i} 
               value={i.toString()}
-              className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+              className="hover:bg-racing-black/10 hover:text-racing-black focus:bg-racing-black/10 focus:text-racing-black cursor-pointer"
             >
               {i} piloto{i !== 1 ? 's' : ''}
             </SelectItem>

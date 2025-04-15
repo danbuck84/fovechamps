@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 
 export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
@@ -20,18 +21,21 @@ export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
 
   const handleDNFCount = (count: number) => {
     console.log("Handling DNF count:", count);
-    // Update DNF drivers count
-    if (count === 0) {
-      setDNFDrivers([]);
-    } else if (dnfDrivers.length > count) {
-      // If we need to reduce the number, slice the array
-      setDNFDrivers(prev => prev.slice(0, count));
-    } else if (dnfDrivers.length < count) {
-      // If we need more DNF drivers, we'll keep the current ones
-      // Note: In a real implementation, you'd need a UI to select which specific drivers 
-      // should be added to reach the desired count
-      console.log(`Need UI to select ${count - dnfDrivers.length} more DNF drivers`);
-    }
+    // Reset DNF drivers array when count changes
+    setDNFDrivers(prev => {
+      if (count === 0) {
+        return [];
+      } else if (prev.length > count) {
+        // If we need to reduce the number, slice the array
+        return prev.slice(0, count);
+      } else if (prev.length < count) {
+        // Se precisamos de mais pilotos DNF, mantemos o estado atual
+        // Na implementação real, você precisaria de uma UI para selecionar quais pilotos
+        // específicos devem ser adicionados para atingir a contagem desejada
+        console.log(`Need UI to select ${count - prev.length} more DNF drivers`);
+      }
+      return prev;
+    });
   };
 
   return {
