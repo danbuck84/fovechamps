@@ -15,9 +15,11 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleDelete = async (predictionId: string, event: React.MouseEvent) => {
-    // Prevent event propagation to parent elements
-    event.stopPropagation();
+  const handleDelete = async (predictionId: string, event?: React.MouseEvent) => {
+    // If event exists, prevent propagation to parent elements
+    if (event) {
+      event.stopPropagation();
+    }
     
     try {
       const { error } = await supabase
@@ -75,7 +77,7 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
             <PredictionCard
               prediction={prediction}
               driversMap={driversMap}
-              handleDelete={(predictionId) => (e) => handleDelete(predictionId, e)}
+              handleDelete={handleDelete}
             />
           </div>
         </div>

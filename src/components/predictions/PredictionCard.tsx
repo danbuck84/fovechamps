@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 interface PredictionCardProps {
   prediction: any;
   driversMap: Record<string, string>;
-  handleDelete: (predictionId: string) => Promise<void>;
+  handleDelete: (predictionId: string, event?: React.MouseEvent) => Promise<void>;
 }
 
 const PredictionCard = ({ prediction, driversMap, handleDelete }: PredictionCardProps) => {
@@ -65,7 +65,7 @@ const PredictionCard = ({ prediction, driversMap, handleDelete }: PredictionCard
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              handleDelete(prediction.id);
+              handleDelete(prediction.id, e);
             }}
           >
             <Trash2 className="h-4 w-4" />
