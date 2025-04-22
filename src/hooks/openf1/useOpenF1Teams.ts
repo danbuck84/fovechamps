@@ -9,21 +9,35 @@ export interface OpenF1Team {
 }
 
 export function useOpenF1Teams(currentSeason: number) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["openf1-teams", currentSeason],
     queryFn: async () => {
       try {
-        return await fetchTeams({ season: currentSeason });
-      } catch {
+        console.log(`Fetching teams for season ${currentSeason}`);
+        const response = await fetchTeams({ season: currentSeason });
+        
+        if (!response || !Array.isArray(response)) {
+          console.error("Invalid teams response:", response);
+          return [];
+        }
+        
+        console.log(`Found ${response.length} teams for season ${currentSeason}`);
+        return response;
+      } catch (err) {
+        console.error(`Error fetching teams for season ${currentSeason}:`, err);
         toast.error("Não foi possível carregar as equipes desta temporada");
-        return [];
+        throw err;
       }
     },
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    // Add a timeout to prevent hanging requests
+    gcTime: 10 * 60 * 1000,
   });
 
   return {
     teams: data || [],
     loadingTeams: isLoading,
+    teamError: error,
   };
 }

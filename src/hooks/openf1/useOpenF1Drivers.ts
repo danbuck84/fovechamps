@@ -13,21 +13,35 @@ export interface OpenF1Driver {
 }
 
 export function useOpenF1Drivers(currentSeason: number) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["openf1-drivers", currentSeason],
     queryFn: async () => {
       try {
-        return await fetchDrivers({ season: currentSeason });
-      } catch {
+        console.log(`Fetching drivers for season ${currentSeason}`);
+        const response = await fetchDrivers({ season: currentSeason });
+        
+        if (!response || !Array.isArray(response)) {
+          console.error("Invalid drivers response:", response);
+          return [];
+        }
+        
+        console.log(`Found ${response.length} drivers for season ${currentSeason}`);
+        return response;
+      } catch (err) {
+        console.error(`Error fetching drivers for season ${currentSeason}:`, err);
         toast.error("Não foi possível carregar os pilotos desta temporada");
-        return [];
+        throw err;
       }
     },
     staleTime: 5 * 60 * 1000,
+    retry: 2,
+    // Add a timeout to prevent hanging requests
+    gcTime: 10 * 60 * 1000,
   });
 
   return {
     drivers: data || [],
     loadingDrivers: isLoading,
+    driverError: error,
   };
 }

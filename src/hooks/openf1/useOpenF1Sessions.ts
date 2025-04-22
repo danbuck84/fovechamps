@@ -41,11 +41,13 @@ export function useOpenF1Sessions(currentSeason: number) {
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,
+    // Add a timeout to prevent hanging requests
+    gcTime: 10 * 60 * 1000,
   });
 
   return {
     raceSessions: data || [],
     loadingRaces: isLoading,
-    error,
+    raceError: error,
   };
 }
