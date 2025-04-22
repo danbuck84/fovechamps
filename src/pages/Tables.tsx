@@ -5,6 +5,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
 const Tables = () => {
   const [selectedSeason, setSelectedSeason] = useState<number>(2024);
@@ -15,7 +16,10 @@ const Tables = () => {
     return (
       <MainLayout>
         <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
-          <p className="text-racing-silver">Carregando dados...</p>
+          <div className="flex flex-col items-center">
+            <Loader2 className="h-10 w-10 text-racing-red animate-spin mb-4" />
+            <p className="text-racing-silver">Carregando dados da temporada {selectedSeason}...</p>
+          </div>
         </div>
       </MainLayout>
     );
@@ -42,6 +46,7 @@ const Tables = () => {
                   <SelectItem value="2024" className="hover:bg-racing-white/10">2024</SelectItem>
                   <SelectItem value="2023" className="hover:bg-racing-white/10">2023</SelectItem>
                   <SelectItem value="2022" className="hover:bg-racing-white/10">2022</SelectItem>
+                  <SelectItem value="2021" className="hover:bg-racing-white/10">2021</SelectItem>
                 </SelectContent>
               </Select>
             </div>

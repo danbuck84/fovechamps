@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -13,8 +13,9 @@ interface PredictionCardProps {
 
 const PredictionCard = ({ prediction, driversMap, handleDelete }: PredictionCardProps) => {
   return (
-    <div
-      className="bg-racing-black border border-racing-silver/20 rounded-lg p-6"
+    <Link 
+      to={`/race-predictions/${prediction.races?.id}`}
+      className="block bg-racing-black border border-racing-silver/20 rounded-lg p-6 hover:bg-racing-black/80 transition-colors"
     >
       <div className="flex justify-between items-start">
         <div>
@@ -49,26 +50,29 @@ const PredictionCard = ({ prediction, driversMap, handleDelete }: PredictionCard
               </p>
             )}
           </div>
+          
+          <div className="mt-4 flex items-center text-racing-red">
+            <span className="text-sm">Ver detalhes completos</span>
+            <ChevronRight size={16} className="ml-1" />
+          </div>
         </div>
 
         <div className="flex gap-2">
-          <Link
-            to={`/race-predictions/${prediction.races?.id}`}
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 w-10 bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
-          >
-            <Edit className="h-4 w-4" />
-          </Link>
           <Button
             variant="outline"
             size="icon"
             className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-red hover:text-racing-white"
-            onClick={() => handleDelete(prediction.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleDelete(prediction.id);
+            }}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

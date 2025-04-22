@@ -1,9 +1,5 @@
 
-import { Link } from "react-router-dom";
-import { Edit, Trash2 } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import PredictionCard from "./PredictionCard";

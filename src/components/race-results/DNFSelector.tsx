@@ -32,7 +32,6 @@ export const DNFSelector = ({
         <Select
           value={survivorsCount.toString()}
           onValueChange={(value) => {
-            // Pass the survivors count directly to the handler
             console.log(`Selected ${value} survivors`);
             handleDNFCountChange(value);
           }}

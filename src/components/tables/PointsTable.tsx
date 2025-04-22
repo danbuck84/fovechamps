@@ -38,6 +38,20 @@ export const PointsTable = ({
 }: PointsTableProps) => {
   const isMobile = useIsMobile();
   
+  // Display a message if no data is available
+  if (!data || data.length === 0) {
+    return (
+      <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full mx-auto">
+        <CardHeader className="px-4 md:px-6">
+          <CardTitle className="text-xl text-racing-white">{title}</CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 md:px-6 py-6">
+          <p className="text-racing-silver text-center">Nenhum dado disponível para esta temporada.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+  
   return (
     <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full mx-auto">
       <CardHeader className="px-4 md:px-6">

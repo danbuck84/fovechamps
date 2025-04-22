@@ -6,6 +6,7 @@ import { useMyPredictions } from "@/hooks/useMyPredictions";
 import PredictionsList from "@/components/predictions/PredictionsList";
 import LoadingState from "@/components/predictions/LoadingState";
 import EmptyState from "@/components/predictions/EmptyState";
+import MainLayout from "@/components/layout/MainLayout";
 
 const MyPredictions = () => {
   const navigate = useNavigate();
@@ -27,31 +28,39 @@ const MyPredictions = () => {
   const { predictions, isLoading, error, driversMap, refetch } = useMyPredictions(userId);
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <MainLayout>
+        <LoadingState />
+      </MainLayout>
+    );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p className="text-racing-red">Erro ao carregar suas apostas. Por favor, tente novamente.</p>
-      </div>
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-racing-red">Erro ao carregar suas apostas. Por favor, tente novamente.</p>
+        </div>
+      </MainLayout>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-racing-white mb-8">Minhas Apostas</h1>
-      
-      {predictions && predictions.length > 0 ? (
-        <PredictionsList 
-          predictions={predictions} 
-          driversMap={driversMap}
-          refetch={refetch}
-        />
-      ) : (
-        <EmptyState />
-      )}
-    </div>
+    <MainLayout>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-racing-white mb-8">Minhas Apostas</h1>
+        
+        {predictions && predictions.length > 0 ? (
+          <PredictionsList 
+            predictions={predictions} 
+            driversMap={driversMap}
+            refetch={refetch}
+          />
+        ) : (
+          <EmptyState />
+        )}
+      </div>
+    </MainLayout>
   );
 };
 
