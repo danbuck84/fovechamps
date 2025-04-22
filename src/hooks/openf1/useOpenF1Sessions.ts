@@ -19,7 +19,10 @@ export function useOpenF1Sessions(currentSeason: number) {
     queryFn: async () => {
       try {
         console.log(`Fetching sessions for season ${currentSeason}`);
-        const sessions = await fetchSessions({ season: currentSeason });
+        // For 2025, use 2024 data as fallback since it's a future season
+        const actualSeason = currentSeason === 2025 ? 2024 : currentSeason;
+        
+        const sessions = await fetchSessions({ season: actualSeason });
         
         if (!sessions || !Array.isArray(sessions)) {
           console.error("Invalid sessions response:", sessions);
@@ -31,7 +34,7 @@ export function useOpenF1Sessions(currentSeason: number) {
           (session: OpenF1Session) => session.session_type === "Race"
         );
         
-        console.log(`Found ${racesSessions.length} race sessions for season ${currentSeason}`);
+        console.log(`Found ${racesSessions.length} race sessions for season ${currentSeason} (using ${actualSeason} data)`);
         return racesSessions;
       } catch (err) {
         console.error(`Error fetching sessions for season ${currentSeason}:`, err);

@@ -59,9 +59,10 @@ export async function processOpenF1Results(
         id: driver.driver_id,
         name: driver.name || "Desconhecido",
         team_name: driver.team_name || "Desconhecido",
+        team_id: driver.team_id || "unknown",
         nationality: driver.nationality || "N/A",
         points: {},
-        total: 0,  // Corrigido o valor de R0 para 0
+        total: 0,
       };
     }
   });
@@ -94,9 +95,12 @@ export async function processOpenF1Results(
       
       console.log(`Fetching results for session ${session.session_key} (${session.session_name || 'Unnamed'})`);
       
+      // For 2025, use 2024 data as fallback since it's a future season
+      const actualSeason = currentSeason === 2025 ? 2024 : currentSeason;
+      
       const results: OpenF1Result[] = await fetchResults({
         session_key: session.session_key,
-        season: currentSeason,
+        season: actualSeason,
       });
 
       if (!results || !Array.isArray(results) || results.length === 0) {

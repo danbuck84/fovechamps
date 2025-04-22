@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const Tables = () => {
-  const [selectedSeason, setSelectedSeason] = useState<number>(2025);
+  const [selectedSeason, setSelectedSeason] = useState<number>(2024); // Start with 2024 since we have data for it
   const [retryCount, setRetryCount] = useState(0);
   const { races, driversStandings, teamsStandings, loading, error, currentSeason } = useOpenF1TableData(selectedSeason);
   const isMobile = useIsMobile();
@@ -40,7 +40,7 @@ const Tables = () => {
     // Delay the season change slightly to ensure React Query refetches
     setTimeout(() => {
       // Toggle season back and forth to force a refetch
-      setSelectedSeason(prev => prev === 2025 ? 2024 : 2025);
+      setSelectedSeason(prev => prev === 2024 ? 2023 : 2024);
       setTimeout(() => setSelectedSeason(currentSeason), 100);
     }, 100);
   };
@@ -66,7 +66,7 @@ const Tables = () => {
                 Tentar novamente
               </Button>
               <Button 
-                onClick={() => setSelectedSeason(selectedSeason === 2025 ? 2024 : 2025)} 
+                onClick={() => setSelectedSeason(selectedSeason === 2024 ? 2023 : 2024)} 
                 variant="outline" 
                 className="bg-racing-black hover:bg-racing-black/80 text-racing-white border border-racing-silver/50"
               >
@@ -116,7 +116,6 @@ const Tables = () => {
                   <SelectValue placeholder="Selecione a temporada" />
                 </SelectTrigger>
                 <SelectContent className="bg-racing-black text-racing-white border-racing-silver/20">
-                  <SelectItem value="2025" className="hover:bg-racing-white/10">2025</SelectItem>
                   <SelectItem value="2024" className="hover:bg-racing-white/10">2024</SelectItem>
                   <SelectItem value="2023" className="hover:bg-racing-white/10">2023</SelectItem>
                   <SelectItem value="2022" className="hover:bg-racing-white/10">2022</SelectItem>
@@ -135,7 +134,7 @@ const Tables = () => {
                   Nenhuma corrida encontrada para a temporada {selectedSeason}.
                 </p>
                 <Button 
-                  onClick={() => setSelectedSeason(selectedSeason === 2025 ? 2024 : 2025)} 
+                  onClick={() => setSelectedSeason(selectedSeason === 2024 ? 2023 : 2024)} 
                   variant="outline" 
                   className="mt-4 bg-racing-black hover:bg-racing-black/80 text-racing-white border border-racing-silver/50"
                 >
@@ -173,6 +172,6 @@ const Tables = () => {
       </div>
     </MainLayout>
   );
-};
+}
 
 export default Tables;

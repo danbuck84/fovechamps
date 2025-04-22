@@ -14,14 +14,17 @@ export function useOpenF1Teams(currentSeason: number) {
     queryFn: async () => {
       try {
         console.log(`Fetching teams for season ${currentSeason}`);
-        const response = await fetchTeams({ season: currentSeason });
+        // For 2025, use 2024 data as fallback since it's a future season
+        const actualSeason = currentSeason === 2025 ? 2024 : currentSeason;
+        
+        const response = await fetchTeams({ season: actualSeason });
         
         if (!response || !Array.isArray(response)) {
           console.error("Invalid teams response:", response);
           return [];
         }
         
-        console.log(`Found ${response.length} teams for season ${currentSeason}`);
+        console.log(`Found ${response.length} teams for season ${currentSeason} (using ${actualSeason} data)`);
         return response;
       } catch (err) {
         console.error(`Error fetching teams for season ${currentSeason}:`, err);
