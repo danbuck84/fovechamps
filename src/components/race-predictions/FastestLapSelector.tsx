@@ -19,8 +19,8 @@ export const FastestLapSelector = ({
 }: FastestLapSelectorProps) => {
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-semibold text-racing-white">Volta Mais Rápida</h3>
-      <p className="text-racing-silver">Quem fará a volta mais rápida da corrida?</p>
+      <h3 className="text-xl font-semibold text-fove-white">Volta Mais Rápida</h3>
+      <p className="text-fove-silver">Quem fará a volta mais rápida da corrida?</p>
 
       <div className="flex flex-wrap gap-4 mt-4">
         <Select
@@ -30,12 +30,12 @@ export const FastestLapSelector = ({
         >
           <SelectTrigger 
             ref={buttonRef}
-            className="w-[300px] bg-racing-black text-racing-white border-racing-silver/20 min-h-[44px]"
+            className="w-[300px] bg-fove-navy text-fove-white border-fove-silver/20 min-h-[44px]"
           >
             <SelectValue placeholder="Selecione o piloto" />
           </SelectTrigger>
           <SelectContent 
-            className="bg-racing-black border-racing-silver/20"
+            className="bg-fove-navy border-fove-silver/20"
             position="popper"
             sideOffset={5}
             align="start"
@@ -45,7 +45,7 @@ export const FastestLapSelector = ({
               <SelectItem 
                 key={driver.id} 
                 value={driver.id}
-                className="text-racing-white hover:bg-racing-silver/10 focus:bg-racing-silver/10 focus:text-racing-white py-3"
+                className="text-fove-white hover:bg-fove-silver/10 focus:bg-fove-silver/10 focus:text-fove-white py-3"
               >
                 {driver.name} ({driver.team.name})
               </SelectItem>

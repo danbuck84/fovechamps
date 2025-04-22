@@ -24,6 +24,123 @@ body, html {
   padding: 0 1rem;
 }
 
+/* FoVe Champs logo styles */
+.fove-logo {
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+}
+
+.fove-logo-text-fo {
+  color: #DC0000;
+}
+
+.fove-logo-text-ve {
+  color: #FFFFFF;
+}
+
+.fove-f1-badge {
+  font-size: 0.65em;
+  background-color: #DC0000;
+  color: white;
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  margin-left: 0.5em;
+}
+
+/* Position indicators */
+.position-indicator {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.position-gold {
+  background-color: #FFC300;
+  color: #000814;
+}
+
+.position-silver {
+  background-color: #E0E0E0;
+  color: #000814;
+}
+
+.position-bronze {
+  background-color: #CD7F32;
+  color: white;
+}
+
+.position-default {
+  background-color: #001233;
+  color: white;
+}
+
+/* Game mode cards */
+.game-mode-card {
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.game-mode-card-red {
+  border-top: 4px solid #DC0000;
+}
+
+.game-mode-card-blue {
+  border-top: 4px solid #0466C8;
+}
+
+.game-mode-card-green {
+  border-top: 4px solid #38B000;
+}
+
+.game-mode-card-purple {
+  border-top: 4px solid #9D4EDD;
+}
+
+.game-mode-card-gold {
+  border-top: 4px solid #FFC300;
+}
+
+.game-mode-card-orange {
+  border-top: 4px solid #FF5400;
+}
+
+/* Race countdown timer */
+.race-countdown {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(220, 0, 0, 0.1);
+  border-radius: 4px;
+  font-weight: 500;
+  color: #F8F8F8;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.status-badge-active {
+  background-color: rgba(56, 176, 0, 0.2);
+  color: #38B000;
+}
+
+.status-badge-expired {
+  background-color: rgba(220, 0, 0, 0.2);
+  color: #DC0000;
+}
+
 /* Responsive settings */
 @media (max-width: 768px) {
   .container {

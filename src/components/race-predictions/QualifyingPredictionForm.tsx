@@ -28,8 +28,8 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
   return (
     <div ref={ref} className="space-y-4">
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold text-racing-white">Acerte o Grid</h3>
-        <p className="text-sm text-racing-silver">
+        <h3 className="text-xl font-semibold text-fove-white">Acerte o Grid</h3>
+        <p className="text-sm text-fove-silver">
           Tente acertar exatamente a posição de cada piloto no grid de largada após a classificação.
         </p>
       </div>
@@ -40,7 +40,7 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
             className="space-y-2"
             ref={el => positionRefs && (positionRefs.current[index] = el)}
           >
-            <label className="text-sm text-racing-silver">
+            <label className="text-sm text-fove-silver">
               {index + 1}º Lugar
             </label>
             <Select
@@ -53,12 +53,12 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
               disabled={disabled}
             >
               <SelectTrigger 
-                className={`bg-racing-white text-racing-black border-racing-silver/20 min-h-[44px] ${!driverId ? "border-racing-red" : ""}`}
+                className={`bg-fove-white text-fove-black border-fove-silver/20 min-h-[44px] ${!driverId ? "border-fove-red" : ""}`}
               >
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
               <SelectContent 
-                className="bg-racing-white border-racing-silver/20"
+                className="bg-fove-white border-fove-silver/20"
                 position="popper"
                 sideOffset={5}
                 align="start"
@@ -66,7 +66,7 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
               >
                 <SelectItem 
                   value="placeholder" 
-                  className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer py-3"
+                  className="hover:bg-fove-black hover:text-fove-white focus:bg-fove-black focus:text-fove-white cursor-pointer py-3"
                 >
                   Selecione um piloto
                 </SelectItem>
@@ -74,7 +74,7 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
                   <SelectItem 
                     key={driver.id} 
                     value={driver.id}
-                    className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer py-3"
+                    className="hover:bg-fove-black hover:text-fove-white focus:bg-fove-black focus:text-fove-white cursor-pointer py-3"
                   >
                     {driver.name} ({driver.team.name})
                   </SelectItem>

@@ -14,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 0 0% 9%;
+    --primary: 0 72% 51%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96.1%;
@@ -33,8 +33,41 @@
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
+    --sidebar-accent: 0 72% 51%;
+    --sidebar-accent-foreground: 0 0% 98%;
+  }
+
+  .dark {
+    --background: 210 100% 2%;
+    --foreground: 0 0% 98%;
+
+    --card: 210 100% 2%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 100% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 72% 51%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 100% 3.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217 32.6% 17.5%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 74.2% 50.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
     --sidebar-accent: 0 72% 51%;
     --sidebar-accent-foreground: 0 0% 98%;
   }
@@ -50,7 +83,7 @@
   }
   
   body {
-    @apply bg-racing-black text-foreground antialiased;
+    @apply bg-fove-navy text-foreground antialiased;
   }
   
   html {
@@ -65,19 +98,19 @@
 
 /* Custom styles for Sidebar */
 [data-sidebar="sidebar"] {
-  @apply bg-racing-black border-racing-silver/10;
+  @apply bg-fove-black border-fove-silver/10;
 }
 
 [data-sidebar="menu-button"] {
-  @apply text-racing-white hover:bg-racing-red/10 hover:text-racing-white;
+  @apply text-fove-white hover:bg-fove-red/10 hover:text-fove-white;
 }
 
 [data-sidebar="menu-button"][data-active="true"] {
-  @apply bg-racing-red/10 text-racing-white;
+  @apply bg-fove-red/10 text-fove-white;
 }
 
 [data-sidebar="group-label"] {
-  @apply text-racing-silver;
+  @apply text-fove-silver;
 }
 
 /* Custom scrollbar */
@@ -86,15 +119,15 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-racing-black;
+  @apply bg-fove-black;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-racing-red/50 rounded-full;
+  @apply bg-fove-red/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-racing-red;
+  @apply bg-fove-red;
 }
 
 /* Smooth transitions */
@@ -107,63 +140,135 @@
   @apply w-full h-full overflow-y-auto flex-1;
 }
 
-/* Ensure layout containers take full height */
-.min-h-screen {
-  min-height: 100vh;
+/* Custom styles for FoVe theme */
+.fove-tab {
+  @apply px-4 py-2 cursor-pointer transition-all;
 }
 
-/* Application layout structure */
-.app-layout {
-  @apply flex flex-col min-h-screen;
+.fove-tab.active {
+  @apply border-b-2 border-fove-red font-semibold;
 }
 
-.page-container {
-  @apply flex-1 w-full max-w-7xl mx-auto;
+.fove-tab:not(.active) {
+  @apply text-fove-silver hover:text-fove-white;
 }
 
-/* Fix for sidebar and content alignment */
-.sidebar-layout {
-  @apply flex w-full h-full;
+.fove-card {
+  @apply bg-fove-navy rounded-lg border border-fove-silver/10 overflow-hidden;
 }
 
-.content-area {
-  @apply flex-1 flex flex-col;
+.fove-position-circle {
+  @apply flex items-center justify-center rounded-full w-8 h-8 text-sm font-semibold;
 }
 
-/* Common UI components centering */
-.card,
-.form-container,
-.table-container {
-  @apply mx-auto w-full;
+.fove-header {
+  @apply bg-fove-black py-3 flex items-center justify-between border-b border-fove-silver/10;
 }
 
-/* Center tables and their content */
-th, td {
-  @apply text-center;
+.fove-footer {
+  @apply bg-fove-black py-4 mt-auto border-t border-fove-silver/10;
 }
 
-/* Center card headers and content */
-.card-header,
-.card-content {
-  @apply text-center;
+.fove-btn-red {
+  @apply bg-fove-red hover:bg-fove-red/90 text-white font-medium px-4 py-2 rounded transition-colors;
 }
 
-/* Override text-left where needed */
-.text-left-override {
-  @apply text-left !important;
+.fove-btn-outline {
+  @apply border border-fove-silver/20 text-fove-white hover:bg-fove-silver/10 px-4 py-2 rounded transition-colors;
 }
 
-/* Center form elements */
-form {
-  @apply mx-auto w-full max-w-4xl;
+.fove-btn-blue {
+  @apply bg-fove-blue hover:bg-fove-blue/90 text-white font-medium px-4 py-2 rounded transition-colors;
 }
 
-/* Center inputs and selects */
-select, input, .select-trigger {
-  @apply mx-auto;
+.fove-game-card {
+  @apply border-t-4 rounded-lg p-4 bg-white dark:bg-fove-navy;
 }
 
-/* Tables page specific styling */
-.tables-container {
-  @apply w-full max-w-5xl mx-auto;
+.fove-game-card-palpites {
+  @apply border-t-fove-red;
+}
+
+.fove-game-card-pole {
+  @apply border-t-fove-blue;
+}
+
+.fove-game-card-grid {
+  @apply border-t-green-500;
+}
+
+.fove-game-card-manager {
+  @apply border-t-purple-500;
+}
+
+.fove-game-card-bolsa {
+  @apply border-t-fove-gold;
+}
+
+.fove-game-card-team {
+  @apply border-t-red-500;
+}
+
+.fove-game-card-survivors {
+  @apply border-t-orange-500;
+}
+
+.status-indicator {
+  @apply inline-flex items-center justify-center px-2 py-1 text-xs font-bold rounded;
+}
+
+.status-active {
+  @apply bg-green-500/20 text-green-500;
+}
+
+.status-expired {
+  @apply bg-fove-red/20 text-fove-red;
+}
+
+.position-badge {
+  @apply inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded-full;
+}
+
+.position-1 {
+  @apply bg-fove-gold text-fove-black;
+}
+
+.position-2 {
+  @apply bg-fove-silver text-fove-black;
+}
+
+.position-3 {
+  @apply bg-amber-700 text-white;
+}
+
+.position-other {
+  @apply bg-fove-navy text-fove-white;
+}
+
+.progress-bar {
+  @apply w-full h-2 bg-fove-navy rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full rounded-full;
+}
+
+.progress-fill-red {
+  @apply bg-fove-red;
+}
+
+.progress-fill-blue {
+  @apply bg-fove-blue;
+}
+
+.progress-fill-green {
+  @apply bg-green-500;
+}
+
+.progress-fill-purple {
+  @apply bg-purple-500;
+}
+
+.progress-fill-gold {
+  @apply bg-fove-gold;
 }

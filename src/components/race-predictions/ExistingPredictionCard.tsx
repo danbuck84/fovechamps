@@ -18,26 +18,26 @@ export const ExistingPredictionCard = ({
   onViewPredictions,
 }: ExistingPredictionCardProps) => {
   return (
-    <Card className="bg-racing-black border-racing-silver/20">
+    <Card className="bg-fove-navy border-fove-silver/20">
       <RaceInfoHeader 
         race={race}
         isDeadlinePassed={isDeadlinePassed}
       />
       <CardContent className="flex flex-col items-center justify-center py-8">
-        <p className="text-racing-silver mb-4">
+        <p className="text-fove-silver mb-4">
           Você já fez seus palpites para este Grande Prêmio.
         </p>
         <div className="space-x-4">
           <Button
             variant="outline"
             onClick={onViewPredictions}
-            className="bg-racing-black text-racing-white border-racing-silver/20 hover:bg-racing-silver/20"
+            className="bg-fove-navy text-fove-white border-fove-silver/20 hover:bg-fove-silver/20"
           >
             Ver Meus Palpites
           </Button>
           <Button
             onClick={onEdit}
-            className="bg-racing-red hover:bg-racing-red/90"
+            className="bg-fove-red hover:bg-fove-red/90"
           >
             Editar Palpites
           </Button>

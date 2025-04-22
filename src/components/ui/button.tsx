@@ -10,14 +10,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-racing-red text-racing-white hover:bg-racing-red/90 shadow-sm",
+        default: "bg-fove-red text-fove-white hover:bg-fove-red/90 shadow-sm",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
-        outline: "border border-racing-silver/30 bg-transparent text-racing-white hover:bg-racing-red/10 hover:text-racing-white hover:border-racing-red shadow-sm",
-        secondary: "bg-racing-silver/20 text-racing-white hover:bg-racing-silver/30 shadow-sm",
-        ghost: "text-racing-white hover:bg-racing-red/10 hover:text-racing-white",
-        link: "text-racing-white underline-offset-4 hover:underline",
-        blue: "bg-racing-blue text-racing-white hover:bg-racing-blue/90 shadow-sm",
-        tab: "rounded-full bg-transparent text-racing-silver data-[state=active]:bg-racing-red data-[state=active]:text-racing-white hover:text-racing-white hover:bg-racing-red/20",
+        outline: "border border-fove-silver/30 bg-transparent text-fove-white hover:bg-fove-red/10 hover:text-fove-white hover:border-fove-red shadow-sm",
+        secondary: "bg-fove-silver/20 text-fove-white hover:bg-fove-silver/30 shadow-sm",
+        ghost: "text-fove-white hover:bg-fove-red/10 hover:text-fove-white",
+        link: "text-fove-white underline-offset-4 hover:underline",
+        blue: "bg-fove-blue text-fove-white hover:bg-fove-blue/90 shadow-sm",
+        gold: "bg-fove-gold text-fove-black hover:bg-fove-gold/90 shadow-sm",
+        green: "bg-green-500 text-white hover:bg-green-600 shadow-sm",
+        purple: "bg-purple-500 text-white hover:bg-purple-600 shadow-sm",
+        orange: "bg-orange-500 text-white hover:bg-orange-600 shadow-sm",
+        tab: "rounded-full bg-transparent text-fove-silver data-[state=active]:bg-fove-red data-[state=active]:text-fove-white hover:text-fove-white hover:bg-fove-red/20",
       },
       size: {
         default: "h-10 px-4 py-2",

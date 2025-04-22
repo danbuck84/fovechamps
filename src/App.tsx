@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import routes from "./routes";
 import { supabase, debugSupabase } from "@/lib/supabase";
 import { validateEnvVariables } from "@/utils/env-utils";
+import "./App.css";
 
 // Validate environment variables
 validateEnvVariables();
@@ -42,8 +43,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <SessionContextProvider supabaseClient={supabase}>
         <Suspense fallback={
-          <div className="min-h-screen bg-racing-black flex items-center justify-center">
-            <p className="text-racing-white">Carregando aplicação...</p>
+          <div className="min-h-screen bg-fove-navy flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-fove-white text-2xl font-bold mb-2">FoVe Champs</h2>
+              <p className="text-fove-silver">Carregando aplicação...</p>
+            </div>
           </div>
         }>
           <RouterProvider router={routes} />

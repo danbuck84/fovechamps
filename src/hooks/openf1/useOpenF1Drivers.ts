@@ -99,7 +99,6 @@ export function useOpenF1Drivers(currentSeason: number) {
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,
-    // Add a timeout to prevent hanging requests
     gcTime: 10 * 60 * 1000,
   });
 

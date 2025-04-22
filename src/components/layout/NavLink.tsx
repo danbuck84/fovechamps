@@ -21,8 +21,8 @@ const NavLink = ({ path, icon: Icon, label, isCollapsed }: NavLinkProps) => {
         onClick={() => navigate(path)}
         className={`flex items-center w-full p-2 rounded-lg transition-colors ${
           isActive
-            ? "text-racing-red bg-racing-red/10"
-            : "text-racing-silver hover:bg-racing-red/10"
+            ? "text-fove-red bg-fove-red/10"
+            : "text-fove-silver hover:bg-fove-red/10 hover:text-fove-white"
         }`}
       >
         <Icon className="w-6 h-6" />

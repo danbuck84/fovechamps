@@ -14,7 +14,7 @@ export const PredictionFormActions = ({
     <Button 
       type="button"
       onClick={handleClearPredictions}
-      className="bg-racing-silver/20 hover:bg-racing-silver/30 text-racing-white"
+      className="bg-fove-silver/20 hover:bg-fove-silver/30 text-fove-white"
       disabled={isDeadlinePassed}
     >
       Limpar Aposta
@@ -22,7 +22,7 @@ export const PredictionFormActions = ({
     
     <Button 
       type="submit"
-      className="bg-racing-red hover:bg-racing-red/90 text-racing-white disabled:opacity-50 disabled:cursor-not-allowed"
+      className="bg-fove-red hover:bg-fove-red/90 text-fove-white disabled:opacity-50 disabled:cursor-not-allowed"
       disabled={isDeadlinePassed}
     >
       Salvar Apostas
