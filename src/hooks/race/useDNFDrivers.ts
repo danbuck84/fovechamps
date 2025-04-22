@@ -19,9 +19,11 @@ export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
     }
   };
 
-  // This function now properly handles survivor count
-  const handleDNFCount = (survivorCount: number) => {
+  // Este método agora recebe a contagem de sobreviventes como string e converte para número
+  const handleDNFCount = (survivorCountStr: string) => {
+    const survivorCount = parseInt(survivorCountStr, 10);
     console.log("Handling survivor count:", survivorCount);
+    
     // Calculate DNF count based on total drivers (20) minus survivors
     const dnfCount = 20 - survivorCount;
     

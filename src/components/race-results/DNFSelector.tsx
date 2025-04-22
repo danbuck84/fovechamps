@@ -31,10 +31,7 @@ export const DNFSelector = ({
       <div className={isMobile ? "w-full" : ""}>
         <Select
           value={survivorsCount.toString()}
-          onValueChange={(value) => {
-            console.log(`Selected ${value} survivors`);
-            handleDNFCountChange(value);
-          }}
+          onValueChange={handleDNFCountChange}
         >
           <SelectTrigger className={`${isMobile ? 'w-full' : 'w-[180px]'} bg-racing-black text-racing-white border-racing-silver/20 min-h-[44px]`}>
             <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />

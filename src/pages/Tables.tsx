@@ -9,7 +9,7 @@ import { Loader2 } from "lucide-react";
 
 const Tables = () => {
   const [selectedSeason, setSelectedSeason] = useState<number>(2025);
-  const { races, driversStandings, teamsStandings, loading, currentSeason } = useOpenF1TableData(selectedSeason);
+  const { races, driversStandings, teamsStandings, loading } = useOpenF1TableData(selectedSeason);
   const isMobile = useIsMobile();
   
   if (loading) {
@@ -57,7 +57,7 @@ const Tables = () => {
             {/* Tabela de Pilotos */}
             <PointsTable 
               title="Campeonato de Pilotos"
-              data={driversStandings}
+              data={driversStandings || []}
               races={races || []}
               getName={(driver) => `${driver.name}`}
               getPoints={(driver, raceId) => driver.points[raceId] || 0}
@@ -69,7 +69,7 @@ const Tables = () => {
             {/* Tabela de Construtores */}
             <PointsTable 
               title="Campeonato de Construtores"
-              data={teamsStandings}
+              data={teamsStandings || []}
               races={races || []}
               getName={(team) => `${team.name}`}
               getPoints={(team, raceId) => team.points[raceId] || 0}

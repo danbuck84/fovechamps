@@ -30,6 +30,7 @@ export const useOpenF1TableData = (currentSeason = 2025) => {
           setTeamsStandings(teamsStandings);
         }
       } catch (e) {
+        console.error("Error processing results:", e);
         toast.error("Erro ao processar os resultados das corridas");
       }
     };
