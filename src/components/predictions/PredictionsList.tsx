@@ -15,7 +15,10 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleDelete = async (predictionId: string) => {
+  const handleDelete = async (predictionId: string, event: React.MouseEvent) => {
+    // Prevent event propagation to parent elements
+    event.stopPropagation();
+    
     try {
       const { error } = await supabase
         .from('predictions')
@@ -58,9 +61,13 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
       {predictions.map((prediction: any) => (
         <div 
           key={prediction.id} 
-          className="relative cursor-pointer transition-all hover:translate-x-1 hover:opacity-90"
-          onClick={() => handlePredictionClick(prediction.race_id)}
+          className="relative transition-all hover:translate-x-1 hover:opacity-90"
         >
+          <button 
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            onClick={() => handlePredictionClick(prediction.race_id)}
+            aria-label={`Ver detalhes da aposta para ${prediction?.races?.name || 'corrida'}`}
+          />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
             <ChevronRight className="h-5 w-5 text-racing-silver" />
           </div>
@@ -68,7 +75,7 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
             <PredictionCard
               prediction={prediction}
               driversMap={driversMap}
-              handleDelete={handleDelete}
+              handleDelete={(predictionId) => (e) => handleDelete(predictionId, e)}
             />
           </div>
         </div>

@@ -14,6 +14,7 @@ body, html {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
+  touch-action: pan-y; /* Improved touch handling */
 }
 
 .container {
@@ -120,10 +121,29 @@ body, html {
   /* Touch-friendly select dropdowns */
   .select-content {
     max-height: 80vh !important;
+    min-height: 44px; /* Larger touch targets */
+    touch-action: manipulation; /* Prevent zooming */
   }
   
   /* Better scroll areas */
   .scroll-area {
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
+  
+  /* Make SelectItem more touch-friendly */
+  .select-item {
+    padding: 10px !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Add safe area for iOS devices */
+.select-content {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+/* Improve touch areas for dropdown selectors */
+.select-item {
+  padding: 10px !important;
 }

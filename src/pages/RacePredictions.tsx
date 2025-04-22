@@ -10,6 +10,7 @@ import { RacePredictionLoading } from "@/components/race-predictions/RacePredict
 import { RacePredictionNotFound } from "@/components/race-predictions/RacePredictionNotFound";
 import { DeadlinePassedView } from "@/components/race-predictions/DeadlinePassedView";
 import { useRacePrediction } from "@/hooks/useRacePrediction";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const RacePredictions = () => {
   const { raceId } = useParams();
@@ -60,7 +61,7 @@ const RacePredictions = () => {
             <div className="mt-4 flex justify-end">
               <Button
                 onClick={() => navigate(`/admin/race-results/${raceId}`)}
-                className="bg-racing-red hover:bg-racing-red/90"
+                className="bg-racing-red hover:bg-racing-red/90 min-h-[44px]"
               >
                 Editar Resultados
               </Button>
@@ -95,27 +96,29 @@ const RacePredictions = () => {
             isDeadlinePassed={isDeadlinePassed}
           />
           <CardContent>
-            <PredictionForm
-              drivers={drivers}
-              poleTime={poleTime}
-              onPoleTimeChange={handlePoleTimeChange}
-              qualifyingTop10={qualifyingTop10}
-              setQualifyingTop10={setQualifyingTop10}
-              raceTop10={raceTop10}
-              setRaceTop10={setRaceTop10}
-              dnfPredictions={dnfPredictions}
-              onDriverDNF={handleDriverDNF}
-              getAvailableDrivers={getAvailableDrivers}
-              isDeadlinePassed={isDeadlinePassed}
-              onSubmit={handleSubmit}
-              fastestLap={fastestLap}
-              setFastestLap={setFastestLap}
-            />
+            <ScrollArea className="h-full pr-4" type="always">
+              <PredictionForm
+                drivers={drivers}
+                poleTime={poleTime}
+                onPoleTimeChange={handlePoleTimeChange}
+                qualifyingTop10={qualifyingTop10}
+                setQualifyingTop10={setQualifyingTop10}
+                raceTop10={raceTop10}
+                setRaceTop10={setRaceTop10}
+                dnfPredictions={dnfPredictions}
+                onDriverDNF={handleDriverDNF}
+                getAvailableDrivers={getAvailableDrivers}
+                isDeadlinePassed={isDeadlinePassed}
+                onSubmit={handleSubmit}
+                fastestLap={fastestLap}
+                setFastestLap={setFastestLap}
+              />
+            </ScrollArea>
             {isAdmin && (
               <div className="mt-4 flex justify-end">
                 <Button
                   onClick={() => navigate(`/admin/race-results/${raceId}`)}
-                  className="bg-racing-red hover:bg-racing-red/90"
+                  className="bg-racing-red hover:bg-racing-red/90 min-h-[44px]"
                 >
                   Editar Resultados
                 </Button>

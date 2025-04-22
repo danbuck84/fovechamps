@@ -53,19 +53,28 @@ export const QualifyingPredictionForm = forwardRef<HTMLDivElement, QualifyingPre
               disabled={disabled}
             >
               <SelectTrigger 
-                className={`bg-racing-white text-racing-black border-racing-silver/20 ${!driverId ? "border-racing-red" : ""}`}
+                className={`bg-racing-white text-racing-black border-racing-silver/20 min-h-[44px] ${!driverId ? "border-racing-red" : ""}`}
               >
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
-              <SelectContent className="bg-racing-white border-racing-silver/20">
-                <SelectItem value="placeholder" className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer">
+              <SelectContent 
+                className="bg-racing-white border-racing-silver/20"
+                position="popper"
+                sideOffset={5}
+                align="start"
+                avoidCollisions={true}
+              >
+                <SelectItem 
+                  value="placeholder" 
+                  className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer py-3"
+                >
                   Selecione um piloto
                 </SelectItem>
                 {getAvailableDrivers(index).map((driver) => (
                   <SelectItem 
                     key={driver.id} 
                     value={driver.id}
-                    className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer"
+                    className="hover:bg-racing-black hover:text-racing-white focus:bg-racing-black focus:text-racing-white cursor-pointer py-3"
                   >
                     {driver.name} ({driver.team.name})
                   </SelectItem>

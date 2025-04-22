@@ -7,6 +7,7 @@ import PredictionsList from "@/components/predictions/PredictionsList";
 import LoadingState from "@/components/predictions/LoadingState";
 import EmptyState from "@/components/predictions/EmptyState";
 import MainLayout from "@/components/layout/MainLayout";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const MyPredictions = () => {
   const navigate = useNavigate();
@@ -50,15 +51,17 @@ const MyPredictions = () => {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-racing-white mb-8">Minhas Apostas</h1>
         
-        {predictions && predictions.length > 0 ? (
-          <PredictionsList 
-            predictions={predictions} 
-            driversMap={driversMap}
-            refetch={refetch}
-          />
-        ) : (
-          <EmptyState />
-        )}
+        <ScrollArea className="h-full" type="always">
+          {predictions && predictions.length > 0 ? (
+            <PredictionsList 
+              predictions={predictions} 
+              driversMap={driversMap}
+              refetch={refetch}
+            />
+          ) : (
+            <EmptyState />
+          )}
+        </ScrollArea>
       </div>
     </MainLayout>
   );

@@ -30,16 +30,22 @@ export const FastestLapSelector = ({
         >
           <SelectTrigger 
             ref={buttonRef}
-            className="w-[300px] bg-racing-black text-racing-white border-racing-silver/20"
+            className="w-[300px] bg-racing-black text-racing-white border-racing-silver/20 min-h-[44px]"
           >
             <SelectValue placeholder="Selecione o piloto" />
           </SelectTrigger>
-          <SelectContent className="bg-racing-black border-racing-silver/20">
+          <SelectContent 
+            className="bg-racing-black border-racing-silver/20"
+            position="popper"
+            sideOffset={5}
+            align="start"
+            avoidCollisions={true}
+          >
             {drivers.map((driver) => (
               <SelectItem 
                 key={driver.id} 
                 value={driver.id}
-                className="text-racing-white hover:bg-racing-silver/10 focus:bg-racing-silver/10 focus:text-racing-white"
+                className="text-racing-white hover:bg-racing-silver/10 focus:bg-racing-silver/10 focus:text-racing-white py-3"
               >
                 {driver.name} ({driver.team.name})
               </SelectItem>

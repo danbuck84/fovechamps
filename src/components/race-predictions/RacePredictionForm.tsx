@@ -53,19 +53,28 @@ export const RacePredictionForm = forwardRef<HTMLDivElement, RacePredictionFormP
               disabled={disabled}
             >
               <SelectTrigger 
-                className={`bg-racing-black text-racing-white border-racing-silver/20 ${!driverId ? "border-racing-red" : ""}`}
+                className={`bg-racing-black text-racing-white border-racing-silver/20 min-h-[44px] ${!driverId ? "border-racing-red" : ""}`}
               >
                 <SelectValue placeholder="Selecione um piloto" />
               </SelectTrigger>
-              <SelectContent className="bg-racing-black border-racing-silver/20">
-                <SelectItem value="placeholder" className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer">
+              <SelectContent 
+                className="bg-racing-black border-racing-silver/20"
+                position="popper" 
+                sideOffset={5}
+                align="start"
+                avoidCollisions={true}
+              >
+                <SelectItem 
+                  value="placeholder" 
+                  className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer py-3"
+                >
                   Selecione um piloto
                 </SelectItem>
                 {getAvailableDrivers(index, false).map((driver) => (
                   <SelectItem 
                     key={driver.id} 
                     value={driver.id}
-                    className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer"
+                    className="text-racing-white hover:bg-racing-white hover:text-racing-black focus:bg-racing-white focus:text-racing-black cursor-pointer py-3"
                   >
                     {driver.name} ({driver.team.name})
                   </SelectItem>
