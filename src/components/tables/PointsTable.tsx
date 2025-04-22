@@ -51,6 +51,8 @@ export const PointsTable = ({
       </Card>
     );
   }
+
+  console.log(`Rendering ${title} with ${data.length} entries and ${races.length} races`);
   
   return (
     <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full mx-auto">
@@ -79,13 +81,10 @@ export const PointsTable = ({
               <TableBody>
                 {[...data]
                   .sort((a, b) => {
-                    const totalA = races.reduce((sum, race) => sum + getPoints(a, race.id), 0);
-                    const totalB = races.reduce((sum, race) => sum + getPoints(b, race.id), 0);
-                    return ascending ? totalA - totalB : totalB - totalA;
+                    // Use total points from the data object instead of calculating again
+                    return ascending ? a.total - b.total : b.total - a.total;
                   })
                   .map((item, index) => {
-                    const total = races.reduce((sum, race) => sum + getPoints(item, race.id), 0);
-                    
                     // Apply special styling for swapped drivers
                     const isSwappedDriver = item.name === "Yuki Tsunoda" || item.name === "Liam Lawson";
                     const displayTeam = (getTeam && getTeam(item)) || "";
@@ -105,7 +104,7 @@ export const PointsTable = ({
                           <TableCell className="text-racing-white sticky left-12 md:left-16 bg-racing-black z-10">{getName(item)}</TableCell>
                         )}
                         <TableCell className="text-center font-bold text-racing-white">
-                          {total}
+                          {item.total}
                         </TableCell>
                       </TableRow>
                     );

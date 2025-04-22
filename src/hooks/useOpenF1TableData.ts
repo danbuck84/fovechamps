@@ -11,6 +11,7 @@ interface OpenF1Driver {
   name: string;
   team_name: string;
   team_id: string;
+  nationality?: string;
 }
 
 interface OpenF1Result {
@@ -27,6 +28,7 @@ interface OpenF1Session {
   country_name: string;
   circuit_short_name: string;
   date_start: string;
+  round?: number;
 }
 
 interface GroupedPoints {
@@ -39,7 +41,7 @@ interface GroupedPoints {
   total: number;
 }
 
-export const useOpenF1TableData = (currentSeason = 2024) => {
+export const useOpenF1TableData = (currentSeason = 2025) => {
   const [driversStandings, setDriversStandings] = useState<GroupedPoints[]>([]);
   const [teamsStandings, setTeamsStandings] = useState<GroupedPoints[]>([]);
 
@@ -48,15 +50,18 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
     queryKey: ["openf1-races", currentSeason],
     queryFn: async () => {
       try {
+        console.log(`Fetching race sessions for season ${currentSeason}`);
         const sessions = await fetchSessions({ 
           season: currentSeason,
-          // Filter only race sessions, not practice or qualifying
-          // session_type: 'Race'
         });
         
-        return sessions.filter((session: OpenF1Session) => 
+        // Filter only race sessions, not practice or qualifying
+        const racesOnly = sessions.filter((session: OpenF1Session) => 
           session.session_type === 'Race'
         );
+        
+        console.log(`Found ${racesOnly.length} races for season ${currentSeason}`);
+        return racesOnly;
       } catch (error) {
         console.error("Error fetching race sessions:", error);
         toast.error("Não foi possível carregar as corridas desta temporada");
@@ -71,7 +76,10 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
     queryKey: ["openf1-drivers", currentSeason],
     queryFn: async () => {
       try {
-        return await fetchDrivers({ season: currentSeason });
+        console.log(`Fetching drivers for season ${currentSeason}`);
+        const driversData = await fetchDrivers({ season: currentSeason });
+        console.log(`Found ${driversData.length} drivers for season ${currentSeason}`);
+        return driversData;
       } catch (error) {
         console.error("Error fetching drivers:", error);
         toast.error("Não foi possível carregar os pilotos desta temporada");
@@ -86,7 +94,10 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
     queryKey: ["openf1-teams", currentSeason],
     queryFn: async () => {
       try {
-        return await fetchTeams({ season: currentSeason });
+        console.log(`Fetching teams for season ${currentSeason}`);
+        const teamsData = await fetchTeams({ season: currentSeason });
+        console.log(`Found ${teamsData.length} teams for season ${currentSeason}`);
+        return teamsData;
       } catch (error) {
         console.error("Error fetching teams:", error);
         toast.error("Não foi possível carregar as equipes desta temporada");
@@ -99,6 +110,8 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
   // Process race results when races and drivers data is available
   useEffect(() => {
     if (!raceSessions || !drivers) return;
+    
+    console.log("Processing race results...");
 
     const processRaceResults = async () => {
       try {
@@ -112,7 +125,7 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
             id: driver.driver_id,
             name: driver.name,
             team_name: driver.team_name,
-            nationality: "", // OpenF1 doesn't provide nationality directly
+            nationality: driver.nationality || "N/A",
             points: {},
             total: 0
           };
@@ -132,50 +145,56 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
         
         // Fetch and process results for each race session
         for (const session of raceSessions) {
-          const results = await fetchResults({ 
-            session_key: session.session_key,
-            season: currentSeason 
-          });
+          console.log(`Fetching results for race: ${session.session_name} (${session.session_key})`);
           
-          // Process driver points
-          results.forEach((result: OpenF1Result) => {
-            const driver = driverPoints[result.driver_id];
-            if (driver) {
-              // F1 points system: 25-18-15-12-10-8-6-4-2-1 for positions 1-10
-              let points = 0;
-              
-              if (result.points !== undefined) {
-                points = result.points;
-              } else {
-                // Calculate points based on position if not provided by API
-                switch (result.position) {
-                  case 1: points = 25; break;
-                  case 2: points = 18; break;
-                  case 3: points = 15; break;
-                  case 4: points = 12; break;
-                  case 5: points = 10; break;
-                  case 6: points = 8; break;
-                  case 7: points = 6; break;
-                  case 8: points = 4; break;
-                  case 9: points = 2; break;
-                  case 10: points = 1; break;
-                  default: points = 0; break;
+          try {
+            const results = await fetchResults({ 
+              session_key: session.session_key,
+              season: currentSeason 
+            });
+            
+            // Process driver points
+            results.forEach((result: OpenF1Result) => {
+              const driver = driverPoints[result.driver_id];
+              if (driver) {
+                // F1 points system: 25-18-15-12-10-8-6-4-2-1 for positions 1-10
+                let points = 0;
+                
+                if (result.points !== undefined) {
+                  points = result.points;
+                } else {
+                  // Calculate points based on position if not provided by API
+                  switch (result.position) {
+                    case 1: points = 25; break;
+                    case 2: points = 18; break;
+                    case 3: points = 15; break;
+                    case 4: points = 12; break;
+                    case 5: points = 10; break;
+                    case 6: points = 8; break;
+                    case 7: points = 6; break;
+                    case 8: points = 4; break;
+                    case 9: points = 2; break;
+                    case 10: points = 1; break;
+                    default: points = 0; break;
+                  }
+                }
+                
+                driver.points[session.session_key.toString()] = points;
+                driver.total += points;
+                
+                // Add to team points if we have team info
+                const driverObj = drivers.find((d: OpenF1Driver) => d.driver_id === result.driver_id);
+                if (driverObj && driverObj.team_id && teamPoints[driverObj.team_id]) {
+                  const team = teamPoints[driverObj.team_id];
+                  team.points[session.session_key.toString()] = 
+                    (team.points[session.session_key.toString()] || 0) + points;
+                  team.total += points;
                 }
               }
-              
-              driver.points[session.session_key.toString()] = points;
-              driver.total += points;
-              
-              // Add to team points if we have team info
-              const driverObj = drivers.find((d: OpenF1Driver) => d.driver_id === result.driver_id);
-              if (driverObj && driverObj.team_id && teamPoints[driverObj.team_id]) {
-                const team = teamPoints[driverObj.team_id];
-                team.points[session.session_key.toString()] = 
-                  (team.points[session.session_key.toString()] || 0) + points;
-                team.total += points;
-              }
-            }
-          });
+            });
+          } catch (error) {
+            console.error(`Error fetching results for race ${session.session_key}:`, error);
+          }
         }
         
         // Convert to arrays and sort by total points (descending)
@@ -185,6 +204,10 @@ export const useOpenF1TableData = (currentSeason = 2024) => {
         setTeamsStandings(Object.values(teamPoints)
           .sort((a, b) => b.total - a.total));
           
+        console.log("Processed standings:", { 
+          drivers: Object.values(driverPoints).length, 
+          teams: Object.values(teamPoints).length 
+        });
       } catch (error) {
         console.error("Error processing race results:", error);
         toast.error("Erro ao processar os resultados das corridas");

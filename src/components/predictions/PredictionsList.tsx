@@ -1,8 +1,9 @@
 
-import { Trash2 } from "lucide-react";
+import { Trash2, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import PredictionCard from "./PredictionCard";
+import { useNavigate } from "react-router-dom";
 
 interface PredictionsListProps {
   predictions: any[];
@@ -12,6 +13,7 @@ interface PredictionsListProps {
 
 const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleDelete = async (predictionId: string) => {
     try {
@@ -47,15 +49,29 @@ const PredictionsList = ({ predictions, driversMap, refetch }: PredictionsListPr
     }
   };
 
+  const handlePredictionClick = (raceId: string) => {
+    navigate(`/race-predictions/${raceId}`);
+  };
+
   return (
     <div className="space-y-6">
       {predictions.map((prediction: any) => (
-        <PredictionCard
-          key={prediction.id}
-          prediction={prediction}
-          driversMap={driversMap}
-          handleDelete={handleDelete}
-        />
+        <div 
+          key={prediction.id} 
+          className="relative cursor-pointer transition-all hover:translate-x-1 hover:opacity-90"
+          onClick={() => handlePredictionClick(prediction.race_id)}
+        >
+          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10">
+            <ChevronRight className="h-5 w-5 text-racing-silver" />
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <PredictionCard
+              prediction={prediction}
+              driversMap={driversMap}
+              handleDelete={handleDelete}
+            />
+          </div>
+        </div>
       ))}
     </div>
   );

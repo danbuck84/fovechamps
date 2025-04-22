@@ -39,12 +39,12 @@ export const DNFSelector = ({
           <SelectTrigger className={`${isMobile ? 'w-full' : 'w-[180px]'} bg-racing-black text-racing-white border-racing-silver/20 min-h-[44px]`}>
             <SelectValue placeholder="Selecione quantos pilotos sobreviveram" />
           </SelectTrigger>
-          <SelectContent className="bg-racing-black text-racing-white border-racing-silver/20 max-h-[300px]">
+          <SelectContent className="bg-racing-black text-racing-white border-racing-silver/20 max-h-[300px] overflow-y-auto">
             {Array.from({ length: 21 }).map((_, index) => (
               <SelectItem 
                 key={index} 
                 value={index.toString()}
-                className="text-racing-white hover:bg-racing-white/20 hover:text-racing-white focus:bg-racing-white/20 focus:text-racing-white cursor-pointer min-h-[40px] flex items-center"
+                className="text-racing-white hover:bg-racing-white/20 hover:text-racing-white focus:bg-racing-white/20 focus:text-racing-white cursor-pointer min-h-[40px] flex items-center px-4 py-2"
               >
                 {index} piloto{index !== 1 ? 's' : ''}
               </SelectItem>

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2 } from "lucide-react";
 
 const Tables = () => {
-  const [selectedSeason, setSelectedSeason] = useState<number>(2024);
+  const [selectedSeason, setSelectedSeason] = useState<number>(2025);
   const { races, driversStandings, teamsStandings, loading, currentSeason } = useOpenF1TableData(selectedSeason);
   const isMobile = useIsMobile();
   
@@ -43,6 +43,7 @@ const Tables = () => {
                   <SelectValue placeholder="Selecione a temporada" />
                 </SelectTrigger>
                 <SelectContent className="bg-racing-black text-racing-white border-racing-silver/20">
+                  <SelectItem value="2025" className="hover:bg-racing-white/10">2025</SelectItem>
                   <SelectItem value="2024" className="hover:bg-racing-white/10">2024</SelectItem>
                   <SelectItem value="2023" className="hover:bg-racing-white/10">2023</SelectItem>
                   <SelectItem value="2022" className="hover:bg-racing-white/10">2022</SelectItem>
