@@ -19,7 +19,7 @@ export const useDNFDrivers = (initialDNFDrivers: string[] = []) => {
     }
   };
 
-  // Esta função recebe o número de sobreviventes, não de DNFs
+  // Esta função recebe o número de sobreviventes diretamente
   const handleDNFCount = (survivorCount: number) => {
     console.log("Handling survivor count:", survivorCount);
     // Calculamos quantos DNFs temos com base no número total de pilotos (20) 

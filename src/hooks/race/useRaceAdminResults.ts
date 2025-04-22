@@ -75,7 +75,7 @@ export const useRaceAdminResults = () => {
         return driver ? driver.name : 'Driver';
       }).join(', ');
       
-      toast.error(`Duplicates in qualifying: ${driverNames}. Please fix before saving.`);
+      toast.error(`Duplicatas na classificação: ${driverNames}. Corrija antes de salvar.`);
       return;
     }
 
@@ -86,7 +86,7 @@ export const useRaceAdminResults = () => {
         return driver ? driver.name : 'Driver';
       }).join(', ');
       
-      toast.error(`Duplicates in race results: ${driverNames}. Please fix before saving.`);
+      toast.error(`Duplicatas nos resultados da corrida: ${driverNames}. Corrija antes de salvar.`);
       return;
     }
 
@@ -98,9 +98,12 @@ export const useRaceAdminResults = () => {
         raceResults,
         dnfDrivers
       );
+      
+      toast.success("Resultados salvos com sucesso!");
       navigate(-1);
     } catch (error) {
       console.error("Error saving results:", error);
+      toast.error("Erro ao salvar os resultados. Tente novamente.");
     }
   };
 
@@ -121,6 +124,7 @@ export const useRaceAdminResults = () => {
     dnfDrivers,
     handleDNFChange,
     handleDNFCount,
+    handleDNFCountChange,
     saving,
     loading,
     handleSaveResults

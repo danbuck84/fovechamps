@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import { useIsMobile } from "@/hooks/use-mobile";
 import type { Race } from "@/types/betting";
 import type { GroupedPoints } from "@/types/tables";
 
@@ -35,28 +36,30 @@ export const PointsTable = ({
   getTeam,
   getNationality
 }: PointsTableProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card className="bg-racing-black border-racing-silver/20 mb-8 w-full mx-auto">
-      <CardHeader className="px-6">
+      <CardHeader className="px-4 md:px-6">
         <CardTitle className="text-xl text-racing-white">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="px-6">
-        <ScrollArea className="w-full">
-          <div className="min-w-max">
+      <CardContent className="px-2 md:px-6">
+        <ScrollArea className="w-full" type="always">
+          <div className={`min-w-max ${isMobile ? 'pb-4' : ''}`}>
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-racing-silver/20">
-                  <TableHead className="w-16 text-center bg-racing-black text-racing-white font-semibold">POS</TableHead>
+                  <TableHead className="w-12 md:w-16 text-center bg-racing-black text-racing-white font-semibold sticky left-0 z-10">POS</TableHead>
                   {isDrivers ? (
                     <>
-                      <TableHead className="text-left text-racing-white font-semibold">Piloto</TableHead>
-                      <TableHead className="text-center text-racing-white font-semibold">Nacionalidade</TableHead>
-                      <TableHead className="text-left text-racing-white font-semibold">Equipe</TableHead>
+                      <TableHead className="text-left text-racing-white font-semibold sticky left-12 md:left-16 bg-racing-black z-10 min-w-[120px]">Piloto</TableHead>
+                      {!isMobile && <TableHead className="text-center text-racing-white font-semibold">Nacionalidade</TableHead>}
+                      <TableHead className="text-left text-racing-white font-semibold min-w-[100px]">Equipe</TableHead>
                     </>
                   ) : (
-                    <TableHead className="text-left text-racing-white font-semibold">Equipe</TableHead>
+                    <TableHead className="text-left text-racing-white font-semibold sticky left-12 md:left-16 bg-racing-black z-10 min-w-[150px]">Equipe</TableHead>
                   )}
-                  <TableHead className="text-center text-racing-white font-semibold">Pts</TableHead>
+                  <TableHead className="text-center text-racing-white font-semibold w-16">Pts</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -75,17 +78,17 @@ export const PointsTable = ({
                     
                     return (
                       <TableRow key={item.id} className="border-b border-racing-silver/20">
-                        <TableCell className="bg-racing-black text-racing-white font-medium text-center">{index + 1}</TableCell>
+                        <TableCell className="bg-racing-black text-racing-white font-medium text-center sticky left-0 z-10">{index + 1}</TableCell>
                         {isDrivers ? (
                           <>
-                            <TableCell className="text-racing-white">{getName(item)}</TableCell>
-                            <TableCell className="text-center text-racing-white">{getNationality && getNationality(item)}</TableCell>
+                            <TableCell className="text-racing-white sticky left-12 md:left-16 bg-racing-black z-10">{getName(item)}</TableCell>
+                            {!isMobile && <TableCell className="text-center text-racing-white">{getNationality && getNationality(item)}</TableCell>}
                             <TableCell className={`text-racing-white ${isSwappedDriver ? "font-medium" : ""}`}>
                               {displayTeam}
                             </TableCell>
                           </>
                         ) : (
-                          <TableCell className="text-racing-white">{getName(item)}</TableCell>
+                          <TableCell className="text-racing-white sticky left-12 md:left-16 bg-racing-black z-10">{getName(item)}</TableCell>
                         )}
                         <TableCell className="text-center font-bold text-racing-white">
                           {total}

@@ -1,15 +1,17 @@
 
-import { useTableData } from "@/hooks/useTableData";
+import { useOpenF1TableData } from "@/hooks/useOpenF1TableData";
 import { PointsTable } from "@/components/tables/PointsTable";
 import MainLayout from "@/components/layout/MainLayout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Tables = () => {
-  const { races, processTableData } = useTableData();
+  const [selectedSeason, setSelectedSeason] = useState<number>(2024);
+  const { races, driversStandings, teamsStandings, loading, currentSeason } = useOpenF1TableData(selectedSeason);
+  const isMobile = useIsMobile();
   
-  const tableData = processTableData();
-  
-  if (!races || !tableData) {
+  if (loading) {
     return (
       <MainLayout>
         <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
@@ -22,15 +24,35 @@ const Tables = () => {
   return (
     <MainLayout>
       <div className="min-h-screen bg-racing-black text-racing-white p-4 md:p-6">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8 text-center">Tabelas de Classificação</h1>
+        <div className={`max-w-5xl mx-auto ${isMobile ? 'px-2' : ''}`}>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-0 text-center md:text-left">
+              Tabelas de Classificação
+            </h1>
+            
+            <div className="w-full md:w-auto">
+              <Select
+                value={selectedSeason.toString()}
+                onValueChange={(value) => setSelectedSeason(parseInt(value))}
+              >
+                <SelectTrigger className="w-full md:w-[180px] bg-racing-black text-racing-white border-racing-silver/20">
+                  <SelectValue placeholder="Selecione a temporada" />
+                </SelectTrigger>
+                <SelectContent className="bg-racing-black text-racing-white border-racing-silver/20">
+                  <SelectItem value="2024" className="hover:bg-racing-white/10">2024</SelectItem>
+                  <SelectItem value="2023" className="hover:bg-racing-white/10">2023</SelectItem>
+                  <SelectItem value="2022" className="hover:bg-racing-white/10">2022</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           
-          <div className="mx-auto">
+          <div className="mx-auto overflow-x-auto">
             {/* Tabela de Pilotos */}
             <PointsTable 
               title="Campeonato de Pilotos"
-              data={tableData.drivers || []}
-              races={races}
+              data={driversStandings}
+              races={races || []}
               getName={(driver) => `${driver.name}`}
               getPoints={(driver, raceId) => driver.points[raceId] || 0}
               isDrivers={true}
@@ -41,8 +63,8 @@ const Tables = () => {
             {/* Tabela de Construtores */}
             <PointsTable 
               title="Campeonato de Construtores"
-              data={tableData.teams || []}
-              races={races}
+              data={teamsStandings}
+              races={races || []}
               getName={(team) => `${team.name}`}
               getPoints={(team, raceId) => team.points[raceId] || 0}
             />

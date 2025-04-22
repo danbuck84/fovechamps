@@ -26,21 +26,42 @@ body, html {
 /* Responsive settings */
 @media (max-width: 768px) {
   .container {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
   }
   
   /* Ensure proper spacing on mobile */
   .p-6 {
-    padding: 1rem !important;
+    padding: 0.75rem !important;
   }
   
   /* Adjust grid layouts for mobile */
   .grid-cols-2 {
     grid-template-columns: 1fr !important;
   }
+  
+  /* Fix table display on mobile */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Responsive typography */
+  h1.text-3xl {
+    font-size: 1.5rem !important;
+  }
+  
+  h2.text-2xl {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Better table display on mobile */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
 
-/* Mobile device styles */
+/* Mobile device styles - small screens */
 @media (max-width: 640px) {
   body {
     overflow-x: hidden;
@@ -51,9 +72,29 @@ body, html {
     width: 100%;
   }
   
+  /* Better margins on mobile */
+  .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+  
   /* Smaller text on mobile */
   h1.text-3xl {
-    font-size: 1.75rem !important;
+    font-size: 1.25rem !important;
+  }
+  
+  /* Full width select boxes */
+  .select-wrapper {
+    width: 100% !important;
+  }
+  
+  /* Adjust padding for mobile */
+  .p-4 {
+    padding: 0.5rem !important;
+  }
+  
+  /* Ensure cards have proper padding on mobile */
+  .card {
+    padding: 0.75rem !important;
   }
 }
 
@@ -64,4 +105,25 @@ body, html {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+}
+
+/* Mobile optimizations for touch interactions */
+@media (hover: none) {
+  /* Better touch targets */
+  button, 
+  a, 
+  [role="button"],
+  .select-trigger {
+    min-height: 44px;
+  }
+  
+  /* Touch-friendly select dropdowns */
+  .select-content {
+    max-height: 80vh !important;
+  }
+  
+  /* Better scroll areas */
+  .scroll-area {
+    -webkit-overflow-scrolling: touch;
+  }
 }
