@@ -36,7 +36,7 @@ const MainLayout = ({ children, username = "", isAdmin = false }: MainLayoutProp
         <SidebarInset className="bg-racing-black flex-1 flex flex-col">
           {isMobile && (
             <div className="sticky top-4 left-4 z-50 p-2">
-              <SidebarTrigger asChild>
+              <SidebarTrigger>
                 <Button variant="ghost" size="icon" className="h-10 w-10 text-racing-white hover:bg-racing-red/20">
                   <Menu size={24} />
                 </Button>

@@ -2,7 +2,7 @@
 import { useOpenF1TableData } from "@/hooks/useOpenF1TableData";
 import { PointsTable } from "@/components/tables/PointsTable";
 import MainLayout from "@/components/layout/MainLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
