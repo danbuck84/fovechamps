@@ -14,25 +14,38 @@ export interface OpenF1Session {
 }
 
 export function useOpenF1Sessions(currentSeason: number) {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["openf1-races", currentSeason],
     queryFn: async () => {
       try {
+        console.log(`Fetching sessions for season ${currentSeason}`);
         const sessions = await fetchSessions({ season: currentSeason });
+        
+        if (!sessions || !Array.isArray(sessions)) {
+          console.error("Invalid sessions response:", sessions);
+          return [];
+        }
+        
         // Only Race sessions
-        return sessions.filter(
+        const racesSessions = sessions.filter(
           (session: OpenF1Session) => session.session_type === "Race"
         );
+        
+        console.log(`Found ${racesSessions.length} race sessions for season ${currentSeason}`);
+        return racesSessions;
       } catch (err) {
+        console.error(`Error fetching sessions for season ${currentSeason}:`, err);
         toast.error("Não foi possível carregar as corridas desta temporada");
-        return [];
+        throw err;
       }
     },
     staleTime: 5 * 60 * 1000,
+    retry: 2,
   });
 
   return {
     raceSessions: data || [],
     loadingRaces: isLoading,
+    error,
   };
 }

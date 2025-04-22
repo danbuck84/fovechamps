@@ -10,6 +10,7 @@ import type { GroupedPoints } from "@/utils/openf1/processOpenF1Results";
 export const useOpenF1TableData = (currentSeason = 2025) => {
   const [driversStandings, setDriversStandings] = useState<GroupedPoints[]>([]);
   const [teamsStandings, setTeamsStandings] = useState<GroupedPoints[]>([]);
+  const [error, setError] = useState<Error | null>(null);
 
   const { raceSessions, loadingRaces } = useOpenF1Sessions(currentSeason);
   const { drivers, loadingDrivers } = useOpenF1Drivers(currentSeason);
@@ -19,18 +20,38 @@ export const useOpenF1TableData = (currentSeason = 2025) => {
     let cancelled = false;
 
     const updateResults = async () => {
-      if (!raceSessions || !drivers || !teams) return;
+      // Reset error state
+      setError(null);
+      
+      // Check if data is available
+      if (!raceSessions || !drivers || !teams) {
+        console.log("Missing data, skipping results processing", {
+          raceSessions: !!raceSessions,
+          drivers: !!drivers,
+          teams: !!teams
+        });
+        return;
+      }
 
       try {
+        console.log("Processing F1 results for season:", currentSeason);
+        
         const { driversStandings, teamsStandings } =
           await processOpenF1Results(raceSessions, drivers, teams, currentSeason);
 
         if (!cancelled) {
-          setDriversStandings(driversStandings);
-          setTeamsStandings(teamsStandings);
+          console.log("Setting standings data", {
+            driversCount: driversStandings?.length || 0,
+            teamsCount: teamsStandings?.length || 0
+          });
+          
+          // Make sure we always set arrays, even if empty
+          setDriversStandings(driversStandings || []);
+          setTeamsStandings(teamsStandings || []);
         }
       } catch (e) {
         console.error("Error processing results:", e);
+        setError(e instanceof Error ? e : new Error("Erro desconhecido"));
         toast.error("Erro ao processar os resultados das corridas");
       }
     };
@@ -42,10 +63,11 @@ export const useOpenF1TableData = (currentSeason = 2025) => {
   }, [raceSessions, drivers, teams, currentSeason]);
 
   return {
-    races: raceSessions,
+    races: raceSessions || [],
     driversStandings,
     teamsStandings,
     loading: loadingRaces || loadingDrivers || loadingTeams,
+    error,
     currentSeason,
   };
 };

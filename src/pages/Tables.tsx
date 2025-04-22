@@ -5,12 +5,20 @@ import MainLayout from "@/components/layout/MainLayout";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Tables = () => {
   const [selectedSeason, setSelectedSeason] = useState<number>(2025);
-  const { races, driversStandings, teamsStandings, loading } = useOpenF1TableData(selectedSeason);
+  const { races, driversStandings, teamsStandings, loading, error } = useOpenF1TableData(selectedSeason);
   const isMobile = useIsMobile();
+  
+  const handleRetry = () => {
+    // Force re-render by changing and immediately changing back the selected season
+    const currentSeason = selectedSeason;
+    setSelectedSeason(currentSeason === 2025 ? 2024 : 2025);
+    setTimeout(() => setSelectedSeason(currentSeason), 100);
+  };
   
   if (loading) {
     return (
@@ -19,6 +27,26 @@ const Tables = () => {
           <div className="flex flex-col items-center">
             <Loader2 className="h-10 w-10 text-racing-red animate-spin mb-4" />
             <p className="text-racing-silver">Carregando dados da temporada {selectedSeason}...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+  
+  if (error) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen bg-racing-black text-racing-white flex items-center justify-center">
+          <div className="flex flex-col items-center text-center max-w-md">
+            <AlertCircle className="h-10 w-10 text-racing-red mb-4" />
+            <p className="text-racing-silver mb-4">Ocorreu um erro ao carregar os dados da temporada {selectedSeason}.</p>
+            <Button 
+              onClick={handleRetry} 
+              variant="outline" 
+              className="bg-racing-red hover:bg-racing-red/80 text-racing-white border-none"
+            >
+              Tentar novamente
+            </Button>
           </div>
         </div>
       </MainLayout>
@@ -59,11 +87,11 @@ const Tables = () => {
               title="Campeonato de Pilotos"
               data={driversStandings || []}
               races={races || []}
-              getName={(driver) => `${driver.name}`}
-              getPoints={(driver, raceId) => driver.points[raceId] || 0}
+              getName={(driver) => `${driver?.name || 'Desconhecido'}`}
+              getPoints={(driver, raceId) => driver?.points?.[raceId] || 0}
               isDrivers={true}
-              getNationality={(driver) => driver.nationality || "N/A"}
-              getTeam={(driver) => driver.team_name || ""}
+              getNationality={(driver) => driver?.nationality || "N/A"}
+              getTeam={(driver) => driver?.team_name || ""}
             />
             
             {/* Tabela de Construtores */}
@@ -71,8 +99,8 @@ const Tables = () => {
               title="Campeonato de Construtores"
               data={teamsStandings || []}
               races={races || []}
-              getName={(team) => `${team.name}`}
-              getPoints={(team, raceId) => team.points[raceId] || 0}
+              getName={(team) => `${team?.name || 'Desconhecido'}`}
+              getPoints={(team, raceId) => team?.points?.[raceId] || 0}
             />
           </div>
         </div>

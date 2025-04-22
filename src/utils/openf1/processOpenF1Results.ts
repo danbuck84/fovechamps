@@ -30,39 +30,76 @@ export async function processOpenF1Results(
   teams: OpenF1Team[],
   currentSeason: number
 ): Promise<{ driversStandings: GroupedPoints[]; teamsStandings: GroupedPoints[] }> {
+  // Validate input arguments
+  if (!raceSessions || !Array.isArray(raceSessions)) {
+    console.error("Invalid race sessions:", raceSessions);
+    return { driversStandings: [], teamsStandings: [] };
+  }
+  
+  if (!drivers || !Array.isArray(drivers)) {
+    console.error("Invalid drivers:", drivers);
+    return { driversStandings: [], teamsStandings: [] };
+  }
+  
+  if (!teams || !Array.isArray(teams)) {
+    console.error("Invalid teams:", teams);
+    return { driversStandings: [], teamsStandings: [] };
+  }
+
   const driverPoints: Record<string, GroupedPoints> = {};
   const teamPoints: Record<string, GroupedPoints> = {};
 
+  // Initialize driver standings
   drivers.forEach((driver) => {
-    driverPoints[driver.driver_id] = {
-      id: driver.driver_id,
-      name: driver.name,
-      team_name: driver.team_name,
-      nationality: driver.nationality || "N/A",
-      points: {},
-      total: 0,
-    };
-  });
-
-  if (teams) {
-    teams.forEach((team) => {
-      teamPoints[team.team_id] = {
-        id: team.team_id,
-        name: team.team_name,
+    if (driver && driver.driver_id) {
+      driverPoints[driver.driver_id] = {
+        id: driver.driver_id,
+        name: driver.name || "Desconhecido",
+        team_name: driver.team_name || "Desconhecido",
+        nationality: driver.nationality || "N/A",
         points: {},
         total: 0,
       };
+    }
+  });
+
+  // Initialize team standings
+  if (teams) {
+    teams.forEach((team) => {
+      if (team && team.team_id) {
+        teamPoints[team.team_id] = {
+          id: team.team_id,
+          name: team.team_name || "Desconhecido",
+          points: {},
+          total: 0,
+        };
+      }
     });
   }
 
+  // Process race results
   for (const session of raceSessions) {
     try {
+      if (!session || !session.session_key) {
+        console.warn("Invalid session data, skipping", session);
+        continue;
+      }
+      
+      console.log(`Fetching results for session ${session.session_key} (${session.session_name || 'Unnamed'})`);
+      
       const results: OpenF1Result[] = await fetchResults({
         session_key: session.session_key,
         season: currentSeason,
       });
 
+      if (!results || !Array.isArray(results)) {
+        console.warn(`No results for session ${session.session_key}`);
+        continue;
+      }
+
       results.forEach((result) => {
+        if (!result || !result.driver_id) return;
+        
         const driver = driverPoints[result.driver_id];
         if (driver) {
           let points = 0;
@@ -83,20 +120,23 @@ export async function processOpenF1Results(
               default: points = 0; break;
             }
           }
-          driver.points[session.session_key.toString()] = points;
+          
+          const sessionKey = session.session_key.toString();
+          driver.points[sessionKey] = points;
           driver.total += points;
 
+          // Update team points
           const driverObj = drivers.find((d) => d.driver_id === result.driver_id);
           if (driverObj && driverObj.team_id && teamPoints[driverObj.team_id]) {
             const team = teamPoints[driverObj.team_id];
-            team.points[session.session_key.toString()] =
-              (team.points[session.session_key.toString()] || 0) + points;
+            team.points[sessionKey] = (team.points[sessionKey] || 0) + points;
             team.total += points;
           }
         }
       });
-    } catch {
-      // Ignore fetch errors here; main hook handles error notification.
+    } catch (error) {
+      console.error(`Error processing session ${session.session_key}:`, error);
+      // Continue processing other sessions
     }
   }
 

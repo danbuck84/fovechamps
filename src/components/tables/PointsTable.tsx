@@ -80,11 +80,16 @@ export const PointsTable = ({
               </TableHeader>
               <TableBody>
                 {[...data]
+                  .filter(item => item && item.id) // Filter out invalid items
                   .sort((a, b) => {
                     // Use total points from the data object instead of calculating again
-                    return ascending ? a.total - b.total : b.total - a.total;
+                    const totalA = a?.total || 0;
+                    const totalB = b?.total || 0;
+                    return ascending ? totalA - totalB : totalB - totalA;
                   })
                   .map((item, index) => {
+                    if (!item) return null;
+                    
                     // Apply special styling for swapped drivers
                     const isSwappedDriver = item.name === "Yuki Tsunoda" || item.name === "Liam Lawson";
                     const displayTeam = (getTeam && getTeam(item)) || "";
@@ -104,7 +109,7 @@ export const PointsTable = ({
                           <TableCell className="text-racing-white sticky left-12 md:left-16 bg-racing-black z-10">{getName(item)}</TableCell>
                         )}
                         <TableCell className="text-center font-bold text-racing-white">
-                          {item.total}
+                          {item.total || 0}
                         </TableCell>
                       </TableRow>
                     );
