@@ -17,8 +17,8 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', showF1Badge = true }) => {
   return (
     <Link to="/" className="no-underline">
       <div className={`fove-logo ${sizeClasses[size]}`}>
-        <span className="fove-logo-text-fo">FoVe</span>
-        <span className="fove-logo-text-ve">Champs</span>
+        <span className="text-white">FoVe</span>
+        <span className="text-fove-red">Champs</span>
         {showF1Badge && <span className="fove-f1-badge">F1 2025</span>}
       </div>
     </Link>
