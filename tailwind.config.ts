@@ -33,18 +33,29 @@ export default {
           black: "#000814",
           silver: "#E0E0E0",
           white: "#F8F8F8",
-          blue: "#0466C8",
+          blue: "#0466C8", // Principal azul padrão nas classes "fove-blue"
+          blue50: "#e7f2fb",
+          blue100: "#c2ddf7",
+          blue200: "#96c3ef",
+          blue300: "#6ca5e4",
+          blue400: "#4587d7",
+          blue500: "#0466C8", // O mesmo tom usado nas UI principais
+          blue600: "#0352a3",
+          blue700: "#043c7a",
+          blue800: "#032653",
+          blue900: "#02163a",
           gold: "#FFC300",
           green: "#38B000",
           purple: "#9D4EDD",
           orange: "#FF5400",
         },
+        // Mantém a escala racing azul para compatibilidade, mas padronizado
         racing: {
           black: "#0A0A0A",
           red: "#DC0000",
           silver: "#E0E0E0",
           white: "#F8F8F8",
-          blue: "#005AE0",
+          blue: "#0466C8", // Agora sempre igual ao fove-blue principal
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
